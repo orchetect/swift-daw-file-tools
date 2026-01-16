@@ -14,7 +14,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/orchetect/swift-extensions", from: "2.0.0"),
         .package(url: "https://github.com/orchetect/swift-timecode", from: "3.0.0"),
-        .package(url: "https://github.com/orchetect/MIDIKit", from: "0.10.6")
+        .package(url: "https://github.com/orchetect/MIDIKit", from: "0.10.7")
     ],
     targets: [
         .target(
