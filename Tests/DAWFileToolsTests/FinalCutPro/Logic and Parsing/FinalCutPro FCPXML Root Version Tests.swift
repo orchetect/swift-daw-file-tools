@@ -17,60 +17,88 @@ final class FinalCutPro_FCPXML_RootVersionTests: FCPXMLTestCase {
     
     typealias Version = FinalCutPro.FCPXML.Version
     
-    func testVersion() {
-        let v = Version(major: 1, minor: 12)
+    func testVersion_1_12() {
+        let v = Version(1, 12)
         
         XCTAssertEqual(v.major, 1)
         XCTAssertEqual(v.minor, 12)
+        XCTAssertEqual(v.patch, 0)
+        XCTAssertEqual(v.semanticVersion.build, nil)
+        XCTAssertEqual(v.semanticVersion.preRelease, nil)
+        
+        XCTAssertEqual(v.rawValue, "1.12")
+    }
+    
+    func testVersion_1_12_1() {
+        let v = Version(1, 12, 1)
+        
+        XCTAssertEqual(v.major, 1)
+        XCTAssertEqual(v.minor, 12)
+        XCTAssertEqual(v.patch, 1)
+        XCTAssertEqual(v.semanticVersion.build, nil)
+        XCTAssertEqual(v.semanticVersion.preRelease, nil)
+        
+        XCTAssertEqual(v.rawValue, "1.12.1")
     }
     
     func testVersion_Equatable() {
         XCTAssertEqual(
-            Version(major: 1, minor: 12),
-            Version(major: 1, minor: 12)
+            Version(1, 12),
+            Version(1, 12)
         )
         
         XCTAssertNotEqual(
-            Version(major: 1, minor: 12),
-            Version(major: 1, minor: 13)
+            Version(1, 12),
+            Version(1, 13)
         )
         
         XCTAssertNotEqual(
-            Version(major: 1, minor: 12),
-            Version(major: 2, minor: 12)
+            Version(1, 12),
+            Version(2, 12)
         )
     }
     
     func testVersion_Comparable() {
         XCTAssertFalse(
-            Version(major: 1, minor: 12) < Version(major: 1, minor: 12)
+            Version(1, 12) < Version(1, 12)
         )
         
         XCTAssertFalse(
-            Version(major: 1, minor: 12) > Version(major: 1, minor: 12)
+            Version(1, 12) > Version(1, 12)
         )
         
         XCTAssertTrue(
-            Version(major: 1, minor: 11) < Version(major: 1, minor: 12)
+            Version(1, 11) < Version(1, 12)
         )
         
         XCTAssertTrue(
-            Version(major: 1, minor: 12) > Version(major: 1, minor: 11)
+            Version(1, 12) > Version(1, 11)
         )
         
         XCTAssertTrue(
-            Version(major: 1, minor: 10) < Version(major: 2, minor: 3)
+            Version(1, 10) < Version(2, 3)
         )
         
         XCTAssertTrue(
-            Version(major: 2, minor: 3) > Version(major: 1, minor: 10)
+            Version(2, 3) > Version(1, 10)
         )
+    }
+    
+    func testVersion_RawValue_EdgeCase_MajorVersionOnly() throws {
+        let v = try XCTUnwrap(Version(rawValue: "2"))
+        
+        XCTAssertEqual(v.major, 2)
+        XCTAssertEqual(v.minor, 0)
+        XCTAssertEqual(v.patch, 0)
+        XCTAssertEqual(v.semanticVersion.build, nil)
+        XCTAssertEqual(v.semanticVersion.preRelease, nil)
+        
+        XCTAssertEqual(v.rawValue, "2.0")
     }
     
     func testVersion_RawValue_Invalid() throws {
         XCTAssertNil(Version(rawValue: ""))
         XCTAssertNil(Version(rawValue: "1."))
-        XCTAssertNil(Version(rawValue: "1"))
         XCTAssertNil(Version(rawValue: "1.A"))
         XCTAssertNil(Version(rawValue: "A"))
         XCTAssertNil(Version(rawValue: "A.1"))
