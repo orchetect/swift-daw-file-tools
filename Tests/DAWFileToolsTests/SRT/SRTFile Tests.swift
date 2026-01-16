@@ -11,7 +11,7 @@ import SwiftTimecodeCore
 
 @Suite struct SRTFileDecodeTests {
     @Test
-    func decodeSRT_EmptyFile() throws {
+    func decodeSRT_EmptyFile() async throws {
         let srtFile = try SRTFile(fileContent: "", encoding: .utf8)
         
         #expect(srtFile.encoding == .utf8)
@@ -19,7 +19,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSRT_OneSubtitle() throws {
+    func decodeSRT_OneSubtitle() async throws {
         let encoded = """
             1
             00:00:05,217 --> 00:00:10,854
@@ -39,7 +39,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSRT_TwoSubtitles() throws {
+    func decodeSRT_TwoSubtitles() async throws {
         let encoded = """
             1
             00:00:05,217 --> 00:00:10,854
@@ -69,7 +69,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSRT_TwoSubtitlesMultiline() throws {
+    func decodeSRT_TwoSubtitlesMultiline() async throws {
         let encoded = """
             1
             00:00:05,217 --> 00:00:10,854
@@ -101,7 +101,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSRT_TwoSubtitles_NonConsecutiveSequenceNumbers() throws {
+    func decodeSRT_TwoSubtitles_NonConsecutiveSequenceNumbers() async throws {
         let encoded = """
             2
             00:00:05,217 --> 00:00:10,854
@@ -131,7 +131,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSRT_TwoSubtitles_NonOrderedSequenceNumbers() throws {
+    func decodeSRT_TwoSubtitles_NonOrderedSequenceNumbers() async throws {
         let encoded = """
             2
             00:00:05,217 --> 00:00:10,854
@@ -161,7 +161,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSRT_ExtraLineBreaks1() throws {
+    func decodeSRT_ExtraLineBreaks1() async throws {
         let encoded = """
             1
             00:00:05,000 --> 00:00:10,000
@@ -180,7 +180,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSRT_ExtraLineBreaks2() throws {
+    func decodeSRT_ExtraLineBreaks2() async throws {
         let encoded = """
             
             1
@@ -199,7 +199,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSRT_ExtraLineBreaks3() throws {
+    func decodeSRT_ExtraLineBreaks3() async throws {
         let encoded = """
             
             
@@ -223,7 +223,7 @@ import SwiftTimecodeCore
 
 @Suite struct SRTFileEncodeTests {
     @Test
-    func encodeSRT_EmptyFile() throws {
+    func encodeSRT_EmptyFile() async throws {
         let srtFile = SRTFile(subtitles: [])
         
         let data = try srtFile.rawData()
@@ -232,7 +232,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func encodeSRT_OneSubtitle() throws {
+    func encodeSRT_OneSubtitle() async throws {
         let inTime1 = Time(hours: 0, minutes: 0, seconds: 5, milliseconds: 217)
         let outTime1 = Time(hours: 0, minutes: 0, seconds: 10, milliseconds: 854)
         let subtitle1 = SRTFile.Subtitle(
@@ -255,7 +255,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func encodeSRT_TwoSubtitles() throws {
+    func encodeSRT_TwoSubtitles() async throws {
         let inTime1 = Time(hours: 0, minutes: 0, seconds: 5, milliseconds: 217)
         let outTime1 = Time(hours: 0, minutes: 0, seconds: 10, milliseconds: 854)
         let subtitle1 = SRTFile.Subtitle(
@@ -290,7 +290,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func encodeSRT_TwoSubtitlesMultiline() throws {
+    func encodeSRT_TwoSubtitlesMultiline() async throws {
         let inTime1 = Time(hours: 0, minutes: 0, seconds: 5, milliseconds: 217)
         let outTime1 = Time(hours: 0, minutes: 0, seconds: 10, milliseconds: 854)
         let subtitle1 = SRTFile.Subtitle(

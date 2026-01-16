@@ -11,7 +11,7 @@ import SwiftTimecodeCore
 
 @Suite struct SRTFile_utf8BOMExtendedCharsTests {
     @Test
-    func decodeSRT_BOM_CRLF_ExtendedChars() throws {
+    func decodeSRT_BOM_CRLF_ExtendedChars() async throws {
         // load file
         
         let filename = "SRT-BOM-CRLF-ExtendedChars"

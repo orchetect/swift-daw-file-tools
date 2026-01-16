@@ -11,7 +11,7 @@ import SwiftTimecodeCore
 
 @Suite struct SRTFileSubtitleDecodeTests {
     @Test
-    func decodeSubtitle() throws {
+    func decodeSubtitle() async throws {
         let encoded = """
             1
             00:00:05,217 --> 00:00:10,854
@@ -27,7 +27,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSubtitleWithTwoLines() throws {
+    func decodeSubtitleWithTwoLines() async throws {
         let encoded = """
             1
             00:00:05,217 --> 00:00:10,854
@@ -44,7 +44,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSubtitleWithThreeLines() throws {
+    func decodeSubtitleWithThreeLines() async throws {
         let encoded = """
             1
             00:00:05,217 --> 00:00:10,854
@@ -62,7 +62,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSubtitle_InvalidSequenceNumber_A() throws {
+    func decodeSubtitle_InvalidSequenceNumber_A() async throws {
         let encoded = """
             A
             00:00:05,217 --> 00:00:10,854
@@ -75,7 +75,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSubtitle_InvalidSequenceNumber_Empty() throws {
+    func decodeSubtitle_InvalidSequenceNumber_Empty() async throws {
         let encoded = """
             
             00:00:05,217 --> 00:00:10,854
@@ -88,7 +88,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSubtitle_InvalidSequenceNumber_0() throws {
+    func decodeSubtitle_InvalidSequenceNumber_0() async throws {
         let encoded = """
             0
             00:00:05,217 --> 00:00:10,854
@@ -101,7 +101,7 @@ import SwiftTimecodeCore
     
     /// Technically, identical in and out timestamps are allowed.
     @Test
-    func decodeSubtitle_IdenticalInOutTimestamps() throws {
+    func decodeSubtitle_IdenticalInOutTimestamps() async throws {
         let encoded = """
             1
             00:00:05,217 --> 00:00:05,217
@@ -117,7 +117,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSubtitle_NonChronologicalTimestamps() throws {
+    func decodeSubtitle_NonChronologicalTimestamps() async throws {
         let encoded = """
             1
             00:00:10,854 --> 00:00:05,217
@@ -130,7 +130,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func decodeSubtitle_WithUnofficialTextCoordinates() throws {
+    func decodeSubtitle_WithUnofficialTextCoordinates() async throws {
         let encoded = """
             1
             01:12:14,850 --> 01:12:22,074 X1:100 X2:200 Y1:300 Y2:400
@@ -150,7 +150,7 @@ import SwiftTimecodeCore
 
 @Suite struct SRTFileSubtitleEncodeTests {
     @Test
-    func encodeSubtitle() throws {
+    func encodeSubtitle() async throws {
         let inTime = Time(hours: 0, minutes: 0, seconds: 5, milliseconds: 217)
         let outTime = Time(hours: 0, minutes: 0, seconds: 10, milliseconds: 854)
         let subtitle = SRTFile.Subtitle(
@@ -171,7 +171,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func encodeSubtitle_WithUnofficialTextCoordinates() throws {
+    func encodeSubtitle_WithUnofficialTextCoordinates() async throws {
         let inTime = Time(hours: 0, minutes: 0, seconds: 5, milliseconds: 217)
         let outTime = Time(hours: 0, minutes: 0, seconds: 10, milliseconds: 854)
         let subtitle = SRTFile.Subtitle(

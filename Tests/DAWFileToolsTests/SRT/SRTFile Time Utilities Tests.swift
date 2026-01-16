@@ -11,7 +11,7 @@ import SwiftTimecodeCore
 
 @Suite struct SRTFileTimeUtilitiesTests {
     @Test
-    func parseSRTTimestamp_Strict() {
+    func parseSRTTimestamp_Strict() async {
         // invalid strings
         #expect(Time(srtEncodedString: "", strict: true) == nil)
         #expect(Time(srtEncodedString: " ", strict: true) == nil)
@@ -52,7 +52,7 @@ import SwiftTimecodeCore
     }
     
     @Test
-    func parseSRTTimestamp_NonStrict() {
+    func parseSRTTimestamp_NonStrict() async {
         // invalid strings
         #expect(Time(srtEncodedString: "", strict: false) == nil)
         #expect(Time(srtEncodedString: " ", strict: false) == nil)
