@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if SRT
+
 import Foundation
 
 /// SRT Text (SubRip Subtitles) file.
@@ -186,3 +188,5 @@ extension SRTFile {
         return data
     }
 }
+
+#endif

@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if Cubase
+
 import Foundation
 import SwiftTimecodeCore
 
@@ -39,3 +41,5 @@ extension Cubase {
         )
     }
 }
+
+#endif

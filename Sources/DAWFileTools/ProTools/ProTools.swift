@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if ProTools
+
 import Foundation
 import SwiftTimecodeCore
 
@@ -61,3 +63,5 @@ extension ProTools {
         )
     }
 }
+
+#endif

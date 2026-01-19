@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if MIDIFile
+
 import Foundation
 import SwiftExtensions
 import MIDIKitSMF
@@ -232,3 +234,5 @@ extension MIDIFile {
         self = midifile
     }
 }
+
+#endif

@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if ProTools
+
 import Foundation
 
 extension ProTools.SessionInfo {
@@ -138,3 +140,5 @@ extension ProTools.SessionInfo.TimeValueFormat {
         return source.regexMatches(pattern: regExPattern).count == 1
     }
 }
+
+#endif

@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if ProTools
+
 import Foundation
 import SwiftExtensions
 import SwiftTimecodeCore
@@ -232,3 +234,5 @@ extension ProTools.SessionInfo {
         case orphan(name: String)
     }
 }
+
+#endif

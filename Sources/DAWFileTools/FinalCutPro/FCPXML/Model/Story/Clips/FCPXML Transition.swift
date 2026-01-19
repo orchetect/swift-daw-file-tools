@@ -4,7 +4,7 @@
 //  © 2025 Steffan Andrews • Licensed under MIT License
 //
 
-#if os(macOS) // XMLNode only works on macOS
+#if FCP && os(macOS) // XMLNode only works on macOS
 
 import Foundation
 import SwiftTimecodeCore

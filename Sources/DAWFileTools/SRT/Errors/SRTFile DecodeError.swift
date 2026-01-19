@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if SRT
+
 import Foundation
 
 extension SRTFile {
@@ -27,3 +29,5 @@ extension SRTFile {
         }
     }
 }
+
+#endif

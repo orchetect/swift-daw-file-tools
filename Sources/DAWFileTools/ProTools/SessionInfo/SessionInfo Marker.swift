@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if ProTools
+
 import Foundation
 import SwiftTimecodeCore
 
@@ -133,3 +135,5 @@ extension ProTools.SessionInfo.Marker {
 }
 
 extension ProTools.SessionInfo.Marker.TrackType: Sendable { }
+
+#endif

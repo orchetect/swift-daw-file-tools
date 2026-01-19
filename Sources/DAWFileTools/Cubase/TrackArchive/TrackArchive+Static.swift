@@ -4,7 +4,7 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
-#if os(macOS) // XMLNode only works on macOS
+#if Cubase && os(macOS) // XMLNode only works on macOS
 
 import SwiftTimecodeCore
 

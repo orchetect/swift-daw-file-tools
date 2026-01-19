@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if ProTools
+
 import Foundation
 
 extension ProTools.SessionInfo {
@@ -14,3 +16,5 @@ extension ProTools.SessionInfo {
 }
 
 extension ProTools.SessionInfo.OrphanData: Sendable { }
+
+#endif

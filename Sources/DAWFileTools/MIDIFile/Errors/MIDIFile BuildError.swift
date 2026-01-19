@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if MIDIFile
+
 import Foundation
 import MIDIKitSMF
 
@@ -13,3 +15,5 @@ extension MIDIFile {
         case general(String)
     }
 }
+
+#endif

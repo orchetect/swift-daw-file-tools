@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if SRT
+
 import Foundation
 import SwiftExtensions
 import SwiftTimecodeCore
@@ -214,3 +216,5 @@ extension Sequence where Element == SRTFile.Subtitle {
         map { $0.convertToDAWMarker(frameRate: frameRate) }
     }
 }
+
+#endif

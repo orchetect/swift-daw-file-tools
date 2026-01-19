@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if ProTools
+
 import Foundation
 import SwiftTimecodeCore
 
@@ -26,3 +28,5 @@ extension ProTools.SessionInfo {
 }
 
 extension ProTools.SessionInfo.Main: Sendable { }
+
+#endif

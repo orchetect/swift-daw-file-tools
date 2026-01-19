@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if ProTools
+
 import Foundation
 import SwiftTimecodeCore
 
@@ -261,3 +263,5 @@ extension ProTools.SessionInfo {
         return .feetAndFrames(feet: feet, frames: frames, subFrames: subFrames)
     }
 }
+
+#endif

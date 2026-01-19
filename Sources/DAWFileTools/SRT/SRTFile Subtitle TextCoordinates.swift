@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if SRT
+
 import Foundation
 import SwiftExtensions
 
@@ -29,3 +31,5 @@ extension SRTFile.Subtitle.TextCoordinates: Equatable { }
 extension SRTFile.Subtitle.TextCoordinates: Hashable { }
 
 extension SRTFile.Subtitle.TextCoordinates: Sendable { }
+
+#endif

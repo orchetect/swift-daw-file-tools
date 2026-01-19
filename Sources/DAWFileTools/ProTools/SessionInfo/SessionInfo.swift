@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if ProTools
+
 import Foundation
 import SwiftTimecodeCore
 
@@ -49,3 +51,5 @@ extension ProTools.SessionInfo {
     /// Array of file types for use with NSOpenPanel / NSSavePanel
     public static let fileTypes = ["public.txt", "txt"]
 }
+
+#endif

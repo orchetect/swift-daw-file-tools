@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if FCP
+
 import Foundation
 import SwiftTimecodeCore
 
@@ -96,3 +98,5 @@ extension FinalCutPro {
         )
     }
 }
+
+#endif

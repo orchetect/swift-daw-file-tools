@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if SRT
+
 import Foundation
 import SwiftExtensions
 
@@ -54,3 +56,5 @@ extension Time {
             + milliseconds.string(paddedTo: 3)
     }
 }
+
+#endif

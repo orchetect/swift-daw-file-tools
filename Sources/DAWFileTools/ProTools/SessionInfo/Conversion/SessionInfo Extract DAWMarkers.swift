@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if ProTools
+
 import Foundation
 import SwiftTimecodeCore
 
@@ -105,3 +107,5 @@ func == (lhs: DAWTrackType, rhs: ProTools.SessionInfo.Marker.TrackType) -> Bool 
 func == (lhs: ProTools.SessionInfo.Marker.TrackType, rhs: DAWTrackType) -> Bool {
     rhs == lhs
 }
+
+#endif

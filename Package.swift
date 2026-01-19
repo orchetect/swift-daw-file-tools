@@ -11,6 +11,14 @@ let package = Package(
     products: [
         .library(name: "DAWFileTools", targets: ["DAWFileTools"])
     ],
+    traits: [
+        .cubase,
+        .fcp,
+        .midiFile,
+        .proTools,
+        .srt,
+        .default(enabledTraits: [.cubase, .fcp, .midiFile, .proTools, .srt])
+    ],
     dependencies: [
         .package(url: "https://github.com/orchetect/swift-extensions", from: "2.0.0"),
         .package(url: "https://github.com/orchetect/swift-timecode", from: "3.0.0"),
@@ -22,7 +30,7 @@ let package = Package(
             dependencies: [
                 .product(name: "SwiftExtensions", package: "swift-extensions"),
                 .product(name: "SwiftTimecodeCore", package: "swift-timecode"),
-                .product(name: "MIDIKitSMF", package: "MIDIKit")
+                .product(name: "MIDIKitSMF", package: "MIDIKit", condition: .when(traits: [.midiFile]))
             ]
         ),
         .testTarget(
@@ -37,3 +45,42 @@ let package = Package(
         )
     ]
 )
+
+// MARK: - Traits
+
+extension Trait {
+    static var cubase: Trait { .trait(name: "Cubase") }
+    static var fcp: Trait { .trait(name: "FCP") }
+    static var midiFile: Trait { .trait(name: "MIDIFile") }
+    static var proTools: Trait { .trait(name: "ProTools") }
+    static var srt: Trait { .trait(name: "SRT") }
+}
+
+// MARK: - Helpers
+
+@available(_PackageDescription 6.1)
+extension Trait {
+    @_disfavoredOverload
+    public static func trait(name: String, description: String? = nil, enabledTraits: Set<Trait> = []) -> Trait {
+        .trait(name: name, description: description, enabledTraits: Set(enabledTraits.map(\.name)))
+    }
+    
+    @_disfavoredOverload
+    public static func `default`(enabledTraits: Set<Trait>) -> Trait {
+        .default(enabledTraits: Set(enabledTraits.map(\.name)))
+    }
+}
+
+extension TargetDependencyCondition {
+    @available(_PackageDescription 6.1)
+    @_disfavoredOverload
+    public static func when(platforms: [Platform], traits: Set<Trait>) -> TargetDependencyCondition? {
+        .when(platforms: platforms, traits: Set(traits.map(\.name)))
+    }
+    
+    @available(_PackageDescription 6.1)
+    @_disfavoredOverload
+    public static func when(traits: Set<Trait>) -> TargetDependencyCondition? {
+        .when(traits: Set(traits.map(\.name)))
+    }
+}
