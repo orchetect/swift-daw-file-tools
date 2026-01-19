@@ -5,6 +5,8 @@
 //
 
 import XCTest
+import Testing
+import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
@@ -16,13 +18,7 @@ class ProTools_SessionText_FPPFinal: XCTestCase {
     func testSessionText_FPPFinal() throws {
         // load file
         
-        let filename = "SessionText_FPPFinal_23-976fps_DefaultExportOptions_PT2020.3"
-        guard let rawData = loadFileContents(
-            forResource: filename,
-            withExtension: "txt",
-            subFolder: .ptSessionTextExports
-        )
-        else { XCTFail("Could not form URL, possibly could not find file."); return }
+        let rawData = try TestResource.PTSessionTextExports.fppFinal_23_976fps_DefaultExportOptions_PT2020_3.data()
         
         // parse
         

@@ -7,6 +7,7 @@
 @testable import DAWFileTools
 import SwiftExtensions
 import Testing
+import TestingExtensions
 import SwiftTimecodeCore
 
 @Suite struct SRTFile_utf8BOMExtendedCharsTests {
@@ -14,13 +15,7 @@ import SwiftTimecodeCore
     func decodeSRT_BOM_CRLF_ExtendedChars() async throws {
         // load file
         
-        let filename = "SRT-BOM-CRLF-ExtendedChars"
-        guard let rawData = loadFileContents(
-            forResource: filename,
-            withExtension: "srt",
-            subFolder: .srtFiles
-        )
-        else { Issue.record("Could not form URL, possibly could not find file."); return }
+        let rawData = try TestResource.SRTFiles.bomCrLfExtendedChars.data()
         
         // parse
         

@@ -7,6 +7,8 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import XCTest
+import Testing
+import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
@@ -18,11 +20,7 @@ final class FinalCutPro_FCPXML_BasicMarkers_1HourProjectStart: FCPXMLTestCase {
     func testParse() throws {
         // load file
         
-        let rawData = try XCTUnwrap(loadFileContents(
-            forResource: "BasicMarkers_1HourProjectStart",
-            withExtension: "fcpxml",
-            subFolder: .fcpxmlExports
-        ))
+        let rawData = try TestResource.FCPXMLExports.basicMarkers_1HourProjectStart.data()
         
         // load
         

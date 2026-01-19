@@ -6,10 +6,12 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
+import XCTest
+import Testing
+import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
-import XCTest
 
 final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
     override func setUp() { }
@@ -18,11 +20,7 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
-        try XCTUnwrap(loadFileContents(
-            forResource: "CompoundClips",
-            withExtension: "fcpxml",
-            subFolder: .fcpxmlExports
-        ))
+        try TestResource.FCPXMLExports.compoundClips.data()
     } }
     
     /// Ensure that markers directly attached to compound clips (`ref-clip`s) on the main timeline

@@ -12,9 +12,6 @@ import SwiftExtensions
 import SwiftTimecodeCore
 
 class Cubase_Helper_Tests: XCTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
     func testCollection_XMLElement_FilterAttribute() throws {
         // prep
         

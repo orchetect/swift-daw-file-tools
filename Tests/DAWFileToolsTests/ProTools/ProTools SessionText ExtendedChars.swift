@@ -5,6 +5,8 @@
 //
 
 import XCTest
+import Testing
+import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
@@ -16,13 +18,7 @@ class ProTools_SessionText_ExtendedChars: XCTestCase {
     func testSessionText_ExtendedChars_TextEditFormat() throws {
         // load file
         
-        let filename = "SessionText_ExtendedChars_TextEditFormat_PT2023.3"
-        guard let rawData = loadFileContents(
-            forResource: filename,
-            withExtension: "txt",
-            subFolder: .ptSessionTextExports
-        )
-        else { XCTFail("Could not form URL, possibly could not find file."); return }
+        let rawData = try TestResource.PTSessionTextExports.extendedChars_TextEditFormat_PT2023_3.data()
         
         // parse
         
@@ -63,13 +59,7 @@ class ProTools_SessionText_ExtendedChars: XCTestCase {
     func testSessionText_ExtendedChars_UTF8Format() throws {
         // load file
         
-        let filename = "SessionText_ExtendedChars_UTF8Format_PT2023.3"
-        guard let rawData = loadFileContents(
-            forResource: filename,
-            withExtension: "txt",
-            subFolder: .ptSessionTextExports
-        )
-        else { XCTFail("Could not form URL, possibly could not find file."); return }
+        let rawData = try TestResource.PTSessionTextExports.extendedChars_UTF8Format_PT2023_3.data()
         
         // parse
         

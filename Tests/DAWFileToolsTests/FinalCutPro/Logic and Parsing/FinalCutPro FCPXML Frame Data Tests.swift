@@ -7,6 +7,8 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import XCTest
+import Testing
+import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
@@ -18,11 +20,7 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
-        try XCTUnwrap(loadFileContents(
-            forResource: "ClipMetadata",
-            withExtension: "fcpxml",
-            subFolder: .fcpxmlExports
-        ))
+        try TestResource.FCPXMLExports.clipMetadata.data()
     } }
     
     func testFrameDataClips() async throws {

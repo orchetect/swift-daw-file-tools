@@ -22,7 +22,10 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/orchetect/swift-extensions", from: "2.0.0"),
         .package(url: "https://github.com/orchetect/swift-timecode", from: "3.0.0"),
-        .package(url: "https://github.com/orchetect/MIDIKit", from: "0.10.7")
+        .package(url: "https://github.com/orchetect/MIDIKit", from: "0.10.7"),
+        
+        // testing-only dependnecies
+        .package(url: "https://github.com/orchetect/swift-testing-extensions", from: "0.2.4"),
     ],
     targets: [
         .target(
@@ -35,7 +38,10 @@ let package = Package(
         ),
         .testTarget(
             name: "DAWFileToolsTests",
-            dependencies: ["DAWFileTools"],
+            dependencies: [
+                "DAWFileTools",
+                .product(name: "TestingExtensions", package: "swift-testing-extensions")
+            ],
             resources: [
                 .copy("Cubase/Resources/Cubase TrackArchive XML Exports"),
                 .copy("ProTools/Resources/PT Session Text Exports"),

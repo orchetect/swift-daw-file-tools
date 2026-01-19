@@ -7,22 +7,15 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import XCTest
+import Testing
+import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
 
 class Cubase_TrackArchive_RoundingTest: XCTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
-    func testRoundingTest() throws {
-        let filename = "RoundingTest"
-        guard let rawData = loadFileContents(
-            forResource: filename,
-            withExtension: "xml",
-            subFolder: .cubaseTrackArchiveXML
-        )
-        else { XCTFail("Could not form URL, possibly could not find file."); return }
+    func testRoundingTest() async throws {
+        let rawData = try TestResource.CubaseTrackArchiveXMLExports.roundingTest.data()
         
         // parse
         

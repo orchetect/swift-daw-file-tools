@@ -12,9 +12,6 @@ import SwiftTimecodeCore
 import XCTest
 
 class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
     func testConvertingDAWMarkers_IncludeComments_NoComments() throws {
         let dawMarkers: [DAWMarker] = [
             DAWMarker(storage: .init(value: .realTime(relativeToStart: 0.5), frameRate: .fps24, base: .max80SubFrames), name: "Marker1", comment: nil),

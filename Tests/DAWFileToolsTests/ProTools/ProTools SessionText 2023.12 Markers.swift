@@ -5,6 +5,8 @@
 //
 
 import XCTest
+import Testing
+import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
@@ -16,13 +18,7 @@ class ProTools_SessionText_2023_12_Markers: XCTestCase {
     func testSessionText() throws {
         // load file
         
-        let filename = "SessionText_MarkerRulersAndTrackMarkers_PT2023.12"
-        guard let rawData = loadFileContents(
-            forResource: filename,
-            withExtension: "txt",
-            subFolder: .ptSessionTextExports
-        )
-        else { XCTFail("Could not form URL, possibly could not find file."); return }
+        let rawData = try TestResource.PTSessionTextExports.markerRulersAndTrackMarkers_PT2023_12.data()
         
         // parse
         
@@ -154,13 +150,7 @@ class ProTools_SessionText_2023_12_Markers: XCTestCase {
     func testDAWMarkerTrackConversion() throws {
         // load file
         
-        let filename = "SessionText_MarkerRulersAndTrackMarkers_PT2023.12"
-        guard let rawData = loadFileContents(
-            forResource: filename,
-            withExtension: "txt",
-            subFolder: .ptSessionTextExports
-        )
-        else { XCTFail("Could not form URL, possibly could not find file."); return }
+        let rawData = try TestResource.PTSessionTextExports.markerRulersAndTrackMarkers_PT2023_12.data()
         
         // parse
         

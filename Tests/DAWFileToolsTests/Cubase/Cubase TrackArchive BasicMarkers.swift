@@ -7,24 +7,17 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import XCTest
+import Testing
+import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
 
 class Cubase_TrackArchive_BasicMarkers: XCTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
-    func testBasicMarkers() throws {
+    func testBasicMarkers() async throws {
         // load file
         
-        let filename = "BasicMarkers"
-        guard let rawData = loadFileContents(
-            forResource: filename,
-            withExtension: "xml",
-            subFolder: .cubaseTrackArchiveXML
-        )
-        else { XCTFail("Could not form URL, possibly could not find file."); return }
+        let rawData = try TestResource.CubaseTrackArchiveXMLExports.basicMarkers.data()
         
         // parse
         

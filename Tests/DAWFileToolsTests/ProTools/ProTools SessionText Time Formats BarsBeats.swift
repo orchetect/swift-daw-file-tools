@@ -5,6 +5,8 @@
 //
 
 import XCTest
+import Testing
+import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
@@ -15,7 +17,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
     
     func testSessionText_BarsBeats() throws {
         try runSessionText(
-            filename: "SessionText_TimeFormats_BarsBeats_PT2022.9",
+            testResource: TestResource.PTSessionTextExports.timeFormats_BarsBeats_PT2022_9,
             
             track1ClipStartTime: .barsAndBeats(bar: 13, beat: 3, ticks: nil),
             track1ClipEndTime:   .barsAndBeats(bar: 20, beat: 1, ticks: nil),
@@ -35,7 +37,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
     
     func testSessionText_BarsBeats_ShowSubframes() throws {
         try runSessionText(
-            filename: "SessionText_TimeFormats_BarsBeats_ShowSubframes_PT2022.9",
+            testResource: TestResource.PTSessionTextExports.timeFormats_BarsBeats_ShowSubframes_PT2022_9,
             
             track1ClipStartTime: .barsAndBeats(bar: 13, beat: 3, ticks: 48),
             track1ClipEndTime:   .barsAndBeats(bar: 20, beat: 1, ticks: 768),
@@ -55,7 +57,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
     
     func testSessionText_FeetFrames() throws {
         try runSessionText(
-            filename: "SessionText_TimeFormats_FeetFrames_PT2022.9",
+            testResource: TestResource.PTSessionTextExports.timeFormats_FeetFrames_PT2022_9,
             
             track1ClipStartTime: .feetAndFrames(feet: 37, frames: 8, subFrames: nil),
             track1ClipEndTime:   .feetAndFrames(feet: 57, frames: 9, subFrames: nil),
@@ -75,7 +77,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
     
     func testSessionText_FeetFrames_ShowSubframes() throws {
         try runSessionText(
-            filename: "SessionText_TimeFormats_FeetFrames_ShowSubframes_PT2022.9",
+            testResource: TestResource.PTSessionTextExports.timeFormats_FeetFrames_ShowSubframes_PT2022_9,
             
             track1ClipStartTime: .feetAndFrames(feet: 37, frames: 8, subFrames: 60),
             track1ClipEndTime:   .feetAndFrames(feet: 57, frames: 9, subFrames: 60),
@@ -95,7 +97,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
     
     func testSessionText_MinSecs() throws {
         try runSessionText(
-            filename: "SessionText_TimeFormats_MinSecs_PT2022.9",
+            testResource: TestResource.PTSessionTextExports.timeFormats_MinSecs_PT2022_9,
             
             track1ClipStartTime: .minSecs(min: 0, sec: 25, ms: nil),
             track1ClipEndTime:   .minSecs(min: 0, sec: 38, ms: nil),
@@ -115,7 +117,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
     
     func testSessionText_MinSecs_ShowSubframes() throws {
         try runSessionText(
-            filename: "SessionText_TimeFormats_MinSecs_ShowSubframes_PT2022.9",
+            testResource: TestResource.PTSessionTextExports.timeFormats_MinSecs_ShowSubframes_PT2022_9,
             
             track1ClipStartTime: .minSecs(min: 0, sec: 25, ms: 025),
             track1ClipEndTime:   .minSecs(min: 0, sec: 38, ms: 400),
@@ -135,7 +137,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
     
     func testSessionText_Samples() throws {
         try runSessionText(
-            filename: "SessionText_TimeFormats_Samples_PT2022.9",
+            testResource: TestResource.PTSessionTextExports.timeFormats_Samples_PT2022_9,
             
             track1ClipStartTime: .samples(1_201_200),
             track1ClipEndTime:   .samples(1_843_200),
@@ -155,7 +157,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
     
     func testSessionText_Samples_ShowSubframes() throws {
         try runSessionText(
-            filename: "SessionText_TimeFormats_Samples_ShowSubframes_PT2022.9",
+            testResource: TestResource.PTSessionTextExports.timeFormats_Samples_ShowSubframes_PT2022_9,
             
             track1ClipStartTime: .samples(1_201_200),
             track1ClipEndTime:   .samples(1_843_200),
@@ -178,7 +180,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
             try! ProTools.formTimecode(tcc, at: .fps23_976)
         }
         try runSessionText(
-            filename: "SessionText_TimeFormats_Timecode_PT2022.9",
+            testResource: TestResource.PTSessionTextExports.timeFormats_Timecode_PT2022_9,
             
             track1ClipStartTime: .timecode(TC(.init(h: 23, m: 57, s: 25, f: 00))),
             track1ClipEndTime:   .timecode(TC(.init(h: 23, m: 57, s: 38, f: 08))),
@@ -201,7 +203,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
             try! ProTools.formTimecode(tcc, at: .fps23_976)
         }
         try runSessionText(
-            filename: "SessionText_TimeFormats_Timecode_ShowSubframes_PT2022.9",
+            testResource: TestResource.PTSessionTextExports.timeFormats_Timecode_ShowSubframes_PT2022_9,
             
             track1ClipStartTime: .timecode(TC(.init(h: 23, m: 57, s: 25, f: 00, sf: 00))),
             track1ClipEndTime:   .timecode(TC(.init(h: 23, m: 57, s: 38, f: 08, sf: 68))),
@@ -222,7 +224,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
     // MARK: - Common Test Body
     
     func runSessionText(
-        filename: String,
+        testResource: TestResource.File,
         track1ClipStartTime: ProTools.SessionInfo.TimeValue,
         track1ClipEndTime: ProTools.SessionInfo.TimeValue,
         track1ClipDuration: ProTools.SessionInfo.TimeValue?,
@@ -234,12 +236,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         marker2Location: ProTools.SessionInfo.TimeValue,
         marker2TimeRef: ProTools.SessionInfo.TimeValue
     ) throws {
-        guard let rawData = loadFileContents(
-            forResource: filename,
-            withExtension: "txt",
-            subFolder: .ptSessionTextExports
-        )
-        else { XCTFail("Could not form URL, possibly could not find file."); return }
+        let rawData = try testResource.data()
         
         // parse
         

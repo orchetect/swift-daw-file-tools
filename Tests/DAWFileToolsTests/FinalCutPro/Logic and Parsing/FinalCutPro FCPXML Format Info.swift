@@ -7,6 +7,8 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import XCTest
+import Testing
+import TestingExtensions
 import Foundation
 @testable import DAWFileTools
 import SwiftExtensions
@@ -20,11 +22,7 @@ final class FinalCutPro_FCPXML_FormatInfo: FCPXMLTestCase {
     func testFirstFormatAndTCFormat() throws {
         // load file
         
-        let rawData = try XCTUnwrap(loadFileContents(
-            forResource: "BasicMarkers",
-            withExtension: "fcpxml",
-            subFolder: .fcpxmlExports
-        ))
+        let rawData = try TestResource.FCPXMLExports.basicMarkers.data()
         
         // load
         

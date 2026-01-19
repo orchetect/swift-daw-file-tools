@@ -5,6 +5,8 @@
 //
 
 import XCTest
+import Testing
+import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
@@ -16,13 +18,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
     func testSessionText_NewLinesAndTabs() throws {
         // load file
         
-        let filename = "SessionText_NewLinesAndTabs_DefaultExportOptions_PT2023.6"
-        guard let rawData = loadFileContents(
-            forResource: filename,
-            withExtension: "txt",
-            subFolder: .ptSessionTextExports
-        )
-        else { XCTFail("Could not form URL, possibly could not find file."); return }
+        let rawData = try TestResource.PTSessionTextExports.newLinesAndTabs_DefaultExportOptions_PT2023_6.data()
         
         // parse
         

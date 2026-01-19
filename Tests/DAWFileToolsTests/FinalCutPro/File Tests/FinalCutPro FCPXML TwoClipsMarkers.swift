@@ -6,21 +6,19 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
+import XCTest
+import Testing
+import TestingExtensions
 /* @testable */ import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
-import XCTest
 
 final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
     override func setUp() { }
     override func tearDown() { }
     
     var fileContents: Data { get throws {
-        try XCTUnwrap(loadFileContents(
-            forResource: "TwoClipsMarkers",
-            withExtension: "fcpxml",
-            subFolder: .fcpxmlExports
-        ))
+        try TestResource.FCPXMLExports.twoClipsMarkers.data()
     } }
     
     /// Test markers contained on two clips in the same sequence, as well as a marker in a gap
