@@ -206,3 +206,75 @@ jobs:
     - name: Unit Tests
       if: steps.destnameprep.outcome != 'failure'
       run: xcodebuild test -workspace ".swiftpm/xcode/package.xcworkspace" -scheme "$SCHEME" -destination "platform=watchOS Simulator,name=$DESTNAME" | xcbeautify --renderer github-actions && exit ${PIPESTATUS[0]}
+
+  NoTraits:
+    name: No Traits
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@main
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    - name: Build
+      run: swift build --disable-default-traits
+
+  CubaseTrait:
+    name: Cubase Trait
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@main
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    - name: Build
+      run: swift build --traits Cubase
+
+  FCPTrait:
+    name: FCP Trait
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@main
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    - name: Build
+      run: swift build --traits FCP
+
+  MIDIFileTrait:
+    name: MIDIFile Trait
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@main
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    - name: Build
+      run: swift build --traits MIDIFile
+
+  ProToolsTrait:
+    name: ProTools Trait
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@main
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    - name: Build
+      run: swift build --traits ProTools
+
+  SRTTrait:
+    name: SRT Trait
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@main
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    - name: Build
+      run: swift build --traits SRT
