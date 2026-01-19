@@ -6,17 +6,13 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-final class FinalCutPro_FCPXML_StandaloneAssetClip: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_StandaloneAssetClip: FCPXMLUtilities {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
@@ -25,7 +21,8 @@ final class FinalCutPro_FCPXML_StandaloneAssetClip: FCPXMLTestCase {
     
     // MARK: - Tests
     
-    func testParse() throws {
+    @Test
+    func parse() async throws {
         // load file
         let rawData = try fileContents
         
@@ -33,11 +30,12 @@ final class FinalCutPro_FCPXML_StandaloneAssetClip: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // version
-        XCTAssertEqual(fcpxml.version, .ver1_11)
+        #expect(fcpxml.version == .ver1_11)
     }
     
     /// Test that FCPXML that doesn't contain a project is still able to extract standalone clips.
-    func testExtract() async throws {
+    @Test
+    func extract() async throws {
         // load file
         let rawData = try fileContents
         
@@ -46,38 +44,38 @@ final class FinalCutPro_FCPXML_StandaloneAssetClip: FCPXMLTestCase {
         
         // timelines
         let timelines = fcpxml.allTimelines()
-        XCTAssertEqual(timelines.count, 1)
+        #expect(timelines.count == 1)
         
-        let anyTimeline = try XCTUnwrap(timelines.first)
+        let anyTimeline = try #require(timelines.first)
         
         // AnyTimeline
         
-        let timelineStartTC = try XCTUnwrap(anyTimeline.timelineStartAsTimecode())
-        XCTAssertEqual(timelineStartTC.components, .init(h: 00, m: 59, s: 50, f: 00))
-        XCTAssertEqual(timelineStartTC.frameRate, .fps29_97)
-        let timelineDurTC = try XCTUnwrap(anyTimeline.timelineDurationAsTimecode())
-        XCTAssertEqual(timelineDurTC.components, .init(h: 00, m: 00, s: 10, f: 00))
-        XCTAssertEqual(timelineDurTC.frameRate, .fps29_97)
+        let timelineStartTC = try #require(anyTimeline.timelineStartAsTimecode())
+        #expect(timelineStartTC.components == .init(h: 00, m: 59, s: 50, f: 00))
+        #expect(timelineStartTC.frameRate == .fps29_97)
+        let timelineDurTC = try #require(anyTimeline.timelineDurationAsTimecode())
+        #expect(timelineDurTC.components == .init(h: 00, m: 00, s: 10, f: 00))
+        #expect(timelineDurTC.frameRate == .fps29_97)
         
         // unwrap AssetClip
         
-        guard case .assetClip(let assetClip) = anyTimeline else { XCTFail() ; return }
+        guard case .assetClip(let assetClip) = anyTimeline else { Issue.record() ; return }
         
         // FCPXMLElementMetaTimeline
-        let assetClipStartTC = try XCTUnwrap(anyTimeline.timelineStartAsTimecode())
-        XCTAssertEqual(assetClipStartTC.components, .init(h: 00, m: 59, s: 50, f: 00))
-        XCTAssertEqual(assetClipStartTC.frameRate, .fps29_97)
-        let assetClipDurTC = try XCTUnwrap(anyTimeline.timelineDurationAsTimecode())
-        XCTAssertEqual(assetClipDurTC.components, .init(h: 00, m: 00, s: 10, f: 00))
-        XCTAssertEqual(assetClipDurTC.frameRate, .fps29_97)
+        let assetClipStartTC = try #require(anyTimeline.timelineStartAsTimecode())
+        #expect(assetClipStartTC.components == .init(h: 00, m: 59, s: 50, f: 00))
+        #expect(assetClipStartTC.frameRate == .fps29_97)
+        let assetClipDurTC = try #require(anyTimeline.timelineDurationAsTimecode())
+        #expect(assetClipDurTC.components == .init(h: 00, m: 00, s: 10, f: 00))
+        #expect(assetClipDurTC.frameRate == .fps29_97)
         
         // local XML attributes
-        let clipStartTC = try XCTUnwrap(assetClip.startAsTimecode())
-        XCTAssertEqual(clipStartTC.components, .init(h: 00, m: 59, s: 50, f: 00))
-        XCTAssertEqual(clipStartTC.frameRate, .fps29_97)
-        let clipDurTC = try XCTUnwrap(assetClip.durationAsTimecode())
-        XCTAssertEqual(clipDurTC.components, .init(h: 00, m: 00, s: 10, f: 00))
-        XCTAssertEqual(clipDurTC.frameRate, .fps29_97)
+        let clipStartTC = try #require(assetClip.startAsTimecode())
+        #expect(clipStartTC.components == .init(h: 00, m: 59, s: 50, f: 00))
+        #expect(clipStartTC.frameRate == .fps29_97)
+        let clipDurTC = try #require(assetClip.durationAsTimecode())
+        #expect(clipDurTC.components == .init(h: 00, m: 00, s: 10, f: 00))
+        #expect(clipDurTC.frameRate == .fps29_97)
     }
 }
 

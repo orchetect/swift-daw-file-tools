@@ -4,18 +4,15 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-class ProTools_SessionText_Plugins: XCTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
-    func testSessionText_Plugins() throws {
+@Suite struct ProTools_SessionText_Plugins {
+    @Test
+    func sessionText_Plugins() async throws {
         // load file
         
         let rawData = try TestResource.PTSessionTextExports.plugins_23_976fps_DefaultExportOptions_PT2020_3.data()
@@ -33,60 +30,60 @@ class ProTools_SessionText_Plugins: XCTestCase {
         
         // parse messages
         
-        XCTAssertEqual(parseMessages.errors.count, 0)
+        #expect(parseMessages.errors.count == 0)
         if !parseMessages.errors.isEmpty {
             dump(parseMessages.errors)
         }
         
         // plug-ins
         
-        let plugins = try XCTUnwrap(sessionInfo.plugins)
+        let plugins = try #require(sessionInfo.plugins)
         
-        XCTAssertEqual(plugins.count, 15)
+        #expect(plugins.count == 15)
         
-        XCTAssertEqual(plugins[0].manufacturer, "AIR Music Technology")
-        XCTAssertEqual(plugins[0].name,         "AIR Kill EQ")
+        #expect(plugins[0].manufacturer == "AIR Music Technology")
+        #expect(plugins[0].name == "AIR Kill EQ")
         
-        XCTAssertEqual(plugins[1].manufacturer, "AIR Music Technology")
-        XCTAssertEqual(plugins[1].name,         "AIR Non-Linear Reverb")
+        #expect(plugins[1].manufacturer == "AIR Music Technology")
+        #expect(plugins[1].name == "AIR Non-Linear Reverb")
         
-        XCTAssertEqual(plugins[2].manufacturer, "Avid")
-        XCTAssertEqual(plugins[2].name,         "Dither")
+        #expect(plugins[2].manufacturer == "Avid")
+        #expect(plugins[2].name == "Dither")
         
-        XCTAssertEqual(plugins[3].manufacturer, "Blue Cat Audio")
-        XCTAssertEqual(plugins[3].name,         "BCPatchWorkSynth")
+        #expect(plugins[3].manufacturer == "Blue Cat Audio")
+        #expect(plugins[3].name == "BCPatchWorkSynth")
         
-        XCTAssertEqual(plugins[4].manufacturer, "FabFilter")
-        XCTAssertEqual(plugins[4].name,         "FabFilter Saturn")
+        #expect(plugins[4].manufacturer == "FabFilter")
+        #expect(plugins[4].name == "FabFilter Saturn")
         
-        XCTAssertEqual(plugins[5].manufacturer, "FabFilter")
-        XCTAssertEqual(plugins[5].name,         "FabFilter Timeless 2")
+        #expect(plugins[5].manufacturer == "FabFilter")
+        #expect(plugins[5].name == "FabFilter Timeless 2")
         
-        XCTAssertEqual(plugins[6].manufacturer, "Native Instruments")
-        XCTAssertEqual(plugins[6].name,         "Kontakt")
+        #expect(plugins[6].manufacturer == "Native Instruments")
+        #expect(plugins[6].name == "Kontakt")
         
-        XCTAssertEqual(plugins[7].manufacturer, "Plogue Art et Technologie, Inc")
-        XCTAssertEqual(plugins[7].name,         "chipsounds")
+        #expect(plugins[7].manufacturer == "Plogue Art et Technologie, Inc")
+        #expect(plugins[7].name == "chipsounds")
         
-        XCTAssertEqual(plugins[8].manufacturer, "Plugin Alliance")
-        XCTAssertEqual(plugins[8].name,         "Schoeps Mono Upmix 1to2")
+        #expect(plugins[8].manufacturer == "Plugin Alliance")
+        #expect(plugins[8].name == "Schoeps Mono Upmix 1to2")
         
-        XCTAssertEqual(plugins[9].manufacturer, "Plugin Alliance")
-        XCTAssertEqual(plugins[9].name,         "Unfiltered Audio Byome")
+        #expect(plugins[9].manufacturer == "Plugin Alliance")
+        #expect(plugins[9].name == "Unfiltered Audio Byome")
         
-        XCTAssertEqual(plugins[10].manufacturer, "Plugin Alliance")
-        XCTAssertEqual(plugins[10].name,         "Vertigo VSM-3")
+        #expect(plugins[10].manufacturer == "Plugin Alliance")
+        #expect(plugins[10].name == "Vertigo VSM-3")
         
-        XCTAssertEqual(plugins[11].manufacturer, "Plugin Alliance")
-        XCTAssertEqual(plugins[11].name,         "bx_boom")
+        #expect(plugins[11].manufacturer == "Plugin Alliance")
+        #expect(plugins[11].name == "bx_boom")
         
-        XCTAssertEqual(plugins[12].manufacturer, "Plugin Alliance")
-        XCTAssertEqual(plugins[12].name,         "bx_rooMS")
+        #expect(plugins[12].manufacturer == "Plugin Alliance")
+        #expect(plugins[12].name == "bx_rooMS")
         
-        XCTAssertEqual(plugins[13].manufacturer, "accusonus")
-        XCTAssertEqual(plugins[13].name,         "ERA 4 Voice Leveler")
+        #expect(plugins[13].manufacturer == "accusonus")
+        #expect(plugins[13].name == "ERA 4 Voice Leveler")
         
-        XCTAssertEqual(plugins[14].manufacturer, "oeksound")
-        XCTAssertEqual(plugins[14].name,         "soothe2")
+        #expect(plugins[14].manufacturer == "oeksound")
+        #expect(plugins[14].name == "soothe2")
     }
 }

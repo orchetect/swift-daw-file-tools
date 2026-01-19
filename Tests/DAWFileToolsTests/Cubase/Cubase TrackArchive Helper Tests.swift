@@ -6,13 +6,15 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
+import Foundation
+import Testing
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
 
-class Cubase_Helper_Tests: XCTestCase {
-    func testCollection_XMLElement_FilterAttribute() throws {
+@Suite struct Cubase_Helper_Tests {
+    @Test
+    func collection_XMLElement_FilterAttribute() async throws {
         // prep
         
         let nodes = [
@@ -25,14 +27,15 @@ class Cubase_Helper_Tests: XCTestCase {
         // test
         
         let filteredA = nodes.filter(whereNameAttributeValue: "name2").zeroIndexed
-        XCTAssertEqual(filteredA[0], nodes[1])
+        #expect(filteredA[0] == nodes[1])
         
         let filteredB = nodes.filter(whereClassAttributeValue: "classA").zeroIndexed
-        XCTAssertEqual(filteredB[0], nodes[0])
-        XCTAssertEqual(filteredB[1], nodes[1])
+        #expect(filteredB[0] == nodes[0])
+        #expect(filteredB[1] == nodes[1])
     }
     
-    func testCollection_XMLElement_FirstAttribute() throws {
+    @Test
+    func collection_XMLElement_FirstAttribute() async throws {
         // prep
         
         let nodes = [
@@ -45,10 +48,10 @@ class Cubase_Helper_Tests: XCTestCase {
         // test
         
         let firstA = nodes.first(whereNameAttributeValue: "name2")
-        XCTAssertEqual(firstA, nodes[1])
+        #expect(firstA == nodes[1])
         
         let firstB = nodes.first(whereClassAttributeValue: "classA")
-        XCTAssertEqual(firstB, nodes[0])
+        #expect(firstB == nodes[0])
     }
 }
 

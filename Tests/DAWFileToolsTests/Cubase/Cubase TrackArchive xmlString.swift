@@ -9,13 +9,11 @@
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
-import XCTest
+import Testing
 
-class Cubase_TrackArchive_xmlString: XCTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
-    func testXMLString_ZeroStartTime() throws {
+@Suite struct Cubase_TrackArchive_xmlString {
+    @Test
+    func xmlString_ZeroStartTime() async throws {
         var trackArchive = Cubase.TrackArchive()
         
         // main
@@ -37,7 +35,7 @@ class Cubase_TrackArchive_xmlString: XCTestCase {
         
         // messages
         
-        XCTAssertEqual(messages.errors.count, 0)
+        #expect(messages.errors.isEmpty)
         if !messages.errors.isEmpty {
             dump(messages.errors)
         }
@@ -86,10 +84,11 @@ class Cubase_TrackArchive_xmlString: XCTestCase {
         </tracklist2>
         """
         
-        XCTAssertEqual(xmlString, expectedXMLString)
+        #expect(xmlString == expectedXMLString)
     }
     
-    func testXMLString_NonZeroStartTime() throws {
+    @Test
+    func xmlString_NonZeroStartTime() async throws {
         var trackArchive = Cubase.TrackArchive()
         
         // main
@@ -114,7 +113,7 @@ class Cubase_TrackArchive_xmlString: XCTestCase {
         
         // messages
         
-        XCTAssertEqual(messages.errors.count, 0)
+        #expect(messages.errors.isEmpty)
         if !messages.errors.isEmpty {
             dump(messages.errors)
         }
@@ -168,7 +167,7 @@ class Cubase_TrackArchive_xmlString: XCTestCase {
         </tracklist2>
         """
         
-        XCTAssertEqual(xmlString, expectedXMLString)
+        #expect(xmlString == expectedXMLString)
     }
 }
 

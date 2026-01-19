@@ -6,17 +6,13 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_Annotations: FCPXMLUtilities {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
@@ -25,7 +21,8 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
     
     // MARK: - Tests
     
-    func testParse() throws {
+    @Test
+    func parse() async throws {
         // load file
         let rawData = try fileContents
         
@@ -33,45 +30,45 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // version
-        XCTAssertEqual(fcpxml.version, .ver1_11)
+        #expect(fcpxml.version == .ver1_11)
         
         // resources
         let resources = fcpxml.root.resources
-        XCTAssertEqual(resources.childElements.count, 3)
+        #expect(resources.childElements.count == 3)
         
-        let r1 = try XCTUnwrap(resources.childElements[safe: 0]?.fcpAsFormat)
-        XCTAssertEqual(r1.id, "r1")
-        XCTAssertEqual(r1.name, "FFVideoFormat1080p25")
-        XCTAssertEqual(r1.frameDuration, Fraction(100,2500))
-        XCTAssertEqual(r1.fieldOrder, nil)
-        XCTAssertEqual(r1.width, 1920)
-        XCTAssertEqual(r1.height, 1080)
-        XCTAssertEqual(r1.paspH, nil)
-        XCTAssertEqual(r1.paspV, nil)
-        XCTAssertEqual(r1.colorSpace, "1-1-1 (Rec. 709)")
-        XCTAssertEqual(r1.projection, nil)
-        XCTAssertEqual(r1.stereoscopic, nil)
+        let r1 = try #require(resources.childElements[safe: 0]?.fcpAsFormat)
+        #expect(r1.id == "r1")
+        #expect(r1.name == "FFVideoFormat1080p25")
+        #expect(r1.frameDuration == Fraction(100,2500))
+        #expect(r1.fieldOrder == nil)
+        #expect(r1.width == 1920)
+        #expect(r1.height == 1080)
+        #expect(r1.paspH == nil)
+        #expect(r1.paspV == nil)
+        #expect(r1.colorSpace == "1-1-1 (Rec. 709)")
+        #expect(r1.projection == nil)
+        #expect(r1.stereoscopic == nil)
         
-        let r2 = try XCTUnwrap(resources.childElements[safe: 1]?.fcpAsAsset)
-        XCTAssertEqual(r2.id, "r2")
-        XCTAssertEqual(r2.name, "TestVideo")
-        XCTAssertEqual(r2.start, .zero)
-        XCTAssertEqual(r2.duration, Fraction(738000, 25000))
-        XCTAssertEqual(r2.format, "r3")
-        XCTAssertEqual(r2.uid, "30C3729DCEE936129873D803DC13B623")
-        XCTAssertEqual(r2.hasVideo, true)
-        XCTAssertEqual(r2.hasAudio, true)
-        XCTAssertEqual(r2.audioSources, 1)
-        XCTAssertEqual(r2.audioChannels, 2)
-        XCTAssertEqual(r2.audioRate, .rate44_1kHz)
-        XCTAssertEqual(r2.videoSources, 1)
-        XCTAssertEqual(r2.auxVideoFlags, nil)
+        let r2 = try #require(resources.childElements[safe: 1]?.fcpAsAsset)
+        #expect(r2.id == "r2")
+        #expect(r2.name == "TestVideo")
+        #expect(r2.start == .zero)
+        #expect(r2.duration == Fraction(738000, 25000))
+        #expect(r2.format == "r3")
+        #expect(r2.uid == "30C3729DCEE936129873D803DC13B623")
+        #expect(r2.hasVideo == true)
+        #expect(r2.hasAudio == true)
+        #expect(r2.audioSources == 1)
+        #expect(r2.audioChannels == 2)
+        #expect(r2.audioRate == .rate44_1kHz)
+        #expect(r2.videoSources == 1)
+        #expect(r2.auxVideoFlags == nil)
         
-        let r2MediaRep = try XCTUnwrap(r2.mediaRep)
-        XCTAssertEqual(r2MediaRep.kind, .originalMedia)
-        XCTAssertEqual(r2MediaRep.sig, "30C3729DCEE936129873D803DC13B623")
-        XCTAssertEqual(r2MediaRep.src, URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/Test%20Event/Original%20Media/TestVideo.m4v")!)
-        XCTAssertEqual(r2MediaRep.bookmark, nil)
+        let r2MediaRep = r2.mediaRep
+        #expect(r2MediaRep.kind == .originalMedia)
+        #expect(r2MediaRep.sig == "30C3729DCEE936129873D803DC13B623")
+        #expect(r2MediaRep.src == URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/Test%20Event/Original%20Media/TestVideo.m4v")!)
+        #expect(r2MediaRep.bookmark == nil)
         
         let r2MetadataXML = try! XMLElement(xmlString: """
             <metadata>
@@ -90,67 +87,67 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
             """
         )
         let r2Metadata = FinalCutPro.FCPXML.Metadata(element: r2MetadataXML)
-        XCTAssertEqual(r2.metadata, r2Metadata)
+        #expect(r2.metadata == r2Metadata)
         
-        let r3 = try XCTUnwrap(resources.childElements[safe: 2]?.fcpAsFormat)
-        XCTAssertEqual(r3.id, "r3")
-        XCTAssertEqual(r3.name, "FFVideoFormat640x480p25")
-        XCTAssertEqual(r3.frameDuration, Fraction(100,2500))
-        XCTAssertEqual(r3.fieldOrder, nil)
-        XCTAssertEqual(r3.width, 640)
-        XCTAssertEqual(r3.height, 480)
-        XCTAssertEqual(r3.paspH, nil)
-        XCTAssertEqual(r3.paspV, nil)
-        XCTAssertEqual(r3.colorSpace, "6-1-6 (Rec. 601 (NTSC))")
-        XCTAssertEqual(r3.projection, nil)
-        XCTAssertEqual(r3.stereoscopic, nil)
+        let r3 = try #require(resources.childElements[safe: 2]?.fcpAsFormat)
+        #expect(r3.id == "r3")
+        #expect(r3.name == "FFVideoFormat640x480p25")
+        #expect(r3.frameDuration == Fraction(100,2500))
+        #expect(r3.fieldOrder == nil)
+        #expect(r3.width == 640)
+        #expect(r3.height == 480)
+        #expect(r3.paspH == nil)
+        #expect(r3.paspV == nil)
+        #expect(r3.colorSpace == "6-1-6 (Rec. 601 (NTSC))")
+        #expect(r3.projection == nil)
+        #expect(r3.stereoscopic == nil)
         
         // library
-        let library = try XCTUnwrap(fcpxml.root.library)
+        let library = try #require(fcpxml.root.library)
         
         let libraryURL = URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/")
-        XCTAssertEqual(library.location, libraryURL)
+        #expect(library.location == libraryURL)
         
         // events
         let events = fcpxml.allEvents()
-        XCTAssertEqual(events.count, 1)
+        #expect(events.count == 1)
         
-        let event = try XCTUnwrap(events[safe: 0])
-        XCTAssertEqual(event.name, "Test Event")
+        let event = try #require(events[safe: 0])
+        #expect(event.name == "Test Event")
         
         // projects
-        let projects = try XCTUnwrap(events[safe: 0]).projects.zeroIndexed
-        XCTAssertEqual(projects.count, 1)
+        let projects = try #require(events[safe: 0]).projects.zeroIndexed
+        #expect(projects.count == 1)
 
-        let project = try XCTUnwrap(projects[safe: 0])
-        XCTAssertEqual(project.name, "Annotations")
-        XCTAssertEqual(project.startTimecode(), Self.tc("01:00:00:00", .fps25))
+        let project = try #require(projects[safe: 0])
+        #expect(project.name == "Annotations")
+        #expect(project.startTimecode() == Self.tc("01:00:00:00", .fps25))
         
         // sequence
-        let sequence = try XCTUnwrap(projects[safe: 0]?.sequence)
-        XCTAssertEqual(sequence.format, "r1")
-        XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("01:00:00:00", .fps25))
-        XCTAssertEqual(sequence.tcStartAsTimecode()?.frameRate, .fps25)
-        XCTAssertEqual(sequence.tcStartAsTimecode()?.subFramesBase, .max80SubFrames)
-        XCTAssertEqual(sequence.durationAsTimecode(), Self.tc("00:00:29:13", .fps25))
-        XCTAssertEqual(sequence.audioLayout, .stereo)
-        XCTAssertEqual(sequence.audioRate, .rate48kHz)
+        let sequence = try #require(projects[safe: 0]?.sequence)
+        #expect(sequence.format == "r1")
+        #expect(sequence.tcStartAsTimecode() == Self.tc("01:00:00:00", .fps25))
+        #expect(sequence.tcStartAsTimecode()?.frameRate == .fps25)
+        #expect(sequence.tcStartAsTimecode()?.subFramesBase == .max80SubFrames)
+        #expect(sequence.durationAsTimecode() == Self.tc("00:00:29:13", .fps25))
+        #expect(sequence.audioLayout == .stereo)
+        #expect(sequence.audioRate == .rate48kHz)
         
         // story elements (clips etc.)
-        let spine = try XCTUnwrap(sequence.spine)
-        XCTAssertEqual(spine.storyElements.count, 1)
+        let spine = sequence.spine
+        #expect(spine.storyElements.count == 1)
         
         let storyElements = spine.storyElements.zeroIndexed
         
-        let element1 = try XCTUnwrap(storyElements[safe: 0]?.fcpAsAssetClip)
-        XCTAssertEqual(element1.ref, "r2")
-        XCTAssertEqual(element1.offsetAsTimecode(), Self.tc("01:00:00:00", .fps25))
-        XCTAssertEqual(element1.offsetAsTimecode()?.frameRate, .fps25)
-        XCTAssertEqual(element1.name, "TestVideo Clip")
-        XCTAssertEqual(element1.start, nil)
-        XCTAssertEqual(element1.durationAsTimecode(), Self.tc("00:00:29:13", .fps25))
-        XCTAssertEqual(element1.durationAsTimecode()?.frameRate, .fps25)
-        XCTAssertEqual(element1.audioRole?.rawValue, "dialogue")
+        let element1 = try #require(storyElements[safe: 0]?.fcpAsAssetClip)
+        #expect(element1.ref == "r2")
+        #expect(element1.offsetAsTimecode() == Self.tc("01:00:00:00", .fps25))
+        #expect(element1.offsetAsTimecode()?.frameRate == .fps25)
+        #expect(element1.name == "TestVideo Clip")
+        #expect(element1.start == nil)
+        #expect(element1.durationAsTimecode() == Self.tc("00:00:29:13", .fps25))
+        #expect(element1.durationAsTimecode()?.frameRate == .fps25)
+        #expect(element1.audioRole?.rawValue == "dialogue")
         
         #warning("> TODO: finish this - but can't test absolute timecodes without running element extraction")
         // markers
@@ -158,60 +155,60 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         let element1Markers = element1.contents
             .filter(whereFCPElement: .marker)
             .zeroIndexed
-        XCTAssertEqual(element1Markers.count, 3)
+        #expect(element1Markers.count == 3)
         
-        let expectedE1Marker0 = try XCTUnwrap(element1Markers[safe: 0])
-        XCTAssertEqual(expectedE1Marker0.startAsTimecode(), Self.tc("00:00:13:00", .fps25))
-        XCTAssertEqual(expectedE1Marker0.durationAsTimecode(), Self.tc("00:00:00:01", .fps25))
-        XCTAssertEqual(expectedE1Marker0.name, "Marker 1")
-        XCTAssertEqual(expectedE1Marker0.configuration, .standard)
-        XCTAssertEqual(expectedE1Marker0.note, nil)
+        let expectedE1Marker0 = try #require(element1Markers[safe: 0])
+        #expect(expectedE1Marker0.startAsTimecode() == Self.tc("00:00:13:00", .fps25))
+        #expect(expectedE1Marker0.durationAsTimecode() == Self.tc("00:00:00:01", .fps25))
+        #expect(expectedE1Marker0.name == "Marker 1")
+        #expect(expectedE1Marker0.configuration == .standard)
+        #expect(expectedE1Marker0.note == nil)
         
-        let expectedE1Marker1 = try XCTUnwrap(element1Markers[safe: 1])
-        XCTAssertEqual(expectedE1Marker1.startAsTimecode(), Self.tc("00:00:18:00", .fps25))
-        XCTAssertEqual(expectedE1Marker1.durationAsTimecode(), Self.tc("00:00:00:01", .fps25))
-        XCTAssertEqual(expectedE1Marker1.name, "Marker 2")
-        XCTAssertEqual(expectedE1Marker1.configuration, .standard)
-        XCTAssertEqual(expectedE1Marker1.note, nil)
+        let expectedE1Marker1 = try #require(element1Markers[safe: 1])
+        #expect(expectedE1Marker1.startAsTimecode() == Self.tc("00:00:18:00", .fps25))
+        #expect(expectedE1Marker1.durationAsTimecode() == Self.tc("00:00:00:01", .fps25))
+        #expect(expectedE1Marker1.name == "Marker 2")
+        #expect(expectedE1Marker1.configuration == .standard)
+        #expect(expectedE1Marker1.note == nil)
         
-        let expectedE1Marker2 = try XCTUnwrap(element1Markers[safe: 2])
-        XCTAssertEqual(expectedE1Marker2.startAsTimecode(), Self.tc("00:00:27:10", .fps25))
-        XCTAssertEqual(expectedE1Marker2.durationAsTimecode(), Self.tc("00:00:00:01", .fps25))
-        XCTAssertEqual(expectedE1Marker2.name, "Marker 3")
-        XCTAssertEqual(expectedE1Marker2.configuration, .standard)
-        XCTAssertEqual(expectedE1Marker2.note, "m3 notes")
+        let expectedE1Marker2 = try #require(element1Markers[safe: 2])
+        #expect(expectedE1Marker2.startAsTimecode() == Self.tc("00:00:27:10", .fps25))
+        #expect(expectedE1Marker2.durationAsTimecode() == Self.tc("00:00:00:01", .fps25))
+        #expect(expectedE1Marker2.name == "Marker 3")
+        #expect(expectedE1Marker2.configuration == .standard)
+        #expect(expectedE1Marker2.note == "m3 notes")
         
         // keywords
         
         let element1Keywords = element1.contents
             .filter(whereFCPElement: .keyword)
             .zeroIndexed
-        XCTAssertEqual(element1Keywords.count, 2)
+        #expect(element1Keywords.count == 2)
         
         // this keyword applies to entire video clip
-        let expectedE1Keyword0 = try XCTUnwrap(element1Keywords[safe: 0])
-        XCTAssertEqual(expectedE1Keyword0.keywords, ["keyword1"])
-        XCTAssertEqual(expectedE1Keyword0.startAsTimecode(), Self.tc("00:00:00:00", .fps25))
-        XCTAssertEqual(expectedE1Keyword0.durationAsTimecode(), Self.tc("00:00:29:13", .fps25))
-        XCTAssertEqual(expectedE1Keyword0.note, "k1 notes")
+        let expectedE1Keyword0 = try #require(element1Keywords[safe: 0])
+        #expect(expectedE1Keyword0.keywords == ["keyword1"])
+        #expect(expectedE1Keyword0.startAsTimecode() == Self.tc("00:00:00:00", .fps25))
+        #expect(expectedE1Keyword0.durationAsTimecode() == Self.tc("00:00:29:13", .fps25))
+        #expect(expectedE1Keyword0.note == "k1 notes")
         
-        let expectedE1Keyword1 = try XCTUnwrap(element1Keywords[safe: 1])
-        XCTAssertEqual(expectedE1Keyword1.keywords, ["keyword2"])
-        XCTAssertEqual(expectedE1Keyword1.startAsTimecode(), Self.tc("00:00:15:20", .fps25))
-        XCTAssertEqual(expectedE1Keyword1.durationAsTimecode(), Self.tc("00:00:08:11", .fps25))
-        XCTAssertEqual(expectedE1Keyword1.note, "k2 notes")
+        let expectedE1Keyword1 = try #require(element1Keywords[safe: 1])
+        #expect(expectedE1Keyword1.keywords == ["keyword2"])
+        #expect(expectedE1Keyword1.startAsTimecode() == Self.tc("00:00:15:20", .fps25))
+        #expect(expectedE1Keyword1.durationAsTimecode() == Self.tc("00:00:08:11", .fps25))
+        #expect(expectedE1Keyword1.note == "k2 notes")
         
         // captions
         
         let element1Captions = element1.contents
             .filter(whereFCPElement: .caption)
             .zeroIndexed
-        XCTAssertEqual(element1Captions.count, 2)
+        #expect(element1Captions.count == 2)
         
-//        let element1Caption0 = try XCTUnwrap(element1Captions[safe: 0])
-//        XCTAssertEqual(element1Caption0.note, nil)
-//        XCTAssertEqual(element1Caption0.role?.rawValue, "iTT?captionFormat=ITT.en")
-//        XCTAssertEqual(Array(element1Caption0.texts), [
+//        let element1Caption0 = try #require(element1Captions[safe: 0])
+//        #expect(element1Caption0.note == nil)
+//        #expect(element1Caption0.role?.rawValue == "iTT?captionFormat=ITT.en")
+//        #expect(Array(element1Caption0.texts) == [
 //            FinalCutPro.FCPXML.Text(
 //                displayStyle: nil,
 //                rollUpHeight: nil,
@@ -223,37 +220,37 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
 //                ]
 //            )
 //        ])
-//        XCTAssertEqual(element1Caption0.textStyleDefinitions, [
+//        #expect(element1Caption0.textStyleDefinitions == [
 //            try! XMLElement(xmlString: """
 //                <text-style-def id="ts1">
 //                    <text-style font=".AppleSystemUIFont" fontSize="13" fontFace="Regular" fontColor="1 1 1 1" backgroundColor="0 0 0 1" tabStops="28L 56L 84L 112L 140L 168L 196L 224L 252L 280L 308L 336L"/>
 //                </text-style-def>
 //                """)
 //        ])
-//        XCTAssertEqual(element1Caption0.lane, 1)
-//        XCTAssertEqual(element1Caption0.offset, Self.tc("00:00:03:00", .fps25))
-//        XCTAssertEqual(element1Caption0.name, "caption1")
-//        XCTAssertEqual(element1Caption0.start, Self.tc("01:00:00:00", .fps25))
-//        XCTAssertEqual(element1Caption0.duration, Self.tc("00:00:04:00", .fps25))
-//        XCTAssertEqual(element1Caption0.enabled, false)
-//        XCTAssertEqual(element1Caption0.context[.absoluteStart], Self.tc("01:00:03:00", .fps25))
-//        XCTAssertEqual(
-//            element1Caption0.context[.localRoles],
-//            [FinalCutPro.FCPXML.CaptionRole(rawValue: "iTT?captionFormat=ITT.en")!.asAnyRole()]
+//        #expect(element1Caption0.lane == 1)
+//        #expect(element1Caption0.offset == Self.tc("00:00:03:00", .fps25))
+//        #expect(element1Caption0.name == "caption1")
+//        #expect(element1Caption0.start == Self.tc("01:00:00:00", .fps25))
+//        #expect(element1Caption0.duration == Self.tc("00:00:04:00", .fps25))
+//        #expect(element1Caption0.enabled == false)
+//        #expect(element1Caption0.context[.absoluteStart] == Self.tc("01:00:03:00", .fps25))
+//        #expect(
+//            element1Caption0.context[.localRoles]
+//                == [FinalCutPro.FCPXML.CaptionRole(rawValue: "iTT?captionFormat=ITT.en")!.asAnyRole()]
 //        )
-//        XCTAssertEqual(
-//            element1Caption0.context[.inheritedRoles],
-//            [
+//        #expect(
+//            element1Caption0.context[.inheritedRoles]
+//            == [
 //                .inherited(.audio(raw: "dialogue")!),
 //                .defaulted(.video(raw: "Video")!),
 //                .assigned(.caption(raw: "iTT?captionFormat=ITT.en")!)
 //            ]
 //        )
         
-//        let element1Caption1 = try XCTUnwrap(element1Captions[safe: 1])
-//        XCTAssertEqual(element1Caption1.note, nil)
-//        XCTAssertEqual(element1Caption1.role?.rawValue, "iTT?captionFormat=ITT.en")
-//        XCTAssertEqual(element1Caption1.texts, [
+//        let element1Caption1 = try #require(element1Captions[safe: 1])
+//        #expect(element1Caption1.note == nil)
+//        #expect(element1Caption1.role?.rawValue == "iTT?captionFormat=ITT.en")
+//        #expect(element1Caption1.texts == [
 //            FinalCutPro.FCPXML.Text(
 //                rollUpHeight: nil,
 //                position: nil,
@@ -264,27 +261,27 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
 //                ]
 //            )
 //        ])
-//        XCTAssertEqual(element1Caption1.textStyleDefinitions, [
+//        #expect(element1Caption1.textStyleDefinitions == [
 //            try! XMLElement(xmlString: """
 //                <text-style-def id="ts2">
 //                    <text-style font=".AppleSystemUIFont" fontSize="13" fontFace="Regular" fontColor="1 1 1 1" backgroundColor="0 0 0 1" tabStops="28L 56L 84L 112L 140L 168L 196L 224L 252L 280L 308L 336L"/>
 //                </text-style-def>
 //                """)
 //        ])
-//        XCTAssertEqual(element1Caption1.lane, 1)
-//        XCTAssertEqual(element1Caption1.offset, Self.tc("00:00:09:10", .fps25))
-//        XCTAssertEqual(element1Caption1.name, "caption2")
-//        XCTAssertEqual(element1Caption1.start, Self.tc("01:00:00:00", .fps25))
-//        XCTAssertEqual(element1Caption1.duration, Self.tc("00:00:02:00", .fps25))
-//        XCTAssertEqual(element1Caption1.enabled, true)
-//        XCTAssertEqual(element1Caption1.context[.absoluteStart], Self.tc("01:00:09:10", .fps25))
-//        XCTAssertEqual(
-//            element1Caption1.context[.localRoles],
-//            [FinalCutPro.FCPXML.CaptionRole(rawValue: "iTT?captionFormat=ITT.en")!.asAnyRole()]
+//        #expect(element1Caption1.lane == 1)
+//        #expect(element1Caption1.offset == Self.tc("00:00:09:10", .fps25))
+//        #expect(element1Caption1.name == "caption2")
+//        #expect(element1Caption1.start == Self.tc("01:00:00:00", .fps25))
+//        #expect(element1Caption1.duration == Self.tc("00:00:02:00", .fps25))
+//        #expect(element1Caption1.enabled == true)
+//        #expect(element1Caption1.context[.absoluteStart] == Self.tc("01:00:09:10", .fps25))
+//        #expect(
+//            element1Caption1.context[.localRoles]
+//                == [FinalCutPro.FCPXML.CaptionRole(rawValue: "iTT?captionFormat=ITT.en")!.asAnyRole()]
 //        )
-//        XCTAssertEqual(
-//            element1Caption1.context[.inheritedRoles],
-//            [
+//        #expect(
+//            element1Caption1.context[.inheritedRoles]
+//            == [
 //                .inherited(.audio(raw: "dialogue")!),
 //                .defaulted(.video(raw: "Video")!),
 //                .assigned(.caption(raw: "iTT?captionFormat=ITT.en")!)
@@ -293,7 +290,8 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
     }
     
     /// Test keywords that apply to each marker.
-    func testExtractMarkers() async throws {
+    @Test
+    func extractMarkers() async throws {
         // load file
         let rawData = try fileContents
         
@@ -301,7 +299,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // project
-        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        let project = try #require(fcpxml.allProjects().first)
         
         let extractedMarkers = await project
             .extract(preset: .markers, scope: .mainTimeline)
@@ -311,26 +309,26 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         let markers = extractedMarkers
         
         let expectedMarkerCount = 3
-        XCTAssertEqual(markers.count, expectedMarkerCount)
+        #expect(markers.count == expectedMarkerCount)
         
         print("Markers sorted by absolute timecode:")
         print(Self.debugString(for: markers))
         
         // markers
         
-        let marker1 = try XCTUnwrap(markers[safe: 0])
-        let marker2 = try XCTUnwrap(markers[safe: 1])
-        let marker3 = try XCTUnwrap(markers[safe: 2])
+        let marker1 = try #require(markers[safe: 0])
+        let marker2 = try #require(markers[safe: 1])
+        let marker3 = try #require(markers[safe: 2])
         
         // Check keywords while constraining to keyword ranges
-        XCTAssertEqual(marker1.keywords(constrainToKeywordRanges: true), ["keyword1"])
-        XCTAssertEqual(marker2.keywords(constrainToKeywordRanges: true), ["keyword1", "keyword2"])
-        XCTAssertEqual(marker3.keywords(constrainToKeywordRanges: true), ["keyword1"])
+        #expect(marker1.keywords(constrainToKeywordRanges: true) == ["keyword1"])
+        #expect(marker2.keywords(constrainToKeywordRanges: true) == ["keyword1", "keyword2"])
+        #expect(marker3.keywords(constrainToKeywordRanges: true) == ["keyword1"])
         
         // Check keywords while NOT constraining to keyword ranges
-        XCTAssertEqual(marker1.keywords(constrainToKeywordRanges: false), ["keyword1", "keyword2"])
-        XCTAssertEqual(marker2.keywords(constrainToKeywordRanges: false), ["keyword1", "keyword2"])
-        XCTAssertEqual(marker3.keywords(constrainToKeywordRanges: false), ["keyword1", "keyword2"])
+        #expect(marker1.keywords(constrainToKeywordRanges: false) == ["keyword1", "keyword2"])
+        #expect(marker2.keywords(constrainToKeywordRanges: false) == ["keyword1", "keyword2"])
+        #expect(marker3.keywords(constrainToKeywordRanges: false) == ["keyword1", "keyword2"])
     }
 }
 

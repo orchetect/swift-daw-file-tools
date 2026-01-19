@@ -4,18 +4,15 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-class ProTools_SessionText_FPPFinal: XCTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
-    func testSessionText_FPPFinal() throws {
+@Suite struct ProTools_SessionText_FPPFinal {
+    @Test
+    func sessionText_FPPFinal() async throws {
         // load file
         
         let rawData = try TestResource.PTSessionTextExports.fppFinal_23_976fps_DefaultExportOptions_PT2020_3.data()
@@ -27,66 +24,63 @@ class ProTools_SessionText_FPPFinal: XCTestCase {
         
         // parse messages
         
-        XCTAssertEqual(parseMessages.errors.count, 0)
+        #expect(parseMessages.errors.count == 0)
         if !parseMessages.errors.isEmpty {
             dump(parseMessages.errors)
         }
         
         // main header
         
-        XCTAssertEqual(
-            sessionInfo.main.name,
-            "FPP Edit 15 A1.4 A2.2 A3.2 A4.2 A5.2 A6.2 A7.2 A8.2 A9.2 Intl.1"
+        #expect(
+            sessionInfo.main.name
+                == "FPP Edit 15 A1.4 A2.2 A3.2 A4.2 A5.2 A6.2 A7.2 A8.2 A9.2 Intl.1"
         )
-        XCTAssertEqual(sessionInfo.main.sampleRate,      48000.0)
-        XCTAssertEqual(sessionInfo.main.bitDepth,        "24-bit")
-        XCTAssertEqual(
-            sessionInfo.main.startTimecode,
-            try ProTools.formTimecode(.init(h: 0, m: 59, s: 55, f: 00), at: .fps23_976)
-        )
-        XCTAssertEqual(sessionInfo.main.frameRate,       .fps23_976)
-        XCTAssertEqual(sessionInfo.main.audioTrackCount, 51)
-        XCTAssertEqual(sessionInfo.main.audioClipCount,  765)
-        XCTAssertEqual(sessionInfo.main.audioFileCount,  142)
+        #expect(sessionInfo.main.sampleRate == 48000.0)
+        #expect(sessionInfo.main.bitDepth == "24-bit")
+        #expect(try sessionInfo.main.startTimecode == ProTools.formTimecode(.init(h: 0, m: 59, s: 55, f: 00), at: .fps23_976))
+        #expect(sessionInfo.main.frameRate == .fps23_976)
+        #expect(sessionInfo.main.audioTrackCount == 51)
+        #expect(sessionInfo.main.audioClipCount == 765)
+        #expect(sessionInfo.main.audioFileCount == 142)
         
         // files - online
         
-        XCTAssertEqual(sessionInfo.onlineFiles?.count, 142)
+        #expect(sessionInfo.onlineFiles?.count == 142)
         
         // files - offline
         
-        XCTAssertEqual(sessionInfo.offlineFiles, [])
+        #expect(sessionInfo.offlineFiles == [])
         
         // clips - online
         
-        XCTAssertEqual(sessionInfo.onlineClips?.count, 753)
+        #expect(sessionInfo.onlineClips?.count == 753)
         
         // clips - offline
         
-        XCTAssertNil(sessionInfo.offlineClips) // missing section
+        #expect(sessionInfo.offlineClips == nil) // missing section
         
         // plug-ins
         
-        XCTAssertEqual(sessionInfo.plugins?.count, 7)
+        #expect(sessionInfo.plugins?.count == 7)
         
         // tracks
         
-        let tracks = try XCTUnwrap(sessionInfo.tracks)
-        let firstTrack = try XCTUnwrap(tracks.first)
-        XCTAssertEqual(firstTrack.name,       "DLG")
-        XCTAssertEqual(firstTrack.state,      [.muted])
-        XCTAssertEqual(firstTrack.clips.count, 65)
-        let lastTrack = try XCTUnwrap(tracks.last)
-        XCTAssertEqual(lastTrack.name,        "Master Bounce (Stereo)")
-        XCTAssertEqual(lastTrack.state,       [.hidden, .inactive, .soloSafe])
-        XCTAssertEqual(lastTrack.clips.count, 0)
+        let tracks = try #require(sessionInfo.tracks)
+        let firstTrack = try #require(tracks.first)
+        #expect(firstTrack.name == "DLG")
+        #expect(firstTrack.state == [.muted])
+        #expect(firstTrack.clips.count == 65)
+        let lastTrack = try #require(tracks.last)
+        #expect(lastTrack.name == "Master Bounce (Stereo)")
+        #expect(lastTrack.state == [.hidden, .inactive, .soloSafe])
+        #expect(lastTrack.clips.count == 0)
         
         // markers
         
-        XCTAssertEqual(sessionInfo.markers?.count, 294)
+        #expect(sessionInfo.markers?.count == 294)
         
         // orphan data
         
-        XCTAssertNil(sessionInfo.orphanData) // none
+        #expect(sessionInfo.orphanData == nil) // none
     }
 }

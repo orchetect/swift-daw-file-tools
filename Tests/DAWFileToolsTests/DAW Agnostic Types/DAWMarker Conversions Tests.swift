@@ -4,18 +4,14 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
-import XCTest
 @testable import DAWFileTools
 import SwiftTimecodeCore
+import Testing
 
-class DAWMarkerConversions_Tests: XCTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
-    // MARK: -
-    
-    /// Same frame rate
-    func testResolvedTimecodeA() throws {
+@Suite struct DAWMarker_Conversions_Tests {
+    /// Same frame rate.
+    @Test
+    func resolvedTimecodeA() async throws {
         let sfBase: Timecode.SubFramesBase = .max80SubFrames
         
         let marker = DAWMarker(
@@ -28,23 +24,21 @@ class DAWMarkerConversions_Tests: XCTestCase {
             comment: nil
         )
         
-        let resolved = try XCTUnwrap(marker.resolvedTimecode(
+        let resolved = try #require(marker.resolvedTimecode(
             at: .fps23_976,
             base: sfBase,
             limit: .max24Hours,
             startTimecode: Timecode(.zero, at: .fps23_976, base: sfBase)
         ))
         
-        XCTAssertEqual(resolved.frameRate, .fps23_976)
-        XCTAssertEqual(resolved.upperLimit, .max24Hours)
-        XCTAssertEqual(
-            resolved.components,
-            .init(d: 0, h: 0, m: 0, s: 5, f: 17, sf: 0)
-        )
+        #expect(resolved.frameRate == .fps23_976)
+        #expect(resolved.upperLimit == .max24Hours)
+        #expect(resolved.components == .init(d: 0, h: 0, m: 0, s: 5, f: 17, sf: 0))
     }
     
-    /// Same frame rate
-    func testResolvedTimecodeB() throws {
+    /// Same frame rate.
+    @Test
+    func resolvedTimecodeB() async throws {
         let sfBase: Timecode.SubFramesBase = .max80SubFrames
         
         let marker = DAWMarker(
@@ -57,23 +51,21 @@ class DAWMarkerConversions_Tests: XCTestCase {
             comment: nil
         )
         
-        let resolved = try XCTUnwrap(marker.resolvedTimecode(
+        let resolved = try #require(marker.resolvedTimecode(
             at: .fps23_976,
             base: sfBase,
             limit: .max24Hours,
             startTimecode: Timecode(.zero, at: .fps23_976, base: sfBase)
         ))
         
-        XCTAssertEqual(resolved.frameRate, .fps23_976)
-        XCTAssertEqual(resolved.upperLimit, .max24Hours)
-        XCTAssertEqual(
-            resolved.components,
-            .init(d: 0, h: 0, m: 0, s: 9, f: 9, sf: 0)
-        )
+        #expect(resolved.frameRate == .fps23_976)
+        #expect(resolved.upperLimit == .max24Hours)
+        #expect(resolved.components == .init(d: 0, h: 0, m: 0, s: 9, f: 9, sf: 0))
     }
     
-    /// Different frame rate
-    func testResolvedTimecodeC() throws {
+    /// Different frame rate.
+    @Test
+    func resolvedTimecodeC() async throws {
         let sfBase: Timecode.SubFramesBase = .max80SubFrames
         
         let marker = DAWMarker(
@@ -86,24 +78,22 @@ class DAWMarkerConversions_Tests: XCTestCase {
             comment: nil
         )
         
-        let resolved = try XCTUnwrap(marker.resolvedTimecode(
+        let resolved = try #require(marker.resolvedTimecode(
             at: .fps30,
             base: sfBase,
             limit: .max24Hours,
             startTimecode: Timecode(.zero, at: .fps30, base: sfBase)
         ))
         
-        XCTAssertEqual(resolved.frameRate, .fps30)
-        XCTAssertEqual(resolved.upperLimit, .max24Hours)
-        XCTAssertEqual(
-            resolved.components,
-            .init(d: 0, h: 0, m: 0, s: 5, f: 21, sf: 33)
-        )
+        #expect(resolved.frameRate == .fps30)
+        #expect(resolved.upperLimit == .max24Hours)
+        #expect(resolved.components == .init(d: 0, h: 0, m: 0, s: 5, f: 21, sf: 33))
     }
     
     // MARK: - Rational Fraction
     
-    func testOriginalTimecode_Fraction() throws {
+    @Test
+    func originalTimecode_Fraction() async throws {
         let sfBase: Timecode.SubFramesBase = .max80SubFrames
         
         let marker = DAWMarker(
@@ -116,16 +106,14 @@ class DAWMarkerConversions_Tests: XCTestCase {
             comment: nil
         )
         
-        let original = try XCTUnwrap(marker.originalTimecode(base: sfBase, limit: .max100Days))
-        XCTAssertEqual(original.frameRate, .fps24)
-        XCTAssertEqual(original.upperLimit, .max100Days)
-        XCTAssertEqual(
-            original.components,
-            .init(d: 0, h: 1, m: 0, s: 0, f: 0, sf: 0)
-        )
+        let original = try #require(marker.originalTimecode(base: sfBase, limit: .max100Days))
+        #expect(original.frameRate == .fps24)
+        #expect(original.upperLimit == .max100Days)
+        #expect(original.components == .init(d: 0, h: 1, m: 0, s: 0, f: 0, sf: 0))
     }
     
-    func testResolvedTimecode_Fraction() throws {
+    @Test
+    func resolvedTimecode_Fraction() async throws {
         let sfBase: Timecode.SubFramesBase = .max80SubFrames
         
         let marker = DAWMarker(
@@ -138,7 +126,7 @@ class DAWMarkerConversions_Tests: XCTestCase {
             comment: nil
         )
         
-        let resolved = try XCTUnwrap(
+        let resolved = try #require(
             marker.resolvedTimecode(
                 at: .fps29_97, 
                 base: sfBase,
@@ -146,11 +134,8 @@ class DAWMarkerConversions_Tests: XCTestCase {
                 startTimecode: Timecode(.zero, at: .fps29_97, base: sfBase)
             )
         )
-        XCTAssertEqual(resolved.frameRate, .fps29_97)
-        XCTAssertEqual(resolved.upperLimit, .max24Hours)
-        XCTAssertEqual(
-            resolved.components,
-            .init(d: 0, h: 0, m: 59, s: 56, f: 12, sf: 08) // confirmed in Pro Tools
-        )
+        #expect(resolved.frameRate == .fps29_97)
+        #expect(resolved.upperLimit == .max24Hours)
+        #expect(resolved.components == .init(d: 0, h: 0, m: 59, s: 56, f: 12, sf: 08)) // confirmed in Pro Tools
     }
 }

@@ -4,18 +4,15 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-class ProTools_SessionText_EmptySession: XCTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
-    func testSessionText_EmptySession() throws {
+@Suite struct ProTools_SessionText_EmptySession {
+    @Test
+    func sessionText_EmptySession() async throws {
         // load file
         
         let rawData = try TestResource.PTSessionTextExports.emptySession_23_976fps_DefaultExportOptions_PT2020_3.data()
@@ -33,55 +30,52 @@ class ProTools_SessionText_EmptySession: XCTestCase {
         
         // parse messages
         
-        XCTAssertEqual(parseMessages.errors.count, 0)
+        #expect(parseMessages.errors.count == 0)
         if !parseMessages.errors.isEmpty {
             dump(parseMessages.errors)
         }
         
         // main header
         
-        XCTAssertEqual(sessionInfo.main.name,              "SessionText_EmptySession")
-        XCTAssertEqual(sessionInfo.main.sampleRate,        48000.0)
-        XCTAssertEqual(sessionInfo.main.bitDepth,          "24-bit")
-        XCTAssertEqual(
-            sessionInfo.main.startTimecode,
-            try ProTools.formTimecode(.init(h: 0, m: 59, s: 55, f: 00), at: .fps23_976)
-        )
-        XCTAssertEqual(sessionInfo.main.frameRate,         .fps23_976)
-        XCTAssertEqual(sessionInfo.main.audioTrackCount,   0)
-        XCTAssertEqual(sessionInfo.main.audioClipCount,    0)
-        XCTAssertEqual(sessionInfo.main.audioFileCount,    0)
+        #expect(sessionInfo.main.name == "SessionText_EmptySession")
+        #expect(sessionInfo.main.sampleRate == 48000.0)
+        #expect(sessionInfo.main.bitDepth == "24-bit")
+        #expect(try sessionInfo.main.startTimecode == ProTools.formTimecode(.init(h: 0, m: 59, s: 55, f: 00), at: .fps23_976))
+        #expect(sessionInfo.main.frameRate == .fps23_976)
+        #expect(sessionInfo.main.audioTrackCount == 0)
+        #expect(sessionInfo.main.audioClipCount == 0)
+        #expect(sessionInfo.main.audioFileCount == 0)
         
         // files - online
         
-        XCTAssertEqual(sessionInfo.onlineFiles, [])
+        #expect(sessionInfo.onlineFiles == [])
         
         // files - offline
         
-        XCTAssertEqual(sessionInfo.offlineFiles, [])
+        #expect(sessionInfo.offlineFiles == [])
         
         // clips - online
         
-        XCTAssertNil(sessionInfo.onlineClips) // missing section
+        #expect(sessionInfo.onlineClips == nil) // missing section
         
         // clips - offline
         
-        XCTAssertNil(sessionInfo.offlineClips) // missing section
+        #expect(sessionInfo.offlineClips == nil) // missing section
         
         // plug-ins
         
-        XCTAssertEqual(sessionInfo.plugins, [])
+        #expect(sessionInfo.plugins == [])
         
         // tracks
         
-        XCTAssertEqual(sessionInfo.tracks, [])
+        #expect(sessionInfo.tracks == [])
         
         // markers
         
-        XCTAssertEqual(sessionInfo.markers, [])
+        #expect(sessionInfo.markers == [])
         
         // orphan data
         
-        XCTAssertNil(sessionInfo.orphanData) // none
+        #expect(sessionInfo.orphanData == nil) // none
     }
 }

@@ -6,17 +6,13 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-final class FinalCutPro_FCPXML_60: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_60: FCPXMLUtilities {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
@@ -27,59 +23,63 @@ final class FinalCutPro_FCPXML_60: FCPXMLTestCase {
     /// Contains media @ 23.976fps and 29.97fps.
     let projectFrameRate: TimecodeFrameRate = .fps60
     
-    func testParse() throws {
+    // MARK: - Tests
+    
+    @Test
+    func parse() async throws {
         // load
         let rawData = try fileContents
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // version
-        XCTAssertEqual(fcpxml.version, .ver1_11)
+        #expect(fcpxml.version == .ver1_11)
         
         // resources
         let resourcesDict = fcpxml.root.resourcesDict
-        XCTAssertEqual(resourcesDict.count, 8)
+        #expect(resourcesDict.count == 8)
         
         // library
-        let library = try XCTUnwrap(fcpxml.root.library)
+        let library = try #require(fcpxml.root.library)
         let libraryURL = URL(string: "file:///Users/user/Movies/FCPXMLTest.fcpbundle/")
-        XCTAssertEqual(library.location, libraryURL)
+        #expect(library.location == libraryURL)
         
         // event
         let events = fcpxml.allEvents()
-        XCTAssertEqual(events.count, 1)
+        #expect(events.count == 1)
         
-        let event = try XCTUnwrap(events[safe: 0])
-        XCTAssertEqual(event.name, "11-9-22")
+        let event = try #require(events[safe: 0])
+        #expect(event.name == "11-9-22")
         
         // project
         let projects = event.projects.zeroIndexed
-        XCTAssertEqual(projects.count, 1)
+        #expect(projects.count == 1)
         
-        let project = try XCTUnwrap(projects[safe: 0])
-        XCTAssertEqual(project.name, "60_V1")
-        XCTAssertEqual(
-            project.startTimecode(),
-            try Timecode(.rational(0, 1), at: projectFrameRate, base: .max80SubFrames)
+        let project = try #require(projects[safe: 0])
+        #expect(project.name == "60_V1")
+        #expect(
+            try project.startTimecode()
+                == Timecode(.rational(0, 1), at: projectFrameRate, base: .max80SubFrames)
         )
         
         // sequence
-        let sequence = try XCTUnwrap(projects[safe: 0]).sequence
-        XCTAssertEqual(sequence.format, "r1")
-        XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("00:00:00:00", projectFrameRate))
-        XCTAssertEqual(sequence.tcStartAsTimecode()?.frameRate, projectFrameRate)
-        XCTAssertEqual(sequence.tcStartAsTimecode()?.subFramesBase, .max80SubFrames)
-        XCTAssertEqual(sequence.durationAsTimecode(), Self.tc("00:04:23:10", projectFrameRate))
-        XCTAssertEqual(sequence.audioLayout, .stereo)
-        XCTAssertEqual(sequence.audioRate, .rate48kHz)
+        let sequence = try #require(projects[safe: 0]).sequence
+        #expect(sequence.format == "r1")
+        #expect(sequence.tcStartAsTimecode() == Self.tc("00:00:00:00", projectFrameRate))
+        #expect(sequence.tcStartAsTimecode()?.frameRate == projectFrameRate)
+        #expect(sequence.tcStartAsTimecode()?.subFramesBase == .max80SubFrames)
+        #expect(sequence.durationAsTimecode() == Self.tc("00:04:23:10", projectFrameRate))
+        #expect(sequence.audioLayout == .stereo)
+        #expect(sequence.audioRate == .rate48kHz)
         
         // spine
-        let spine = try XCTUnwrap(sequence.spine)
+        let spine = sequence.spine
         
         let storyElements = spine.storyElements.zeroIndexed
-        XCTAssertEqual(storyElements.count, 17)
+        #expect(storyElements.count == 17)
     }
     
-    func testExtractMarkers() async throws {
+    @Test
+    func extractMarkers() async throws {
         // load file
         let rawData = try fileContents
         
@@ -87,7 +87,7 @@ final class FinalCutPro_FCPXML_60: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // project
-        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        let project = try #require(fcpxml.allProjects().first)
         
         let extractedMarkers = await project
             .extract(preset: .markers, scope: .deep())
@@ -195,39 +195,39 @@ final class FinalCutPro_FCPXML_60: FCPXMLTestCase {
         let expectedMarkerCount = 30 + (2 * 3)
         assert(markerList.count == expectedMarkerCount) // unit test sanity check
         
-        XCTAssertEqual(markers.count, expectedMarkerCount)
+        #expect(markers.count == expectedMarkerCount)
         
         print("Markers sorted by absolute timecode:")
         print(Self.debugString(for: markers))
         
         for (index, markerData) in markerList.enumerated() {
-            let marker = try XCTUnwrap(markers[safe: index])
+            let marker = try #require(markers[safe: index])
             let desc = marker.name
             
             // name
             guard marker.name == markerData.name else {
-                XCTFail(
-                    "Fail: marker name mismatch at index \(index). "
-                    + "Expected \(markerData.name.quoted) but found \(marker.name.quoted)."
+                Issue.record(
+                    "Fail: marker name mismatch at index \(index). Expected \(markerData.name.quoted) but found \(marker.name.quoted)."
                 )
                 continue
             }
             
             // config
-            XCTAssertEqual(marker.configuration, markerData.config, desc)
+            #expect(marker.configuration == markerData.config, "\(desc)")
             
             // absolute timecode
-            let tc = try XCTUnwrap(marker.timecode(), marker.name)
-            XCTAssertEqual(tc, Self.tc(markerData.absTC, projectFrameRate), desc)
-            XCTAssertEqual(tc.frameRate, projectFrameRate, desc)
+            let tc = try #require(marker.timecode(), "\(marker.name)")
+            #expect(tc == Self.tc(markerData.absTC, projectFrameRate), "\(desc)")
+            #expect(tc.frameRate == projectFrameRate, "\(desc)")
             
             // occlusion
-            XCTAssertEqual(marker.value(forContext: .effectiveOcclusion), markerData.occ, desc)
+            #expect(marker.value(forContext: .effectiveOcclusion) == markerData.occ, "\(desc)")
         }
     }
     
     /// Just check that the correct number of markers are extracted for main timeline.
-    func testExtractMarkers_MainTimeline() async throws {
+    @Test
+    func extractMarkers_MainTimeline() async throws {
         // load file
         let rawData = try fileContents
         
@@ -235,17 +235,18 @@ final class FinalCutPro_FCPXML_60: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // project
-        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        let project = try #require(fcpxml.allProjects().first)
         
         let extractedMarkers = await project
             .extract(preset: .markers, scope: .mainTimeline)
             .sortedByAbsoluteStartTimecode()
             // .zeroIndexed // not necessary after sorting - sort returns new array
         
-        XCTAssertEqual(extractedMarkers.count, 30)
+        #expect(extractedMarkers.count == 30)
     }
     
-    func testEdgeCase() async throws {
+    @Test
+    func edgeCase() async throws {
         // load file
         let rawData = try fileContents
         
@@ -254,55 +255,55 @@ final class FinalCutPro_FCPXML_60: FCPXMLTestCase {
         
         // event
         let events = fcpxml.allEvents()
-        let event = try XCTUnwrap(events[safe: 0])
+        let event = try #require(events[safe: 0])
         
         // project
         let projects = event.projects.zeroIndexed
-        let project = try XCTUnwrap(projects[safe: 0])
+        let project = try #require(projects[safe: 0])
         
         // sequence
         let sequence = project.sequence
         
         // spine
-        let spine = try XCTUnwrap(sequence.spine)
+        let spine = sequence.spine
         
         let storyElements = spine.storyElements.zeroIndexed
         
         // asset-clip @ 00:03:30:34 absolute timecode
-        let assetClip1 = try XCTUnwrap(storyElements[safe: 8]?.fcpAsAssetClip)
-        XCTAssertEqual(
-            assetClip1.offset?.doubleValue,
-            Fraction(75804000, 360000).doubleValue // NOT scaled
+        let assetClip1 = try #require(storyElements[safe: 8]?.fcpAsAssetClip)
+        #expect(
+            assetClip1.offset?.doubleValue
+                == Fraction(75804000, 360000).doubleValue // NOT scaled
         )
-        XCTAssertEqual(
-            assetClip1.start?.doubleValue,
-            Fraction(143286143, 375000).doubleValue / 1.001 // scaled
+        #expect(
+            assetClip1.start?.doubleValue
+                == Fraction(143286143, 375000).doubleValue / 1.001 // scaled
         )
         
         let ac1StoryElements = assetClip1.storyElements.zeroIndexed
         
         // asset-clip @ 00:03:37:38 absolute timecode
-        let assetClip2 = try XCTUnwrap(ac1StoryElements[safe: 0]?.fcpAsAssetClip)
-        XCTAssertEqual(
-            assetClip2.offset?.doubleValue,
-            Fraction(145938793, 375000).doubleValue / 1.001 // scaled
+        let assetClip2 = try #require(ac1StoryElements[safe: 0]?.fcpAsAssetClip)
+        #expect(
+            assetClip2.offset?.doubleValue
+                == Fraction(145938793, 375000).doubleValue / 1.001 // scaled
         )
-        XCTAssertEqual(
-            assetClip2.start?.doubleValue,
-            Fraction(299890591, 1000000).doubleValue / 1.001 // scaled
+        #expect(
+            assetClip2.start?.doubleValue
+                == Fraction(299890591, 1000000).doubleValue / 1.001 // scaled
         )
         
-        XCTAssertEqual(
+        #expect(
             assetClip2.element
                 .fcpAncestorTimeline(includingSelf: true, withLaneZero: false)?
-                .timeline,
-            assetClip2.element
+                .timeline
+            == assetClip2.element
         )
-        XCTAssertEqual(
+        #expect(
             assetClip2.element
                 ._fcpConformRateScalingFactor(timelineFrameRate: nil,
-                                              includingSelf: true),
-            1 / 1.001
+                                              includingSelf: true)
+            == 1 / 1.001
         )
     }
 }

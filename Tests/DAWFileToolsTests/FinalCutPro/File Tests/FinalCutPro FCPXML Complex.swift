@@ -6,24 +6,20 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_Complex: FCPXMLUtilities {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
         try TestResource.FCPXMLExports.complex.data()
     } }
     
-    // MARK: Resources
+    // MARK: - Resources
     
     let r1 = FinalCutPro.FCPXML.Format(
         id: "r1",
@@ -196,7 +192,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         return r
     }()
     
-    // MARK: Clip info
+    // MARK: - Clip Info
     
     struct ClipInfo: Equatable, Hashable, FCPXMLUtilities {
         var elementType: FinalCutPro.FCPXML.ElementType
@@ -329,7 +325,9 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
     
     // MARK: - Tests
     
-//    func testParse() throws {
+    // TODO: refactor this test or remove
+//    @Test
+//    mutating func parse() async throws {
 //        // load file
 //        
 //        let rawData = try fileContents
@@ -340,106 +338,106 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
 //        
 //        // version
 //        
-//        XCTAssertEqual(fcpxml.version, .ver1_11)
+//        #expect(fcpxml.version == .ver1_11)
 //        
 //        // resources
 //        
 //        let resources = fcpxml.resources()
 //        
-//        XCTAssertEqual(resources.count, 7)
+//        #expect(resources.count, 7)
 //        
-//        XCTAssertEqual(resources["r1"], .format(r1))
+//        #expect(resources["r1"], .format(r1))
 //        
-//        XCTAssertEqual(resources["r2"], .asset(r2))
+//        #expect(resources["r2"], .asset(r2))
 //        
-//        XCTAssertEqual(resources["r3"], .asset(r3))
+//        #expect(resources["r3"], .asset(r3))
 //        
-//        XCTAssertEqual(resources["r4"], .format(r4))
+//        #expect(resources["r4"], .format(r4))
 //        
-//        XCTAssertEqual(resources["r5"], .asset(r5))
+//        #expect(resources["r5"], .asset(r5))
 //        
-//        XCTAssertEqual(resources["r6"], .effect(r6))
+//        #expect(resources["r6"], .effect(r6))
 //        
-//        XCTAssertEqual(resources["r7"], .effect(r7))
+//        #expect(resources["r7"], .effect(r7))
 //        
 //        // library
 //        
-//        let library = try XCTUnwrap(fcpxml.library())
+//        let library = try #require(fcpxml.library())
 //        
 //        let libraryURL = URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/")
-//        XCTAssertEqual(library.location, libraryURL)
+//        #expect(library.location == libraryURL)
 //        
 //        // events
 //        
 //        let events = fcpxml.allEvents()
-//        XCTAssertEqual(events.count, 1)
+//        #expect(events.count == 1)
 //        
-//        let event = try XCTUnwrap(events.first)
-//        XCTAssertEqual(event.name, "Example A")
+//        let event = try #require(events.first)
+//        #expect(event.name == "Example A")
 //        
 //        // projects
 //        
 //        let projects = event.projects
-//        XCTAssertEqual(projects.count, 1)
+//        #expect(projects.count == 1)
 //        
-//        let project = try XCTUnwrap(projects.first)
-//        XCTAssertEqual(project.name, "Marker Data Demo_V2")
-//        XCTAssertEqual(project.startTimecode, Self.tc("00:00:00:00", .fps25))
-//        
+//        let project = try #require(projects.first)
+//        #expect(project.name == "Marker Data Demo_V2")
+//        #expect(project.startTimecode == Self.tc("00:00:00:00", .fps25))
+//
 //        // sequence
 //        
 //        let sequence = project.sequence
-//        XCTAssertEqual(sequence.formatID, "r1")
-//        XCTAssertEqual(sequence.startTimecode, Self.tc("00:00:00:00", .fps25))
-//        XCTAssertEqual(sequence.startTimecode?.frameRate, .fps25)
-//        XCTAssertEqual(sequence.startTimecode?.subFramesBase, .max80SubFrames)
-//        XCTAssertEqual(sequence.duration, Self.tc("00:07:27:24", .fps25))
-//        XCTAssertEqual(sequence.audioLayout, .stereo)
-//        XCTAssertEqual(sequence.audioRate, .rate48kHz)
+//        #expect(sequence.formatID == "r1")
+//        #expect(sequence.startTimecode == Self.tc("00:00:00:00", .fps25))
+//        #expect(sequence.startTimecode?.frameRate == .fps25)
+//        #expect(sequence.startTimecode?.subFramesBase == .max80SubFrames)
+//        #expect(sequence.duration == Self.tc("00:07:27:24", .fps25))
+//        #expect(sequence.audioLayout == .stereo)
+//        #expect(sequence.audioRate == .rate48kHz)
 //        
 //        // story elements (clips etc.)
 //        
 //        let spine = sequence.spine
-//        XCTAssertEqual(spine.contents.count, 3)
-//                
+//        #expect(spine.contents.count == 3)
+//
 //        guard case let .anyClip(.assetClip(element1)) = spine.contents[0] 
-//        else { XCTFail("Clip was not expected type.") ; return }
-//        XCTAssertEqual(element1.ref, "r2")
-//        XCTAssertEqual(element1.offset, Self.tc("00:00:00:00", .fps25))
-//        XCTAssertEqual(element1.offset?.frameRate, .fps25)
-//        XCTAssertEqual(element1.name, "Nature Makes You Happy")
-//        XCTAssertEqual(element1.start, nil)
-//        XCTAssertEqual(element1.duration, Self.tc("00:02:22:01", .fps25))
-//        XCTAssertEqual(element1.duration?.frameRate, .fps25)
-//        XCTAssertEqual(element1.audioRole?.rawValue, "dialogue")
-//        
+//        else { Issue.record("Clip was not expected type.") ; return }
+//        #expect(element1.ref == "r2")
+//        #expect(element1.offset == Self.tc("00:00:00:00", .fps25))
+//        #expect(element1.offset?.frameRate == .fps25)
+//        #expect(element1.name == "Nature Makes You Happy")
+//        #expect(element1.start == nil)
+//        #expect(element1.duration == Self.tc("00:02:22:01", .fps25))
+//        #expect(element1.duration?.frameRate == .fps25)
+//        #expect(element1.audioRole?.rawValue == "dialogue")
+//
 //        guard case let .anyClip(.assetClip(element2)) = spine.contents[1] 
-//        else { XCTFail("Clip was not expected type.") ; return }
-//        XCTAssertEqual(element2.ref, "r5")
-//        XCTAssertEqual(element2.offset, Self.tc("00:02:22:01", .fps25))
-//        XCTAssertEqual(element2.offset?.frameRate, .fps25)
-//        XCTAssertEqual(element2.name, "Is This The Land of Fire or Ice")
-//        XCTAssertEqual(element2.start, nil)
-//        XCTAssertEqual(element2.duration, Self.tc("00:03:25:20", .fps25))
-//        XCTAssertEqual(element2.duration?.frameRate, .fps25)
-//        XCTAssertEqual(element2.audioRole?.rawValue, "dialogue")
-//        
+//        else { Issue.record("Clip was not expected type.") ; return }
+//        #expect(element2.ref == "r5")
+//        #expect(element2.offset == Self.tc("00:02:22:01", .fps25))
+//        #expect(element2.offset?.frameRate == .fps25)
+//        #expect(element2.name == "Is This The Land of Fire or Ice")
+//        #expect(element2.start == nil)
+//        #expect(element2.duration == Self.tc("00:03:25:20", .fps25))
+//        #expect(element2.duration?.frameRate == .fps25)
+//        #expect(element2.audioRole?.rawValue == "dialogue")
+//
 //        guard case let .anyClip(.video(element3)) = spine.contents[2] 
-//        else { XCTFail("Clip was not expected type.") ; return }
-//        XCTAssertEqual(element3.ref, "r7")
-//        XCTAssertEqual(element3.offset, Self.tc("00:05:47:21", .fps25))
-//        XCTAssertEqual(element3.offset?.frameRate, .fps25)
-//        XCTAssertEqual(element3.start, Self.tc("01:00:00:00", .fps25))
-//        XCTAssertEqual(element3.start?.frameRate, .fps25)
-//        XCTAssertEqual(element3.duration, Self.tc("00:01:40:03", .fps25))
-//        XCTAssertEqual(element3.duration?.frameRate, .fps25)
-//        XCTAssertEqual(element3.role?.rawValue, "Sample Role.Sample Role-1")
-//        
+//        else { Issue.record("Clip was not expected type.") ; return }
+//        #expect(element3.ref == "r7")
+//        #expect(element3.offset == Self.tc("00:05:47:21", .fps25))
+//        #expect(element3.offset?.frameRate == .fps25)
+//        #expect(element3.start == Self.tc("01:00:00:00", .fps25))
+//        #expect(element3.start?.frameRate == .fps25)
+//        #expect(element3.duration == Self.tc("00:01:40:03", .fps25))
+//        #expect(element3.duration?.frameRate == .fps25)
+//        #expect(element3.role?.rawValue == "Sample Role.Sample Role-1")
+//
 //        // markers
 //        
 //        let element1Markers = element1.contents.annotations().markers()
-//        XCTAssertEqual(element1Markers.count, 7)
-//        
+//        #expect(element1Markers.count == 7)
+//
 //        let expectedE1Marker0 = FinalCutPro.FCPXML.Marker(
 //            start: Self.tc("00:00:20:16", .fps25),
 //            duration: Self.tc("00:00:00:01", .fps25),
@@ -447,25 +445,26 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
 //            metaData: .toDo(completed: false),
 //            note: "Note Test 1"
 //        )
-//        XCTAssertEqual(element1Markers[safe: 0], expectedE1Marker0)
-//        
+//        #expect(element1Markers[safe: 0] == expectedE1Marker0)
+//
 //        
 //        
 //        let element2Markers = element2.contents.annotations().markers()
-//        XCTAssertEqual(element2Markers.count, 6) // shallow at clip level, there are more in nested title clips
-//        
+//        #expect(element2Markers.count == 6) // shallow at clip level, there are more in nested title clips
+//
 //        
 //        
 //        
 //        let element3Markers = element3.contents.annotations().markers()
-//        XCTAssertEqual(element3Markers.count, 4)
-//        
+//        #expect(element3Markers.count == 4)
+//
 //        
 //        
 //        #warning("> TODO: finish writing unit test")
 //    }
     
-    func testExtractMarkers() async throws {
+    @Test
+    func extractMarkers() async throws {
         // load file
         let rawData = try fileContents
         
@@ -473,11 +472,11 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        let event = try XCTUnwrap(fcpxml.allEvents().first)
+        let event = try #require(fcpxml.allEvents().first)
         
         // extract markers
         let extractedMarkers = await event.extract(preset: .markers, scope: .deep())
-        XCTAssertEqual(extractedMarkers.count, Self.markerData.count)
+        #expect(extractedMarkers.count == Self.markerData.count)
         
         // print(debugString(for: extractedMarkers))
         
@@ -487,27 +486,27 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
             else {
                 let tcString = md.timecode.stringValue(format: [.showSubFrames])
                 let nameString = md.name.quoted
-                XCTFail("Marker not extracted: \(tcString) \(nameString)")
+                Issue.record("Marker not extracted: \(tcString) \(nameString)")
                 continue
             }
-            XCTAssertEqual(em.name, md.name, md.name)
-            XCTAssertEqual(em.configuration, md.config, md.name)
-            XCTAssertEqual(em.note, md.note, md.name)
-            XCTAssertEqual(em.duration(), md.clip.markerDuration.duration, md.name)
+            #expect(em.name == md.name, "\(md.name)")
+            #expect(em.configuration == md.config, "\(md.name)")
+            #expect(em.note == md.note, "\(md.name)")
+            #expect(em.duration() == md.clip.markerDuration.duration, "\(md.name)")
             
-            XCTAssertEqual(em.value(forContext: .absoluteStartAsTimecode()), md.timecode, md.name)
-            XCTAssertEqual(em.value(forContext: .parentType), md.clip.elementType, md.name)
-            XCTAssertEqual(em.value(forContext: .parentName), md.clip.name, md.name)
-            XCTAssertEqual(em.value(forContext: .parentAbsoluteStartAsTimecode()), md.clip.absoluteStart, md.name)
-            XCTAssertEqual(em.value(forContext: .parentDurationAsTimecode()), md.clip.duration, md.name)
+            #expect(em.value(forContext: .absoluteStartAsTimecode()) == md.timecode, "\(md.name)")
+            #expect(em.value(forContext: .parentType) == md.clip.elementType, "\(md.name)")
+            #expect(em.value(forContext: .parentName) == md.clip.name, "\(md.name)")
+            #expect(em.value(forContext: .parentAbsoluteStartAsTimecode()) == md.clip.absoluteStart, "\(md.name)")
+            #expect(em.value(forContext: .parentDurationAsTimecode()) == md.clip.duration, "\(md.name)")
             
-            XCTAssertEqual(em.value(forContext: .ancestorEventName), "Example A")
-            XCTAssertEqual(em.value(forContext: .ancestorProjectName), "Marker Data Demo_V2")
+            #expect(em.value(forContext: .ancestorEventName) == "Example A")
+            #expect(em.value(forContext: .ancestorProjectName) == "Marker Data Demo_V2")
             
             // `marker` can't contain roles
-            XCTAssertEqual(em.value(forContext: .localRoles), [])
+            #expect(em.value(forContext: .localRoles) == [])
             // every marker should have a role inherited from an ancestor
-            XCTAssertNotEqual(em.value(forContext: .inheritedRoles), [])
+            #expect(em.value(forContext: .inheritedRoles) != [])
             
             // print(extractedMarker.name, extractedMarker.context[.ancestorsRoles] ?? [])
         }
@@ -541,7 +540,8 @@ extension FinalCutPro_FCPXML_Complex {
     
     // MARK: Shallow Asset Clip Tests
     
-    func testParseFormat_AssetClip() throws {
+    @Test
+    mutating func parseFormat_AssetClip() async throws {
         // test data
         let clip = try XMLElement(xmlString: """
             <asset-clip ref="r2" offset="0s" name="Nature Makes You Happy" duration="355100/2500s" tcFormat="NDF" audioRole="dialogue">
@@ -552,13 +552,14 @@ extension FinalCutPro_FCPXML_Complex {
         let sequence = bareSequence(children: [spine])
         
         // asset clip's ref r2 is an asset resource which in turn uses format r1
-        XCTAssertEqual(clip._fcpFirstFormatResourceForElementOrAncestors(in: resources), r1)
+        #expect(clip._fcpFirstFormatResourceForElementOrAncestors(in: resources) == r1)
         
         // sequence links directly to format r1
-        XCTAssertEqual(sequence._fcpFirstFormatResourceForElementOrAncestors(in: resources), r1)
+        #expect(sequence._fcpFirstFormatResourceForElementOrAncestors(in: resources) == r1)
     }
     
-    func testParseFormat_AssetClip_Isolated() throws {
+    @Test
+    mutating func parseFormat_AssetClip_Isolated() async throws {
         // test data
         let clip = try XMLElement(xmlString: """
             <asset-clip ref="r2" offset="0s" name="Nature Makes You Happy" duration="355100/2500s" tcFormat="NDF" audioRole="dialogue">
@@ -567,12 +568,13 @@ extension FinalCutPro_FCPXML_Complex {
         )
         
         // asset clip's ref r2 is an asset resource which in turn uses format r1, and asset clip contains its own tcFormat
-        XCTAssertEqual(clip._fcpFirstFormatResourceForElementOrAncestors(in: resources), r1)
+        #expect(clip._fcpFirstFormatResourceForElementOrAncestors(in: resources) == r1)
     }
     
     // MARK: Deep Asset Clip Tests
     
-    func testParseFormat_AssetClip_Deep() throws {
+    @Test
+    mutating func parseFormat_AssetClip_Deep() async throws {
         // test data
         let innerClip = try XMLElement(xmlString: """
             <asset-clip ref="r3" lane="-1" offset="0s" name="Interstellar Soundtrack - No Time for Caution" duration="177315755/720000s" format="r4" audioRole="dialogue">
@@ -594,17 +596,18 @@ extension FinalCutPro_FCPXML_Complex {
         // ref r3 is an asset resource containing only audio. it does not have a format attribute.
         // to succeed, this would need to continue traversing ancestors when it encountered the undefined r4 format,
         // (which is what the `firstDefinedFormat()` method does).
-        XCTAssertEqual(innerClip._fcpFirstFormatResourceForElementOrAncestors(in: resources), r4)
+        #expect(innerClip._fcpFirstFormatResourceForElementOrAncestors(in: resources) == r4)
         
         // has no format attribute.
         // ref r2 is an asset resource containing video and audio. it has a format attribute with value "r1".
-        XCTAssertEqual(outerClip._fcpFirstFormatResourceForElementOrAncestors(in: resources), r1)
+        #expect(outerClip._fcpFirstFormatResourceForElementOrAncestors(in: resources) == r1)
         
         // sequence links directly to format r1
-        XCTAssertEqual(sequence._fcpFirstFormatResourceForElementOrAncestors(in: resources), r1)
+        #expect(sequence._fcpFirstFormatResourceForElementOrAncestors(in: resources) == r1)
     }
     
-    func testParseDefinedFormat_AssetClip_Deep() throws {
+    @Test
+    mutating func parseDefinedFormat_AssetClip_Deep() async throws {
         // test data
         let innerClip = try XMLElement(xmlString: """
             <asset-clip ref="r3" lane="-1" offset="0s" name="Interstellar Soundtrack - No Time for Caution" duration="177315755/720000s" format="r4" audioRole="dialogue">
@@ -625,19 +628,20 @@ extension FinalCutPro_FCPXML_Complex {
         // format r4 is undefined.
         // ref r3 is an asset resource containing only audio. it does not have a format attribute.
         // this needs to continue traversing ancestors when it encountered the undefined r4 format.
-        XCTAssertEqual(innerClip._fcpFirstDefinedFormatResourceForElementOrAncestors(in: resources), r1)
+        #expect(innerClip._fcpFirstDefinedFormatResourceForElementOrAncestors(in: resources) == r1)
         
         // has no format attribute.
         // ref r2 is an asset resource containing video and audio. it has a format attribute with value "r1".
-        XCTAssertEqual(outerClip._fcpFirstDefinedFormatResourceForElementOrAncestors(in: resources), r1)
+        #expect(outerClip._fcpFirstDefinedFormatResourceForElementOrAncestors(in: resources) == r1)
         
         // sequence links directly to format r1
-        XCTAssertEqual(sequence._fcpFirstDefinedFormatResourceForElementOrAncestors(in: resources), r1)
+        #expect(sequence._fcpFirstDefinedFormatResourceForElementOrAncestors(in: resources) == r1)
     }
     
     // MARK: Shallow Video Clip Tests
     
-    func testParseFrameRate_VideoClip() throws {
+    @Test
+    mutating func parseFrameRate_VideoClip() async throws {
         // test data
         let clip = try XMLElement(xmlString: """
             <video ref="r7" offset="869600/2500s" name="Clouds" start="3600s" duration="250300/2500s" role="Sample Role.Sample Role-1">
@@ -648,12 +652,13 @@ extension FinalCutPro_FCPXML_Complex {
         let sequence = bareSequence(children: [spine])
         
         // video clip's ref r7 doesn't contain any info, so it needs to traverse ancestors to find r1 in sequence
-        XCTAssertEqual(clip._fcpTimecodeFrameRate(in: resources), .fps25)
+        #expect(clip._fcpTimecodeFrameRate(in: resources) == .fps25)
         
-        XCTAssertEqual(sequence._fcpTimecodeFrameRate(in: resources), .fps25)
+        #expect(sequence._fcpTimecodeFrameRate(in: resources) == .fps25)
     }
     
-    func testParseFrameRate_VideoClip_Isolated() throws {
+    @Test
+    mutating func parseFrameRate_VideoClip_Isolated() async throws {
         // test data
         let clip = try XMLElement(xmlString: """
             <video ref="r7" offset="869600/2500s" name="Clouds" start="3600s" duration="250300/2500s" role="Sample Role.Sample Role-1">
@@ -662,10 +667,11 @@ extension FinalCutPro_FCPXML_Complex {
         )
         
         // video clip's ref r7 doesn't contain any info, so it needs to traverse ancestors to find r1 in sequence
-        XCTAssertEqual(clip._fcpTimecodeFrameRate(in: resources), nil)
+        #expect(clip._fcpTimecodeFrameRate(in: resources) == nil)
     }
     
-    func testParseFormat_VideoClip() throws {
+    @Test
+    mutating func parseFormat_VideoClip() async throws {
         // test data
         let clip = try XMLElement(xmlString: """
             <video ref="r7" offset="869600/2500s" name="Clouds" start="3600s" duration="250300/2500s" role="Sample Role.Sample Role-1">
@@ -676,13 +682,14 @@ extension FinalCutPro_FCPXML_Complex {
         let sequence = bareSequence(children: [spine])
         
         // video clip's ref r7 doesn't contain any info, so it needs to traverse ancestors to find r1 in sequence
-        XCTAssertEqual(clip._fcpFirstFormatResourceForElementOrAncestors(in: resources), r1)
+        #expect(clip._fcpFirstFormatResourceForElementOrAncestors(in: resources) == r1)
         
         // sequence links directly to format r1
-        XCTAssertEqual(sequence._fcpFirstFormatResourceForElementOrAncestors(in: resources), r1)
+        #expect(sequence._fcpFirstFormatResourceForElementOrAncestors(in: resources) == r1)
     }
     
-    func testParseTCFormat_VideoClip() throws {
+    @Test
+    func parseTCFormat_VideoClip() async throws {
         // test data
         let clip = try XMLElement(xmlString: """
             <video ref="r7" offset="869600/2500s" name="Clouds" start="3600s" duration="250300/2500s" role="Sample Role.Sample Role-1">
@@ -692,9 +699,9 @@ extension FinalCutPro_FCPXML_Complex {
         let spine = bareSpine(children: [clip])
         let sequence = bareSequence(children: [spine])
         
-        XCTAssertEqual(clip._fcpTCFormatForElementOrAncestors(), .nonDropFrame)
+        #expect(clip._fcpTCFormatForElementOrAncestors() == .nonDropFrame)
         
-        XCTAssertEqual(sequence._fcpTCFormatForElementOrAncestors(), .nonDropFrame)
+        #expect(sequence._fcpTCFormatForElementOrAncestors() == .nonDropFrame)
     }
 }
 

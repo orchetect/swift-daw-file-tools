@@ -6,25 +6,24 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
-import Testing
-import TestingExtensions
-/* @testable */ import DAWFileTools
+import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-final class FinalCutPro_FCPXML_SyncClipRoles2: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_SyncClipRoles2: FCPXMLUtilities {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
         try TestResource.FCPXMLExports.syncClipRoles2.data()
     } }
     
+    // MARK: - Tests
+    
     /// Ensure that elements that can appear in various locations in the XML hierarchy are all found.
-    func testParse() async throws {
+    @Test
+    func parse() async throws {
         // load file
         let rawData = try fileContents
         
@@ -33,47 +32,49 @@ final class FinalCutPro_FCPXML_SyncClipRoles2: FCPXMLTestCase {
         
         // events
         let events = fcpxml.allEvents()
-        XCTAssertEqual(events.count, 1)
+        #expect(events.count == 1)
         
-        let event = try XCTUnwrap(events[safe: 0])
+        let event = try #require(events[safe: 0])
         
         // project
         let projects = event.projects.zeroIndexed
-        XCTAssertEqual(projects.count, 1)
+        #expect(projects.count == 1)
         
-        let project = try XCTUnwrap(projects[safe: 0])
+        let project = try #require(projects[safe: 0])
         
         // sequence
-        let sequence = try XCTUnwrap(project.sequence)
+        let sequence = project.sequence
         
         // spine
-        let spine = try XCTUnwrap(sequence.spine)
+        let spine = sequence.spine
         
         let storyElements = spine.storyElements.zeroIndexed
-        XCTAssertEqual(storyElements.count, 1)
+        #expect(storyElements.count == 1)
         
         // story elements
-        let clip1 = try XCTUnwrap(storyElements[safe: 0]?.fcpAsSyncClip)
+        let clip1 = try #require(storyElements[safe: 0]?.fcpAsSyncClip)
         // confirm we have the right clip
-        XCTAssertEqual(clip1.name, "5A-1-1")
+        #expect(clip1.name == "5A-1-1")
         
         let markers = clip1.storyElements
             .filter(whereFCPElement: .marker)
             .zeroIndexed
-        XCTAssertEqual(markers.count, 1)
+        #expect(markers.count == 1)
         
-        let marker = try XCTUnwrap(markers.first)
+        let marker = try #require(markers.first)
         // confirm we have the right marker
-        XCTAssertEqual(marker.name, "Marker 1")
+        #expect(marker.name == "Marker 1")
         let extractedMarker = await marker.element.fcpExtract()
-        XCTAssertEqual(
-            extractedMarker.value(forContext: .absoluteStartAsTimecode()),
-            Self.tc("01:01:18:03", .fps25)
+        #expect(
+            extractedMarker.value(forContext: .absoluteStartAsTimecode())
+                == Self.tc("01:01:18:03", .fps25)
         )
-        XCTAssertEqual(extractedMarker.value(forContext: .inheritedRoles), [
-            .defaulted(.video(raw: "Video")!) // from first video asset in sync clip
-            // no audio role
-        ])
+        #expect(
+            extractedMarker.value(forContext: .inheritedRoles) == [
+                .defaulted(.video(raw: "Video")!) // from first video asset in sync clip
+                // no audio role
+            ]
+        )
     }
 }
 

@@ -6,17 +6,13 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-final class FinalCutPro_FCPXML_ClipMetadata: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_ClipMetadata: FCPXMLUtilities {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
@@ -25,7 +21,8 @@ final class FinalCutPro_FCPXML_ClipMetadata: FCPXMLTestCase {
     
     // MARK: - Tests
     
-    func testParse() throws {
+    @Test
+    func parse() async throws {
         // load file
         let rawData = try fileContents
         
@@ -33,11 +30,12 @@ final class FinalCutPro_FCPXML_ClipMetadata: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // version
-        XCTAssertEqual(fcpxml.version, .ver1_11)
+        #expect(fcpxml.version == .ver1_11)
     }
     
     /// Test metadata that applies to marker(s).
-    func testExtractMarkersMetadata() async throws {
+    @Test
+    func extractMarkersMetadata() async throws {
         // load file
         let rawData = try fileContents
         
@@ -45,7 +43,7 @@ final class FinalCutPro_FCPXML_ClipMetadata: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // project
-        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        let project = try #require(fcpxml.allProjects().first)
         
         let extractedMarkers = await project
             .extract(preset: .markers, scope: .mainTimeline)
@@ -55,38 +53,38 @@ final class FinalCutPro_FCPXML_ClipMetadata: FCPXMLTestCase {
         let markers = extractedMarkers
         
         let expectedMarkerCount = 1
-        XCTAssertEqual(markers.count, expectedMarkerCount)
+        #expect(markers.count == expectedMarkerCount)
         
         print("Markers sorted by absolute timecode:")
         print(Self.debugString(for: markers))
         
         // markers
         
-        let marker1 = try XCTUnwrap(markers[safe: 0])
+        let marker1 = try #require(markers[safe: 0])
         
         let metadata = marker1.value(forContext: .metadata)
         
-        XCTAssertEqual(metadata.count, 11)
+        #expect(metadata.count == 11)
         
         func md(key: FinalCutPro.FCPXML.Metadata.Key) -> FinalCutPro.FCPXML.Metadata.Metadatum? {
             let matches = metadata.filter { $0.key == key }
-            XCTAssertLessThan(matches.count, 2)
+            #expect(matches.count < 2)
             return matches.first
         }
         
         // metadata from media
-        XCTAssertEqual(md(key: .cameraName)?.value, "TestVideo Camera Name")
-        XCTAssertEqual(md(key: .rawToLogConversion)?.value, "0")
-        XCTAssertEqual(md(key: .colorProfile)?.value, "SD (6-1-6)")
-        XCTAssertEqual(md(key: .cameraISO)?.value, "0")
-        XCTAssertEqual(md(key: .cameraColorTemperature)?.value, "0")
-        XCTAssertEqual(md(key: .codecs)?.valueArray, ["'avc1'", "MPEG-4 AAC"])
-        XCTAssertEqual(md(key: .ingestDate)?.value, "2023-01-01 19:46:28 -0800")
+        #expect(md(key: .cameraName)?.value == "TestVideo Camera Name")
+        #expect(md(key: .rawToLogConversion)?.value == "0")
+        #expect(md(key: .colorProfile)?.value == "SD (6-1-6)")
+        #expect(md(key: .cameraISO)?.value == "0")
+        #expect(md(key: .cameraColorTemperature)?.value == "0")
+        #expect(md(key: .codecs)?.valueArray == ["'avc1'", "MPEG-4 AAC"])
+        #expect(md(key: .ingestDate)?.value == "2023-01-01 19:46:28 -0800")
         // metadata from clip
-        XCTAssertEqual(md(key: .reel)?.value, "TestVideo Reel")
-        XCTAssertEqual(md(key: .scene)?.value, "TestVideo Scene")
-        XCTAssertEqual(md(key: .take)?.value, "TestVideo Take")
-        XCTAssertEqual(md(key: .cameraAngle)?.value, "TestVideo Camera Angle")
+        #expect(md(key: .reel)?.value == "TestVideo Reel")
+        #expect(md(key: .scene)?.value == "TestVideo Scene")
+        #expect(md(key: .take)?.value == "TestVideo Take")
+        #expect(md(key: .cameraAngle)?.value == "TestVideo Camera Angle")
     }
 }
 

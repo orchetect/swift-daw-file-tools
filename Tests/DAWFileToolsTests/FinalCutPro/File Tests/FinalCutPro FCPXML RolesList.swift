@@ -6,17 +6,13 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-final class FinalCutPro_FCPXML_RolesList: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_RolesList: FCPXMLUtilities {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
@@ -26,18 +22,22 @@ final class FinalCutPro_FCPXML_RolesList: FCPXMLTestCase {
     /// Project @ 24fps.
     let projectFrameRate: TimecodeFrameRate = .fps24
     
-    func testParse() throws {
+    // MARK: - Tests
+    
+    @Test
+    func parse() async throws {
         // load
         let rawData = try fileContents
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // version
-        XCTAssertEqual(fcpxml.version, .ver1_11)
+        #expect(fcpxml.version == .ver1_11)
         
         // skip testing file contents, we only care about roles extraction
     }
     
-    func testExtractRoles() async throws {
+    @Test
+    func extractRoles() async throws {
         // load file
         let rawData = try fileContents
         
@@ -45,7 +45,7 @@ final class FinalCutPro_FCPXML_RolesList: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // project
-        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        let project = try #require(fcpxml.allProjects().first)
         
         let roles = await project.extract(
             preset: .roles(roleTypes: .allCases),
@@ -54,11 +54,11 @@ final class FinalCutPro_FCPXML_RolesList: FCPXMLTestCase {
         
         // dump(roles)
         
-        XCTAssertEqual(roles.count, 4)
-        XCTAssertTrue(roles.contains(.video(raw: "Video")!))
-        XCTAssertTrue(roles.contains(.video(raw: "FIXING.FIXING-1")!))
-        XCTAssertTrue(roles.contains(.video(raw: "TO-DO.TO-DO-1")!))
-        XCTAssertTrue(roles.contains(.video(raw: "VFX.VFX-1")!))
+        #expect(roles.count == 4)
+        #expect(roles.contains(.video(raw: "Video")!))
+        #expect(roles.contains(.video(raw: "FIXING.FIXING-1")!))
+        #expect(roles.contains(.video(raw: "TO-DO.TO-DO-1")!))
+        #expect(roles.contains(.video(raw: "VFX.VFX-1")!))
     }
 }
 

@@ -6,17 +6,13 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-final class FinalCutPro_FCPXML_DisabledClips: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_DisabledClips: FCPXMLUtilities {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
@@ -26,18 +22,22 @@ final class FinalCutPro_FCPXML_DisabledClips: FCPXMLTestCase {
     /// Project @ 24fps.
     let projectFrameRate: TimecodeFrameRate = .fps24
     
-    func testParse() throws {
+    // MARK: - Tests
+    
+    @Test
+    func parse() async throws {
         // load
         let rawData = try fileContents
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // version
-        XCTAssertEqual(fcpxml.version, .ver1_11)
+        #expect(fcpxml.version == .ver1_11)
         
         // skip testing file contents, we only care about roles assigned to markers for these tests
     }
     
-    func testExtractMarkers_IncludeDisabledClips() async throws {
+    @Test
+    func extractMarkers_IncludeDisabledClips() async throws {
         // load file
         let rawData = try fileContents
         
@@ -45,7 +45,7 @@ final class FinalCutPro_FCPXML_DisabledClips: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // project
-        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        let project = try #require(fcpxml.allProjects().first)
         
         var scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline
         scope.includeDisabled = true
@@ -58,27 +58,28 @@ final class FinalCutPro_FCPXML_DisabledClips: FCPXMLTestCase {
         let markers = extractedMarkers
         
         let expectedMarkerCount = 4
-        XCTAssertEqual(markers.count, expectedMarkerCount)
+        #expect(markers.count == expectedMarkerCount)
         
         print("Markers sorted by absolute timecode:")
         print(Self.debugString(for: markers))
         
         // Titles clips should never have an audio role
         
-        let marker1 = try XCTUnwrap(markers[safe: 0])
-        XCTAssertEqual(marker1.name, "Marker 1")
+        let marker1 = try #require(markers[safe: 0])
+        #expect(marker1.name == "Marker 1")
         
-        let marker2 = try XCTUnwrap(markers[safe: 1])
-        XCTAssertEqual(marker2.name, "Marker 2")
+        let marker2 = try #require(markers[safe: 1])
+        #expect(marker2.name == "Marker 2")
         
-        let marker3 = try XCTUnwrap(markers[safe: 2])
-        XCTAssertEqual(marker3.name, "Marker 3")
+        let marker3 = try #require(markers[safe: 2])
+        #expect(marker3.name == "Marker 3")
         
-        let marker4 = try XCTUnwrap(markers[safe: 3])
-        XCTAssertEqual(marker4.name, "Marker 4")
+        let marker4 = try #require(markers[safe: 3])
+        #expect(marker4.name == "Marker 4")
     }
     
-    func testExtractMarkers_ExcludeDisabledClips() async throws {
+    @Test
+    func extractMarkers_ExcludeDisabledClips() async throws {
         // load file
         let rawData = try fileContents
         
@@ -86,7 +87,7 @@ final class FinalCutPro_FCPXML_DisabledClips: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // project
-        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        let project = try #require(fcpxml.allProjects().first)
         
         var scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline
         scope.includeDisabled = false
@@ -99,18 +100,18 @@ final class FinalCutPro_FCPXML_DisabledClips: FCPXMLTestCase {
         let markers = extractedMarkers
         
         let expectedMarkerCount = 2
-        XCTAssertEqual(markers.count, expectedMarkerCount)
+        #expect(markers.count == expectedMarkerCount)
         
         print("Markers sorted by absolute timecode:")
         print(Self.debugString(for: markers))
         
         // Titles clips should never have an audio role
         
-        let marker1 = try XCTUnwrap(markers[safe: 0])
-        XCTAssertEqual(marker1.name, "Marker 1")
+        let marker1 = try #require(markers[safe: 0])
+        #expect(marker1.name == "Marker 1")
         
-        let marker3 = try XCTUnwrap(markers[safe: 1])
-        XCTAssertEqual(marker3.name, "Marker 3")
+        let marker3 = try #require(markers[safe: 1])
+        #expect(marker3.name == "Marker 3")
     }
 }
 

@@ -6,119 +6,113 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
-/* @testable */ import DAWFileTools
+import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
 
-final class FinalCutPro_FCPXML_RootVersionTests: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_RootVersionTests: FCPXMLUtilities {
     typealias Version = FinalCutPro.FCPXML.Version
     
-    func testVersion_1_12() {
+    @Test
+    func version_1_12() async {
         let v = Version(1, 12)
         
-        XCTAssertEqual(v.major, 1)
-        XCTAssertEqual(v.minor, 12)
-        XCTAssertEqual(v.patch, 0)
-        XCTAssertEqual(v.semanticVersion.build, nil)
-        XCTAssertEqual(v.semanticVersion.preRelease, nil)
+        #expect(v.major == 1)
+        #expect(v.minor == 12)
+        #expect(v.patch == 0)
+        #expect(v.semanticVersion.build == nil)
+        #expect(v.semanticVersion.preRelease == nil)
         
-        XCTAssertEqual(v.rawValue, "1.12")
+        #expect(v.rawValue == "1.12")
     }
     
-    func testVersion_1_12_1() {
+    @Test
+    func version_1_12_1() async {
         let v = Version(1, 12, 1)
         
-        XCTAssertEqual(v.major, 1)
-        XCTAssertEqual(v.minor, 12)
-        XCTAssertEqual(v.patch, 1)
-        XCTAssertEqual(v.semanticVersion.build, nil)
-        XCTAssertEqual(v.semanticVersion.preRelease, nil)
+        #expect(v.major == 1)
+        #expect(v.minor == 12)
+        #expect(v.patch == 1)
+        #expect(v.semanticVersion.build == nil)
+        #expect(v.semanticVersion.preRelease == nil)
         
-        XCTAssertEqual(v.rawValue, "1.12.1")
+        #expect(v.rawValue == "1.12.1")
     }
     
-    func testVersion_Equatable() {
-        XCTAssertEqual(
-            Version(1, 12),
-            Version(1, 12)
-        )
-        
-        XCTAssertNotEqual(
-            Version(1, 12),
-            Version(1, 13)
-        )
-        
-        XCTAssertNotEqual(
-            Version(1, 12),
-            Version(2, 12)
-        )
+    @Test
+    func version_Equatable() async {
+        #expect(Version(1, 12) == Version(1, 12))
+        #expect(Version(1, 12) != Version(1, 13))
+        #expect(Version(1, 12) != Version(2, 12))
     }
     
-    func testVersion_Comparable() {
-        XCTAssertFalse(
-            Version(1, 12) < Version(1, 12)
+    @Test
+    func version_Comparable() async {
+        #expect(
+            !(Version(1, 12) < Version(1, 12))
         )
         
-        XCTAssertFalse(
-            Version(1, 12) > Version(1, 12)
+        #expect(
+            !(Version(1, 12) > Version(1, 12))
         )
         
-        XCTAssertTrue(
+        #expect(
             Version(1, 11) < Version(1, 12)
         )
         
-        XCTAssertTrue(
+        #expect(
             Version(1, 12) > Version(1, 11)
         )
         
-        XCTAssertTrue(
+        #expect(
             Version(1, 10) < Version(2, 3)
         )
         
-        XCTAssertTrue(
+        #expect(
             Version(2, 3) > Version(1, 10)
         )
     }
     
-    func testVersion_RawValue_EdgeCase_MajorVersionOnly() throws {
-        let v = try XCTUnwrap(Version(rawValue: "2"))
+    @Test
+    func version_RawValue_EdgeCase_MajorVersionOnly() async throws {
+        let v = try #require(Version(rawValue: "2"))
         
-        XCTAssertEqual(v.major, 2)
-        XCTAssertEqual(v.minor, 0)
-        XCTAssertEqual(v.patch, 0)
-        XCTAssertEqual(v.semanticVersion.build, nil)
-        XCTAssertEqual(v.semanticVersion.preRelease, nil)
+        #expect(v.major == 2)
+        #expect(v.minor == 0)
+        #expect(v.patch == 0)
+        #expect(v.semanticVersion.build == nil)
+        #expect(v.semanticVersion.preRelease == nil)
         
-        XCTAssertEqual(v.rawValue, "2.0")
+        #expect(v.rawValue == "2.0")
     }
     
-    func testVersion_RawValue_Invalid() throws {
-        XCTAssertNil(Version(rawValue: ""))
-        XCTAssertNil(Version(rawValue: "1."))
-        XCTAssertNil(Version(rawValue: "1.A"))
-        XCTAssertNil(Version(rawValue: "A"))
-        XCTAssertNil(Version(rawValue: "A.1"))
-        XCTAssertNil(Version(rawValue: "A.A"))
-        XCTAssertNil(Version(rawValue: "A.A.A"))
-        XCTAssertNil(Version(rawValue: "1.12."))
-        XCTAssertNil(Version(rawValue: "1.12.A"))
+    @Test
+    func version_RawValue_Invalid() async throws {
+        #expect(Version(rawValue: "") == nil)
+        #expect(Version(rawValue: "1.") == nil)
+        #expect(Version(rawValue: "1.A") == nil)
+        #expect(Version(rawValue: "A") == nil)
+        #expect(Version(rawValue: "A.1") == nil)
+        #expect(Version(rawValue: "A.A") == nil)
+        #expect(Version(rawValue: "A.A.A") == nil)
+        #expect(Version(rawValue: "1.12.") == nil)
+        #expect(Version(rawValue: "1.12.A") == nil)
     }
     
-    func testVersion_Init_RawValue() throws {
-        let v = try XCTUnwrap(Version(rawValue: "1.12"))
+    @Test
+    func version_Init_RawValue() async throws {
+        let v = try #require(Version(rawValue: "1.12"))
         
-        XCTAssertEqual(v.major, 1)
-        XCTAssertEqual(v.minor, 12)
+        #expect(v.major == 1)
+        #expect(v.minor == 12)
     }
     
-    func testVersion_RawValue() throws {
-        let v = try XCTUnwrap(Version(rawValue: "1.12"))
+    @Test
+    func version_RawValue() async throws {
+        let v = try #require(Version(rawValue: "1.12"))
         
-        XCTAssertEqual(v.rawValue, "1.12")
+        #expect(v.rawValue == "1.12")
     }
 }
 

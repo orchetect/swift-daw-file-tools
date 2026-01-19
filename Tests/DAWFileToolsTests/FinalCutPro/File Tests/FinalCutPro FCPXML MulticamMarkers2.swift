@@ -6,24 +6,23 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLUtilities {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
         try TestResource.FCPXMLExports.multicamMarkers2.data()
     } }
     
-    func testParse() async throws {
+    // MARK: - Tests
+    
+    @Test
+    func parse() async throws {
         // load file
         let rawData = try fileContents
         
@@ -35,122 +34,120 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         
         // events
         let events = fcpxml.allEvents()
-        XCTAssertEqual(events.count, 1)
+        #expect(events.count == 1)
         
-        let event = try XCTUnwrap(events[safe: 0])
-        XCTAssertEqual(event.name, "Test Event")
-        XCTAssertEqual(event.element._fcpEffectiveOcclusion(), .notOccluded)
+        let event = try #require(events[safe: 0])
+        #expect(event.name == "Test Event")
+        #expect(event.element._fcpEffectiveOcclusion() == .notOccluded)
         
         // projects
         let projects = event.projects
-        XCTAssertEqual(projects.count, 1)
+        #expect(projects.count == 1)
         
-        let project = try XCTUnwrap(projects[safe: 0])
-        XCTAssertEqual(project.element._fcpEffectiveOcclusion(), .notOccluded)
+        let project = try #require(projects[safe: 0])
+        #expect(project.element._fcpEffectiveOcclusion() == .notOccluded)
         
         // sequence
-        let sequence = try XCTUnwrap(project.sequence)
-        XCTAssertEqual(sequence.element._fcpEffectiveOcclusion(), .notOccluded)
+        let sequence = project.sequence
+        #expect(sequence.element._fcpEffectiveOcclusion() == .notOccluded)
         
         // spine
-        let spine = try XCTUnwrap(sequence.spine)
+        let spine = sequence.spine
         
         let storyElements = spine.storyElements.zeroIndexed
-        XCTAssertEqual(storyElements.count, 1)
+        #expect(storyElements.count == 1)
         
         // mc-clip
         
-        let mcClip = try XCTUnwrap(storyElements[safe: 0]?.fcpAsMCClip)
-        XCTAssertEqual(mcClip.ref, "r2")
-        XCTAssertEqual(mcClip.lane, nil)
-        XCTAssertEqual(mcClip.offsetAsTimecode(), Self.tc("01:00:00:00", .fps23_976))
-        XCTAssertEqual(mcClip.offsetAsTimecode()?.frameRate, .fps23_976)
-        XCTAssertEqual(mcClip.name, "MC")
-        XCTAssertEqual(mcClip.startAsTimecode(), Self.tc("00:00:13:01", .fps23_976))
-        XCTAssertEqual(mcClip.durationAsTimecode(), Self.tc("00:00:10:00", .fps23_976))
-        XCTAssertEqual(mcClip.durationAsTimecode()?.frameRate, .fps23_976)
-        XCTAssertEqual(mcClip.enabled, true)
+        let mcClip = try #require(storyElements[safe: 0]?.fcpAsMCClip)
+        #expect(mcClip.ref == "r2")
+        #expect(mcClip.lane == nil)
+        #expect(mcClip.offsetAsTimecode() == Self.tc("01:00:00:00", .fps23_976))
+        #expect(mcClip.offsetAsTimecode()?.frameRate == .fps23_976)
+        #expect(mcClip.name == "MC")
+        #expect(mcClip.startAsTimecode() == Self.tc("00:00:13:01", .fps23_976))
+        #expect(mcClip.durationAsTimecode() == Self.tc("00:00:10:00", .fps23_976))
+        #expect(mcClip.durationAsTimecode()?.frameRate == .fps23_976)
+        #expect(mcClip.enabled)
         let extractedMCClip = await mcClip.element.fcpExtract()
-        XCTAssertEqual(
-            extractedMCClip.value(forContext: .absoluteStartAsTimecode()),
-            Self.tc("01:00:00:00", .fps23_976)
+        #expect(
+            extractedMCClip.value(forContext: .absoluteStartAsTimecode())
+                == Self.tc("01:00:00:00", .fps23_976)
         )
-        XCTAssertEqual(extractedMCClip.value(forContext: .occlusion), .notOccluded)
-        XCTAssertEqual(extractedMCClip.value(forContext: .effectiveOcclusion), .notOccluded)
-        XCTAssertEqual(extractedMCClip.value(forContext: .localRoles), [
+        #expect(extractedMCClip.value(forContext: .occlusion) == .notOccluded)
+        #expect(extractedMCClip.value(forContext: .effectiveOcclusion) == .notOccluded)
+        #expect(extractedMCClip.value(forContext: .localRoles) == [
             .video(raw: "Custom Video Role.Custom Video Role A")!,
             .audio(raw: "music.music-1")!
         ])
-        XCTAssertEqual(extractedMCClip.value(forContext: .inheritedRoles), [
+        #expect(extractedMCClip.value(forContext: .inheritedRoles) == [
             .inherited(.video(raw: "Custom Video Role.Custom Video Role A")!),
             .inherited(.audio(raw: "music.music-1")!)
         ])
         
         // mc-clip multicam media
         
-        let mc = try XCTUnwrap(mcClip.multicamResource)
+        let mc = try #require(mcClip.multicamResource)
         
-        XCTAssertEqual(mc.format, "r1")
-        XCTAssertEqual(mc.tcStartAsTimecode(), Self.tc("00:00:00:00", .fps23_976))
-        XCTAssertEqual(mc.angles.count, 6)
+        #expect(mc.format == "r1")
+        #expect(mc.tcStartAsTimecode() == Self.tc("00:00:00:00", .fps23_976))
+        #expect(mc.angles.count == 6)
         
         // multicam media angles
         
-        let mcAngle1 = try XCTUnwrap(mc.angles[safe: 0])
-        XCTAssertEqual(mcAngle1.name, "A")
-        XCTAssertEqual(mcAngle1.angleID, "+L5xmXXnRXOGdjFq1Eo7EQ")
-        XCTAssertEqual(mcAngle1.contents.count, 2)
+        let mcAngle1 = try #require(mc.angles[safe: 0])
+        #expect(mcAngle1.name == "A")
+        #expect(mcAngle1.angleID == "+L5xmXXnRXOGdjFq1Eo7EQ")
+        #expect(mcAngle1.contents.count == 2)
         
-        let mcAngle2 = try XCTUnwrap(mc.angles[safe: 1])
-        XCTAssertEqual(mcAngle2.name, "B")
-        XCTAssertEqual(mcAngle2.angleID, "FCw5EnkUQcOHu8fwK2TiQQ")
-        XCTAssertEqual(mcAngle2.contents.count, 2)
+        let mcAngle2 = try #require(mc.angles[safe: 1])
+        #expect(mcAngle2.name == "B")
+        #expect(mcAngle2.angleID == "FCw5EnkUQcOHu8fwK2TiQQ")
+        #expect(mcAngle2.contents.count == 2)
         
-        let mcAngle3 = try XCTUnwrap(mc.angles[safe: 2])
-        XCTAssertEqual(mcAngle3.name, "C")
-        XCTAssertEqual(mcAngle3.angleID, "LphqqelgRX6/pXqi35MoGA")
-        XCTAssertEqual(mcAngle3.contents.count, 2)
+        let mcAngle3 = try #require(mc.angles[safe: 2])
+        #expect(mcAngle3.name == "C")
+        #expect(mcAngle3.angleID == "LphqqelgRX6/pXqi35MoGA")
+        #expect(mcAngle3.contents.count == 2)
         
-        let mcAngle4 = try XCTUnwrap(mc.angles[safe: 3])
-        XCTAssertEqual(mcAngle4.name, "D")
-        XCTAssertEqual(mcAngle4.angleID, "gA31yYbYRRSetqQyxAwC8g")
-        XCTAssertEqual(mcAngle4.contents.count, 2)
+        let mcAngle4 = try #require(mc.angles[safe: 3])
+        #expect(mcAngle4.name == "D")
+        #expect(mcAngle4.angleID == "gA31yYbYRRSetqQyxAwC8g")
+        #expect(mcAngle4.contents.count == 2)
         
-        let mcAngle5 = try XCTUnwrap(mc.angles[safe: 4])
-        XCTAssertEqual(mcAngle5.name, "Music Angle")
-        XCTAssertEqual(mcAngle5.angleID, "9jilYFZRQZ+GI27X4ckxpQ")
-        XCTAssertEqual(mcAngle5.contents.count, 1)
+        let mcAngle5 = try #require(mc.angles[safe: 4])
+        #expect(mcAngle5.name == "Music Angle")
+        #expect(mcAngle5.angleID == "9jilYFZRQZ+GI27X4ckxpQ")
+        #expect(mcAngle5.contents.count == 1)
         
-        let mcAngle6 = try XCTUnwrap(mc.angles[safe: 5])
-        XCTAssertEqual(mcAngle6.name, "Sound FX Angle")
-        XCTAssertEqual(mcAngle6.angleID, "u6FMsIKMT/eATN52hY2/rA")
-        XCTAssertEqual(mcAngle6.contents.count, 2)
+        let mcAngle6 = try #require(mc.angles[safe: 5])
+        #expect(mcAngle6.name == "Sound FX Angle")
+        #expect(mcAngle6.angleID == "u6FMsIKMT/eATN52hY2/rA")
+        #expect(mcAngle6.contents.count == 2)
         
         // mc-clip marker on main timeline
         
         let mcMarkers = mcClip.storyElements
             .filter(whereFCPElement: .marker)
             .zeroIndexed
-        XCTAssertEqual(mcMarkers.count, 1)
+        #expect(mcMarkers.count == 1)
         
-        let mcMarker = try XCTUnwrap(mcMarkers[safe: 0])
-        XCTAssertEqual(mcMarker.name, "Marker on Multicam Clip")
+        let mcMarker = try #require(mcMarkers[safe: 0])
+        #expect(mcMarker.name == "Marker on Multicam Clip")
         let extractedMCMarker = await mcMarker.element.fcpExtract()
-        XCTAssertEqual(
-            extractedMCMarker.value(forContext: .absoluteStartAsTimecode()),
-            Self.tc("01:00:04:08", .fps23_976)
-        )
-        XCTAssertEqual(extractedMCMarker.value(forContext: .occlusion), .notOccluded) // within mc-clip
-        XCTAssertEqual(extractedMCMarker.value(forContext: .effectiveOcclusion), .notOccluded) // main timeline
-        XCTAssertEqual(extractedMCMarker.value(forContext: .localRoles), []) // markers never contain roles
-        XCTAssertEqual(extractedMCMarker.value(forContext: .inheritedRoles), [
+        #expect(extractedMCMarker.value(forContext: .absoluteStartAsTimecode()) == Self.tc("01:00:04:08", .fps23_976))
+        #expect(extractedMCMarker.value(forContext: .occlusion) == .notOccluded) // within mc-clip
+        #expect(extractedMCMarker.value(forContext: .effectiveOcclusion) == .notOccluded) // main timeline
+        #expect(extractedMCMarker.value(forContext: .localRoles) == []) // markers never contain roles
+        #expect(extractedMCMarker.value(forContext: .inheritedRoles) == [
             .inherited(.video(raw: "Custom Video Role.Custom Video Role A")!),
             .inherited(.audio(raw: "music.music-1")!)
         ])
     }
     
     /// Test main timeline markers extraction with limited occlusion conditions.
-    func testExtractMarkers_MainTimeline_LimitedOcclusions() async throws {
+    @Test
+    func extractMarkers_MainTimeline_LimitedOcclusions() async throws {
         // load file
         let rawData = try fileContents
         
@@ -158,20 +155,18 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        let event = try XCTUnwrap(fcpxml.allEvents().first)
+        let event = try #require(fcpxml.allEvents().first)
         
         // extract markers
         let extractedMarkers = await event.extract(preset: .markers, scope: .mainTimeline)
-        XCTAssertEqual(extractedMarkers.count, 1)
+        #expect(extractedMarkers.count == 1)
         
-        XCTAssertEqual(
-            extractedMarkers.map(\.name),
-            ["Marker on Multicam Clip"]
-        )
+        #expect(extractedMarkers.map(\.name) == ["Marker on Multicam Clip"])
     }
     
     /// Test main timeline markers extraction with all occlusion conditions.
-    func testExtractMarkers_MainTimeline_AllOcclusions_ActiveAngles() async throws {
+    @Test
+    func extractMarkers_MainTimeline_AllOcclusions_ActiveAngles() async throws {
         // load file
         let rawData = try fileContents
         
@@ -179,22 +174,20 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        let event = try XCTUnwrap(fcpxml.allEvents().first)
+        let event = try #require(fcpxml.allEvents().first)
         
         // extract markers
         var scope = FinalCutPro.FCPXML.ExtractionScope.mainTimeline
         scope.occlusions = .allCases
         let extractedMarkers = await event.extract(preset: .markers, scope: scope)
-        XCTAssertEqual(extractedMarkers.count, 1)
+        #expect(extractedMarkers.count == 1)
         
-        XCTAssertEqual(
-            extractedMarkers.map(\.name),
-            ["Marker on Multicam Clip"]
-        )
+        #expect(extractedMarkers.map(\.name) == ["Marker on Multicam Clip"])
     }
     
     /// Test deep markers extraction with all occlusion conditions and active angles.
-    func testExtractMarkers_Deep_AllOcclusions_ActiveAngles() async throws {
+    @Test
+    func extractMarkers_Deep_AllOcclusions_ActiveAngles() async throws {
         // load file
         let rawData = try fileContents
         
@@ -202,7 +195,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        let event = try XCTUnwrap(fcpxml.allEvents().first)
+        let event = try #require(fcpxml.allEvents().first)
         
         // extract markers
         var scope = FinalCutPro.FCPXML.ExtractionScope.deep()
@@ -210,10 +203,10 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         scope.occlusions = .allCases
         let extractedMarkers = await event.extract(preset: .markers, scope: scope)
         // 1 on mc-clip, and 5 with the mc-clip
-        XCTAssertEqual(extractedMarkers.count, 1 + 2)
+        #expect(extractedMarkers.count == 1 + 2)
         
         // note these are not sorted chronologically; they're in parsing order
-        XCTAssertEqual(extractedMarkers.map(\.name), [
+        #expect(extractedMarkers.map(\.name) == [
             "Marker on Multicam Clip", // on mc-clip
             "Marker in Multicam Clip on Angle B", // within mc-clip, video angle
             "Marker in Multicam Clip on Music Angle" // within mc-clip, audio angle
@@ -221,7 +214,8 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
     }
     
     /// Test deep markers extraction with all occlusion conditions and all angles.
-    func testExtractMarkers_Deep_AllOcclusions_AllAngles() async throws {
+    @Test
+    func extractMarkers_Deep_AllOcclusions_AllAngles() async throws {
         // load file
         let rawData = try fileContents
         
@@ -229,7 +223,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        let event = try XCTUnwrap(fcpxml.allEvents().first)
+        let event = try #require(fcpxml.allEvents().first)
         
         // extract markers
         var scope = FinalCutPro.FCPXML.ExtractionScope.deep()
@@ -237,10 +231,10 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         scope.occlusions = .allCases
         let extractedMarkers = await event.extract(preset: .markers, scope: scope)
         // 1 on mc-clip, and 5 with the mc-clip
-        XCTAssertEqual(extractedMarkers.count, 1 + 5)
+        #expect(extractedMarkers.count == 1 + 5)
         
         // note these are not sorted chronologically; they're in parsing order
-        XCTAssertEqual(extractedMarkers.map(\.name), [
+        #expect(extractedMarkers.map(\.name) == [
             "Marker on Multicam Clip", // on mc-clip
             "Marker in Multicam Clip on Angle A", // within mc-clip
             "Marker in Multicam Clip on Angle B", // within mc-clip

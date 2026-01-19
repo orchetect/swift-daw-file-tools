@@ -4,17 +4,14 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import DAWFileTools
 import SwiftTimecodeCore
 
-class DAWMarkerCodable_Tests: XCTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
-    // MARK: -
-    
-    func testTimeStorage_RealTime() throws {
+@Suite struct DAWMarker_Codable_Tests {
+    @Test
+    func timeStorage_RealTime() async throws {
         let sfBase: Timecode.SubFramesBase = .max80SubFrames
         
         let marker = DAWMarker(
@@ -34,20 +31,21 @@ class DAWMarkerCodable_Tests: XCTestCase {
         let decoded = try decoder.decode(DAWMarker.self, from: encoded)
         
         // check properties
-        XCTAssertEqual(marker, decoded)
-        XCTAssertEqual(marker.name, decoded.name)
-        XCTAssertEqual(marker.comment, decoded.comment)
-        XCTAssertEqual(marker.timeStorage, decoded.timeStorage)
+        #expect(marker == decoded)
+        #expect(marker.name == decoded.name)
+        #expect(marker.comment == decoded.comment)
+        #expect(marker.timeStorage == decoded.timeStorage)
         
         // check specific time storage value
         guard case let .realTime(relativeToStart: timeValue) = decoded.timeStorage?.value else {
-            XCTFail()
+            Issue.record()
             return
         }
-        XCTAssertEqual(timeValue, 3600.0)
+        #expect(timeValue == 3600.0)
     }
     
-    func testTimeStorage_TimecodeString() throws {
+    @Test
+    func timeStorage_TimecodeString() async throws {
         let sfBase: Timecode.SubFramesBase = .max80SubFrames
         
         let marker = DAWMarker(
@@ -67,20 +65,21 @@ class DAWMarkerCodable_Tests: XCTestCase {
         let decoded = try decoder.decode(DAWMarker.self, from: encoded)
         
         // check properties
-        XCTAssertEqual(marker, decoded)
-        XCTAssertEqual(marker.name, decoded.name)
-        XCTAssertEqual(marker.comment, decoded.comment)
-        XCTAssertEqual(marker.timeStorage, decoded.timeStorage)
+        #expect(marker == decoded)
+        #expect(marker.name == decoded.name)
+        #expect(marker.comment == decoded.comment)
+        #expect(marker.timeStorage == decoded.timeStorage)
         
         // check specific time storage value
         guard case let .timecodeString(absolute: timecodeString) = decoded.timeStorage?.value else {
-            XCTFail()
+            Issue.record()
             return
         }
-        XCTAssertEqual(timecodeString, "00:00:05:17")
+        #expect(timecodeString == "00:00:05:17")
     }
     
-    func testTimeStorage_Rational() throws {
+    @Test
+    func timeStorage_Rational() async throws {
         let sfBase: Timecode.SubFramesBase = .max80SubFrames
         
         let marker = DAWMarker(
@@ -100,16 +99,16 @@ class DAWMarkerCodable_Tests: XCTestCase {
         let decoded = try decoder.decode(DAWMarker.self, from: encoded)
         
         // check properties
-        XCTAssertEqual(marker, decoded)
-        XCTAssertEqual(marker.name, decoded.name)
-        XCTAssertEqual(marker.comment, decoded.comment)
-        XCTAssertEqual(marker.timeStorage, decoded.timeStorage)
+        #expect(marker == decoded)
+        #expect(marker.name == decoded.name)
+        #expect(marker.comment == decoded.comment)
+        #expect(marker.timeStorage == decoded.timeStorage)
         
         // check specific time storage value
         guard case let .rational(relativeToStart: fraction) = decoded.timeStorage?.value else {
-            XCTFail()
+            Issue.record()
             return
         }
-        XCTAssertEqual(fraction, Fraction(3600, 1))
+        #expect(fraction == Fraction(3600, 1))
     }
 }

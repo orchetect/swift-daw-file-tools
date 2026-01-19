@@ -4,19 +4,16 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-class ProTools_SessionText_TimeFormats: XCTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
-    func testSessionText_BarsBeats() throws {
-        try runSessionText(
+@Suite struct ProTools_SessionText_TimeFormats {
+    @Test
+    func sessionText_BarsBeats() async throws {
+        try await runSessionText(
             testResource: TestResource.PTSessionTextExports.timeFormats_BarsBeats_PT2022_9,
             
             track1ClipStartTime: .barsAndBeats(bar: 13, beat: 3, ticks: nil),
@@ -35,8 +32,9 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         )
     }
     
-    func testSessionText_BarsBeats_ShowSubframes() throws {
-        try runSessionText(
+    @Test
+    func sessionText_BarsBeats_ShowSubframes() async throws {
+        try await runSessionText(
             testResource: TestResource.PTSessionTextExports.timeFormats_BarsBeats_ShowSubframes_PT2022_9,
             
             track1ClipStartTime: .barsAndBeats(bar: 13, beat: 3, ticks: 48),
@@ -55,8 +53,9 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         )
     }
     
-    func testSessionText_FeetFrames() throws {
-        try runSessionText(
+    @Test
+    func sessionText_FeetFrames() async throws {
+        try await runSessionText(
             testResource: TestResource.PTSessionTextExports.timeFormats_FeetFrames_PT2022_9,
             
             track1ClipStartTime: .feetAndFrames(feet: 37, frames: 8, subFrames: nil),
@@ -75,8 +74,9 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         )
     }
     
-    func testSessionText_FeetFrames_ShowSubframes() throws {
-        try runSessionText(
+    @Test
+    func sessionText_FeetFrames_ShowSubframes() async throws {
+        try await runSessionText(
             testResource: TestResource.PTSessionTextExports.timeFormats_FeetFrames_ShowSubframes_PT2022_9,
             
             track1ClipStartTime: .feetAndFrames(feet: 37, frames: 8, subFrames: 60),
@@ -95,8 +95,9 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         )
     }
     
-    func testSessionText_MinSecs() throws {
-        try runSessionText(
+    @Test
+    func sessionText_MinSecs() async throws {
+        try await runSessionText(
             testResource: TestResource.PTSessionTextExports.timeFormats_MinSecs_PT2022_9,
             
             track1ClipStartTime: .minSecs(min: 0, sec: 25, ms: nil),
@@ -115,8 +116,9 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         )
     }
     
-    func testSessionText_MinSecs_ShowSubframes() throws {
-        try runSessionText(
+    @Test
+    func sessionText_MinSecs_ShowSubframes() async throws {
+        try await runSessionText(
             testResource: TestResource.PTSessionTextExports.timeFormats_MinSecs_ShowSubframes_PT2022_9,
             
             track1ClipStartTime: .minSecs(min: 0, sec: 25, ms: 025),
@@ -135,8 +137,9 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         )
     }
     
-    func testSessionText_Samples() throws {
-        try runSessionText(
+    @Test
+    func sessionText_Samples() async throws {
+        try await runSessionText(
             testResource: TestResource.PTSessionTextExports.timeFormats_Samples_PT2022_9,
             
             track1ClipStartTime: .samples(1_201_200),
@@ -155,8 +158,9 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         )
     }
     
-    func testSessionText_Samples_ShowSubframes() throws {
-        try runSessionText(
+    @Test
+    func sessionText_Samples_ShowSubframes() async throws {
+        try await runSessionText(
             testResource: TestResource.PTSessionTextExports.timeFormats_Samples_ShowSubframes_PT2022_9,
             
             track1ClipStartTime: .samples(1_201_200),
@@ -175,11 +179,12 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         )
     }
     
-    func testSessionText_Timecode() throws {
+    @Test
+    func sessionText_Timecode() async throws {
         func TC(_ tcc: Timecode.Components) -> Timecode {
             try! ProTools.formTimecode(tcc, at: .fps23_976)
         }
-        try runSessionText(
+        try await runSessionText(
             testResource: TestResource.PTSessionTextExports.timeFormats_Timecode_PT2022_9,
             
             track1ClipStartTime: .timecode(TC(.init(h: 23, m: 57, s: 25, f: 00))),
@@ -198,11 +203,12 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         )
     }
     
-    func testSessionText_Timecode_ShowSubframes() throws {
+    @Test
+    func sessionText_Timecode_ShowSubframes() async throws {
         func TC(_ tcc:  Timecode.Components) -> Timecode {
             try! ProTools.formTimecode(tcc, at: .fps23_976)
         }
-        try runSessionText(
+        try await runSessionText(
             testResource: TestResource.PTSessionTextExports.timeFormats_Timecode_ShowSubframes_PT2022_9,
             
             track1ClipStartTime: .timecode(TC(.init(h: 23, m: 57, s: 25, f: 00, sf: 00))),
@@ -223,7 +229,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
     
     // MARK: - Common Test Body
     
-    func runSessionText(
+    private func runSessionText(
         testResource: TestResource.File,
         track1ClipStartTime: ProTools.SessionInfo.TimeValue,
         track1ClipEndTime: ProTools.SessionInfo.TimeValue,
@@ -235,7 +241,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         marker1TimeRef: ProTools.SessionInfo.TimeValue,
         marker2Location: ProTools.SessionInfo.TimeValue,
         marker2TimeRef: ProTools.SessionInfo.TimeValue
-    ) throws {
+    ) async throws {
         let rawData = try testResource.data()
         
         // parse
@@ -245,57 +251,57 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         
         // parse messages
         
-        XCTAssertEqual(parseMessages.errors.count, 0)
+        #expect(parseMessages.errors.count == 0)
         if !parseMessages.errors.isEmpty {
             dump(parseMessages.errors)
         }
         
         // main header
         
-        XCTAssertEqual(sessionInfo.main.name,              "Test")
-        XCTAssertEqual(sessionInfo.main.sampleRate,        48000.0)
-        XCTAssertEqual(sessionInfo.main.bitDepth,          "24-bit")
-        XCTAssertEqual(
-            sessionInfo.main.startTimecode,
-            try ProTools.formTimecode(.init(h: 23, m: 57, s: 00, f: 00), at: .fps23_976)
+        #expect(sessionInfo.main.name == "Test")
+        #expect(sessionInfo.main.sampleRate == 48000.0)
+        #expect(sessionInfo.main.bitDepth == "24-bit")
+        #expect(
+            try sessionInfo.main.startTimecode
+                == ProTools.formTimecode(.init(h: 23, m: 57, s: 00, f: 00), at: .fps23_976)
         )
-        XCTAssertEqual(sessionInfo.main.frameRate,         .fps23_976)
-        XCTAssertEqual(sessionInfo.main.audioTrackCount,   2)
-        XCTAssertEqual(sessionInfo.main.audioClipCount,    0)
-        XCTAssertEqual(sessionInfo.main.audioFileCount,    0)
+        #expect(sessionInfo.main.frameRate == .fps23_976)
+        #expect(sessionInfo.main.audioTrackCount == 2)
+        #expect(sessionInfo.main.audioClipCount == 0)
+        #expect(sessionInfo.main.audioFileCount == 0)
         
         // files - online
         
-        XCTAssertEqual(sessionInfo.onlineFiles, [])
+        #expect(sessionInfo.onlineFiles == [])
         
         // files - offline
         
-        XCTAssertEqual(sessionInfo.offlineFiles, [])
+        #expect(sessionInfo.offlineFiles == [])
         
         // clips - online
         
-        XCTAssertNil(sessionInfo.onlineClips)  // empty
+        #expect(sessionInfo.onlineClips == nil)  // empty
         
         // clips - offline
         
-        XCTAssertNil(sessionInfo.offlineClips) // empty
+        #expect(sessionInfo.offlineClips == nil) // empty
         
         // plug-ins
         
-        XCTAssertEqual(sessionInfo.plugins, [])
+        #expect(sessionInfo.plugins == [])
         
         // tracks
         
-        let tracks = try XCTUnwrap(sessionInfo.tracks)
-        XCTAssertEqual(tracks.count, 2)
+        let tracks = try #require(sessionInfo.tracks)
+        #expect(tracks.count == 2)
         
-        let track1 = try XCTUnwrap(tracks[safe: 0])
-        XCTAssertEqual(track1.name, "Audio A")
-        XCTAssertEqual(track1.comments, "")
-        XCTAssertEqual(track1.userDelay, 0)
-        XCTAssertEqual(track1.state, [])
-        XCTAssertEqual(track1.plugins, [])
-        XCTAssertEqual(track1.clips, [
+        let track1 = try #require(tracks[safe: 0])
+        #expect(track1.name == "Audio A")
+        #expect(track1.comments == "")
+        #expect(track1.userDelay == 0)
+        #expect(track1.state == [])
+        #expect(track1.plugins == [])
+        #expect(track1.clips == [
             .init(
                 channel: 1,
                 event: 1,
@@ -307,13 +313,13 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
             )
         ])
         
-        let track2 = try XCTUnwrap(tracks[safe: 1])
-        XCTAssertEqual(track2.name, "Audio B")
-        XCTAssertEqual(track2.comments, "")
-        XCTAssertEqual(track2.userDelay, 0)
-        XCTAssertEqual(track2.state, [])
-        XCTAssertEqual(track2.plugins, [])
-        XCTAssertEqual(track2.clips, [
+        let track2 = try #require(tracks[safe: 1])
+        #expect(track2.name == "Audio B")
+        #expect(track2.comments == "")
+        #expect(track2.userDelay == 0)
+        #expect(track2.state == [])
+        #expect(track2.plugins == [])
+        #expect(track2.clips == [
             .init(
                 channel: 1,
                 event: 1,
@@ -327,25 +333,25 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         
         // markers
         
-        let markers = try XCTUnwrap(sessionInfo.markers)
-        XCTAssertEqual(markers.count, 2)
+        let markers = try #require(sessionInfo.markers)
+        #expect(markers.count == 2)
         
-        let marker1 = try XCTUnwrap(markers[safe: 0])
-        XCTAssertEqual(marker1.number, 1)
-        XCTAssertEqual(marker1.location, marker1Location)
-        XCTAssertEqual(marker1.timeReference, marker1TimeRef)
-        XCTAssertEqual(marker1.name, "Marker Absolute")
-        XCTAssertEqual(marker1.comment, "Comment")
+        let marker1 = try #require(markers[safe: 0])
+        #expect(marker1.number == 1)
+        #expect(marker1.location == marker1Location)
+        #expect(marker1.timeReference == marker1TimeRef)
+        #expect(marker1.name == "Marker Absolute")
+        #expect(marker1.comment == "Comment")
         
-        let marker2 = try XCTUnwrap(markers[safe: 1])
-        XCTAssertEqual(marker2.number, 2)
-        XCTAssertEqual(marker2.location, marker2Location)
-        XCTAssertEqual(marker2.timeReference, marker2TimeRef)
-        XCTAssertEqual(marker2.name, "Marker Bars-Beats")
-        XCTAssertEqual(marker2.comment, "Comment")
+        let marker2 = try #require(markers[safe: 1])
+        #expect(marker2.number == 2)
+        #expect(marker2.location == marker2Location)
+        #expect(marker2.timeReference == marker2TimeRef)
+        #expect(marker2.name == "Marker Bars-Beats")
+        #expect(marker2.comment == "Comment")
         
         // orphan data
         
-        XCTAssertNil(sessionInfo.orphanData)   // empty
+        #expect(sessionInfo.orphanData == nil) // empty
     }
 }

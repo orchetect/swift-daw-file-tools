@@ -6,17 +6,13 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-final class FinalCutPro_FCPXML_AudioOnly: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_AudioOnly: FCPXMLUtilities {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
@@ -26,18 +22,22 @@ final class FinalCutPro_FCPXML_AudioOnly: FCPXMLTestCase {
     /// Project @ 24fps.
     let projectFrameRate: TimecodeFrameRate = .fps24
     
-    func testParse() throws {
+    // MARK: - Tests
+    
+    @Test
+    func parse() async throws {
         // load
         let rawData = try fileContents
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // version
-        XCTAssertEqual(fcpxml.version, .ver1_11)
+        #expect(fcpxml.version == .ver1_11)
         
         // skip testing file contents
     }
     
-    func testExtractMarkers() async throws {
+    @Test
+    func extractMarkers() async throws {
         // load file
         let rawData = try fileContents
         
@@ -45,7 +45,7 @@ final class FinalCutPro_FCPXML_AudioOnly: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // project
-        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        let project = try #require(fcpxml.allProjects().first)
         
         let extractedMarkers = await project
             .extract(preset: .markers, scope: .mainTimeline)
@@ -55,13 +55,14 @@ final class FinalCutPro_FCPXML_AudioOnly: FCPXMLTestCase {
         let markers = extractedMarkers
         
         let expectedMarkerCount = 10
-        XCTAssertEqual(markers.count, expectedMarkerCount)
+        #expect(markers.count == expectedMarkerCount)
         
         // print("Markers sorted by absolute timecode:")
         // print(Self.debugString(for: markers))
     }
     
-    func testExtractRoles() async throws {
+    @Test
+    func extractRoles() async throws {
         // load file
         let rawData = try fileContents
         
@@ -69,7 +70,7 @@ final class FinalCutPro_FCPXML_AudioOnly: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // project
-        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        let project = try #require(fcpxml.allProjects().first)
         
         let roles = await project.extract(
             preset: .roles(roleTypes: .allCases),
@@ -78,9 +79,9 @@ final class FinalCutPro_FCPXML_AudioOnly: FCPXMLTestCase {
         
         dump(roles)
         
-        XCTAssertEqual(roles.count, 2)
-        XCTAssertTrue(roles.contains(.audio(raw: "music.music-1")!))
-        XCTAssertTrue(roles.contains(.audio(raw: "effects")!))
+        #expect(roles.count == 2)
+        #expect(roles.contains(.audio(raw: "music.music-1")!))
+        #expect(roles.contains(.audio(raw: "effects")!))
     }
 }
 

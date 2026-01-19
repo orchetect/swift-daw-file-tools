@@ -6,19 +6,17 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
 import Foundation
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
 
-final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_ElementInit: FCPXMLUtilities {
     // MARK: - Common Elements
     
-    func testAudioChannelSource() throws {
+    @Test
+    func audioChannelSource() async throws {
         let source = FinalCutPro.FCPXML.AudioChannelSource(
             sourceChannels: "1, 2",
             outputChannels: "L, R",
@@ -29,28 +27,30 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             active: false
         )
         
-        XCTAssertEqual(source.sourceChannels, "1, 2")
-        XCTAssertEqual(source.outputChannels, "L, R")
-        XCTAssertEqual(source.role, .init(rawValue: "music.music-1")!)
-        XCTAssertEqual(source.start, Fraction(3600, 1))
-        XCTAssertEqual(source.duration, Fraction(30, 1))
-        XCTAssertEqual(source.enabled, false)
-        XCTAssertEqual(source.active, false)
+        #expect(source.sourceChannels == "1, 2")
+        #expect(source.outputChannels == "L, R")
+        #expect(source.role == .init(rawValue: "music.music-1")!)
+        #expect(source.start == Fraction(3600, 1))
+        #expect(source.duration == Fraction(30, 1))
+        #expect(!source.enabled)
+        #expect(!source.active)
     }
     
-    func testAudioRoleSource() throws {
+    @Test
+    func audioRoleSource() async throws {
         let source = FinalCutPro.FCPXML.AudioRoleSource(
             role: .init(rawValue: "music.music-1")!,
             active: false
         )
         
-        XCTAssertEqual(source.role, .init(rawValue: "music.music-1")!)
-        XCTAssertEqual(source.active, false)
+        #expect(source.role == .init(rawValue: "music.music-1")!)
+        #expect(!source.active)
     }
     
     // MARK: - Annotations
     
-    func testCaption() {
+    @Test
+    func caption() async {
         let caption = FinalCutPro.FCPXML.Caption(
             role: .init(rawValue: "iTT?captionFormat=ITT.fr")!,
             note: "Some notes",
@@ -62,17 +62,18 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             enabled: false
         )
         
-        XCTAssertEqual(caption.role, .init(rawValue: "iTT?captionFormat=ITT.fr")!)
-        XCTAssertEqual(caption.note, "Some notes")
-        XCTAssertEqual(caption.lane, 2)
-        XCTAssertEqual(caption.offset, Fraction(10, 1))
-        XCTAssertEqual(caption.name, "Caption name")
-        XCTAssertEqual(caption.start, Fraction(20, 1))
-        XCTAssertEqual(caption.duration, Fraction(100, 1))
-        XCTAssertEqual(caption.enabled, false)
+        #expect(caption.role == .init(rawValue: "iTT?captionFormat=ITT.fr")!)
+        #expect(caption.note == "Some notes")
+        #expect(caption.lane == 2)
+        #expect(caption.offset == Fraction(10, 1))
+        #expect(caption.name == "Caption name")
+        #expect(caption.start == Fraction(20, 1))
+        #expect(caption.duration == Fraction(100, 1))
+        #expect(!caption.enabled)
     }
     
-    func testKeyword() {
+    @Test
+    func keyword() async {
         let keyword = FinalCutPro.FCPXML.Keyword(
             keywords: ["keyword1", "keyword2"],
             start: Fraction(10, 1),
@@ -80,34 +81,36 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             note: "Some notes"
         )
         
-        XCTAssertEqual(keyword.keywords, ["keyword1", "keyword2"])
-        XCTAssertEqual(keyword.note, "Some notes")
-        XCTAssertEqual(keyword.start, Fraction(10, 1))
-        XCTAssertEqual(keyword.duration, Fraction(25, 1))
+        #expect(keyword.keywords == ["keyword1", "keyword2"])
+        #expect(keyword.note == "Some notes")
+        #expect(keyword.start == Fraction(10, 1))
+        #expect(keyword.duration == Fraction(25, 1))
     }
     
-    func testMarker() {
+    @Test
+    func marker() async {
         let keyword = FinalCutPro.FCPXML.Marker(
             name: "Marker name",
-            configuration: .chapter(posterOffset: Fraction(2,1)),
+            configuration: .chapter(posterOffset: Fraction(2, 1)),
             start: Fraction(10, 1),
             duration: Fraction(25, 1),
             note: "Some notes"
         )
         
-        XCTAssertEqual(keyword.name, "Marker name")
-        XCTAssertEqual(keyword.configuration, .chapter(posterOffset: Fraction(2,1)))
-        XCTAssertEqual(keyword.start, Fraction(10, 1))
-        XCTAssertEqual(keyword.duration, Fraction(25, 1))
-        XCTAssertEqual(keyword.note, "Some notes")
+        #expect(keyword.name == "Marker name")
+        #expect(keyword.configuration == .chapter(posterOffset: Fraction(2, 1)))
+        #expect(keyword.start == Fraction(10, 1))
+        #expect(keyword.duration == Fraction(25, 1))
+        #expect(keyword.note == "Some notes")
         
         // extra checks
-        XCTAssertEqual(keyword.element.fcpPosterOffset, Fraction(2,1))
+        #expect(keyword.element.fcpPosterOffset == Fraction(2, 1))
     }
     
     // MARK: - Clips
     
-    func testAssetClip() {
+    @Test
+    mutating func assetClip() async {
         let assetClip = FinalCutPro.FCPXML.AssetClip(
             ref: "r2",
             srcEnable: .audio,
@@ -129,27 +132,28 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             metadata: metadata
         )
         
-        XCTAssertEqual(assetClip.ref, "r2")
-        XCTAssertEqual(assetClip.srcEnable, .audio)
-        XCTAssertEqual(assetClip.format, "r3")
-        XCTAssertEqual(assetClip.tcStart, Fraction(3600, 1))
-        XCTAssertEqual(assetClip.tcFormat, .dropFrame)
-        XCTAssertEqual(assetClip.audioRole, .init(rawValue: "music.music-1")!)
-        XCTAssertEqual(assetClip.videoRole, .init(rawValue: "video.video-1")!)
-        XCTAssertEqual(assetClip.audioStart, Fraction(10, 1))
-        XCTAssertEqual(assetClip.audioDuration, Fraction(20, 1))
-        XCTAssertEqual(assetClip.lane, 2)
-        XCTAssertEqual(assetClip.offset, Fraction(4, 1))
-        XCTAssertEqual(assetClip.name, "Clip name")
-        XCTAssertEqual(assetClip.start, Fraction(2, 1))
-        XCTAssertEqual(assetClip.duration, Fraction(100, 1))
-        XCTAssertEqual(assetClip.enabled, false)
-        XCTAssertEqual(assetClip.modDate, "2022-12-30 20:47:39 -0800")
-        XCTAssertEqual(assetClip.note, "Notes here")
-        XCTAssertEqual(assetClip.metadata, metadata)
+        #expect(assetClip.ref == "r2")
+        #expect(assetClip.srcEnable == .audio)
+        #expect(assetClip.format == "r3")
+        #expect(assetClip.tcStart == Fraction(3600, 1))
+        #expect(assetClip.tcFormat == .dropFrame)
+        #expect(assetClip.audioRole == .init(rawValue: "music.music-1")!)
+        #expect(assetClip.videoRole == .init(rawValue: "video.video-1")!)
+        #expect(assetClip.audioStart == Fraction(10, 1))
+        #expect(assetClip.audioDuration == Fraction(20, 1))
+        #expect(assetClip.lane == 2)
+        #expect(assetClip.offset == Fraction(4, 1))
+        #expect(assetClip.name == "Clip name")
+        #expect(assetClip.start == Fraction(2, 1))
+        #expect(assetClip.duration == Fraction(100, 1))
+        #expect(!assetClip.enabled)
+        #expect(assetClip.modDate == "2022-12-30 20:47:39 -0800")
+        #expect(assetClip.note == "Notes here")
+        #expect(assetClip.metadata == metadata)
     }
     
-    func testAudio() {
+    @Test
+    func audio() async {
         let audio = FinalCutPro.FCPXML.Audio(
             ref: "r2",
             role: .init(rawValue: "music.music-1")!,
@@ -165,33 +169,35 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             note: "Notes here"
         )
         
-        XCTAssertEqual(audio.ref, "r2")
-        XCTAssertEqual(audio.role, .init(rawValue: "music.music-1")!)
-        XCTAssertEqual(audio.srcID, "3")
-        XCTAssertEqual(audio.sourceChannels, "3, 4")
-        XCTAssertEqual(audio.outputChannels, "L, R")
-        XCTAssertEqual(audio.lane, 2)
-        XCTAssertEqual(audio.offset, Fraction(4, 1))
-        XCTAssertEqual(audio.name, "Clip name")
-        XCTAssertEqual(audio.start, Fraction(2, 1))
-        XCTAssertEqual(audio.duration, Fraction(100, 1))
-        XCTAssertEqual(audio.enabled, false)
-        XCTAssertEqual(audio.note, "Notes here")
+        #expect(audio.ref == "r2")
+        #expect(audio.role == .init(rawValue: "music.music-1")!)
+        #expect(audio.srcID == "3")
+        #expect(audio.sourceChannels == "3, 4")
+        #expect(audio.outputChannels == "L, R")
+        #expect(audio.lane == 2)
+        #expect(audio.offset == Fraction(4, 1))
+        #expect(audio.name == "Clip name")
+        #expect(audio.start == Fraction(2, 1))
+        #expect(audio.duration == Fraction(100, 1))
+        #expect(!audio.enabled)
+        #expect(audio.note == "Notes here")
     }
     
-    func testAudition() {
+    @Test
+    func audition() async {
         let audition = FinalCutPro.FCPXML.Audition(
             lane: 2,
             offset: Fraction(4, 1),
             modDate: "2022-12-30 20:47:39 -0800"
         )
         
-        XCTAssertEqual(audition.lane, 2)
-        XCTAssertEqual(audition.offset, Fraction(4, 1))
-        XCTAssertEqual(audition.modDate, "2022-12-30 20:47:39 -0800")
+        #expect(audition.lane == 2)
+        #expect(audition.offset == Fraction(4, 1))
+        #expect(audition.modDate == "2022-12-30 20:47:39 -0800")
     }
     
-    func testClip() {
+    @Test
+    mutating func clip() async {
         let clip = FinalCutPro.FCPXML.Clip(
             format: "r3",
             tcStart: Fraction(3600, 1),
@@ -209,23 +215,24 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             metadata: metadata
         )
         
-        XCTAssertEqual(clip.format, "r3")
-        XCTAssertEqual(clip.tcStart, Fraction(3600, 1))
-        XCTAssertEqual(clip.tcFormat, .dropFrame)
-        XCTAssertEqual(clip.audioStart, Fraction(10, 1))
-        XCTAssertEqual(clip.audioDuration, Fraction(20, 1))
-        XCTAssertEqual(clip.lane, 2)
-        XCTAssertEqual(clip.offset, Fraction(4, 1))
-        XCTAssertEqual(clip.name, "Clip name")
-        XCTAssertEqual(clip.start, Fraction(2, 1))
-        XCTAssertEqual(clip.duration, Fraction(100, 1))
-        XCTAssertEqual(clip.enabled, false)
-        XCTAssertEqual(clip.modDate, "2022-12-30 20:47:39 -0800")
-        XCTAssertEqual(clip.note, "Notes here")
-        XCTAssertEqual(clip.metadata, metadata)
+        #expect(clip.format == "r3")
+        #expect(clip.tcStart == Fraction(3600, 1))
+        #expect(clip.tcFormat == .dropFrame)
+        #expect(clip.audioStart == Fraction(10, 1))
+        #expect(clip.audioDuration == Fraction(20, 1))
+        #expect(clip.lane == 2)
+        #expect(clip.offset == Fraction(4, 1))
+        #expect(clip.name == "Clip name")
+        #expect(clip.start == Fraction(2, 1))
+        #expect(clip.duration == Fraction(100, 1))
+        #expect(!clip.enabled)
+        #expect(clip.modDate == "2022-12-30 20:47:39 -0800")
+        #expect(clip.note == "Notes here")
+        #expect(clip.metadata == metadata)
     }
     
-    func testGap() {
+    @Test
+    mutating func gap() async {
         let gap = FinalCutPro.FCPXML.Gap(
             offset: Fraction(4, 1),
             name: "Clip name",
@@ -236,16 +243,17 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             metadata: metadata
         )
         
-        XCTAssertEqual(gap.offset, Fraction(4, 1))
-        XCTAssertEqual(gap.name, "Clip name")
-        XCTAssertEqual(gap.start, Fraction(2, 1))
-        XCTAssertEqual(gap.duration, Fraction(100, 1))
-        XCTAssertEqual(gap.enabled, false)
-        XCTAssertEqual(gap.note, "Notes here")
-        XCTAssertEqual(gap.metadata, metadata)
+        #expect(gap.offset == Fraction(4, 1))
+        #expect(gap.name == "Clip name")
+        #expect(gap.start == Fraction(2, 1))
+        #expect(gap.duration == Fraction(100, 1))
+        #expect(!gap.enabled)
+        #expect(gap.note == "Notes here")
+        #expect(gap.metadata == metadata)
     }
     
-    func testMCClip() {
+    @Test
+    mutating func mcClip() async {
         let mcClip = FinalCutPro.FCPXML.MCClip(
             ref: "r2",
             srcEnable: .audio,
@@ -262,32 +270,34 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             metadata: metadata
         )
         
-        XCTAssertEqual(mcClip.ref, "r2")
-        XCTAssertEqual(mcClip.srcEnable, .audio)
-        XCTAssertEqual(mcClip.audioStart, Fraction(10, 1))
-        XCTAssertEqual(mcClip.audioDuration, Fraction(20, 1))
-        XCTAssertEqual(mcClip.lane, 2)
-        XCTAssertEqual(mcClip.offset, Fraction(4, 1))
-        XCTAssertEqual(mcClip.name, "Clip name")
-        XCTAssertEqual(mcClip.start, Fraction(2, 1))
-        XCTAssertEqual(mcClip.duration, Fraction(100, 1))
-        XCTAssertEqual(mcClip.enabled, false)
-        XCTAssertEqual(mcClip.modDate, "2022-12-30 20:47:39 -0800")
-        XCTAssertEqual(mcClip.note, "Notes here")
-        XCTAssertEqual(mcClip.metadata, metadata)
+        #expect(mcClip.ref == "r2")
+        #expect(mcClip.srcEnable == .audio)
+        #expect(mcClip.audioStart == Fraction(10, 1))
+        #expect(mcClip.audioDuration == Fraction(20, 1))
+        #expect(mcClip.lane == 2)
+        #expect(mcClip.offset == Fraction(4, 1))
+        #expect(mcClip.name == "Clip name")
+        #expect(mcClip.start == Fraction(2, 1))
+        #expect(mcClip.duration == Fraction(100, 1))
+        #expect(!mcClip.enabled)
+        #expect(mcClip.modDate == "2022-12-30 20:47:39 -0800")
+        #expect(mcClip.note == "Notes here")
+        #expect(mcClip.metadata == metadata)
     }
     
-    func testMulticamSource() {
+    @Test
+    func multicamSource() async {
         let mcSource = FinalCutPro.FCPXML.MulticamSource(
             angleID: "as9dn8oadnof",
             sourceEnable: .video
         )
         
-        XCTAssertEqual(mcSource.angleID, "as9dn8oadnof")
-        XCTAssertEqual(mcSource.sourceEnable, .video)
+        #expect(mcSource.angleID == "as9dn8oadnof")
+        #expect(mcSource.sourceEnable == .video)
     }
     
-    func testRefClip() {
+    @Test
+    mutating func refClip() async {
         let refClip = FinalCutPro.FCPXML.RefClip(
             ref: "r2",
             srcEnable: .audio,
@@ -305,23 +315,24 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             metadata: metadata
         )
         
-        XCTAssertEqual(refClip.ref, "r2")
-        XCTAssertEqual(refClip.srcEnable, .audio)
-        XCTAssertEqual(refClip.useAudioSubroles, true)
-        XCTAssertEqual(refClip.audioStart, Fraction(10, 1))
-        XCTAssertEqual(refClip.audioDuration, Fraction(20, 1))
-        XCTAssertEqual(refClip.lane, 2)
-        XCTAssertEqual(refClip.offset, Fraction(4, 1))
-        XCTAssertEqual(refClip.name, "Clip name")
-        XCTAssertEqual(refClip.start, Fraction(2, 1))
-        XCTAssertEqual(refClip.duration, Fraction(100, 1))
-        XCTAssertEqual(refClip.enabled, false)
-        XCTAssertEqual(refClip.modDate, "2022-12-30 20:47:39 -0800")
-        XCTAssertEqual(refClip.note, "Notes here")
-        XCTAssertEqual(refClip.metadata, metadata)
+        #expect(refClip.ref == "r2")
+        #expect(refClip.srcEnable == .audio)
+        #expect(refClip.useAudioSubroles)
+        #expect(refClip.audioStart == Fraction(10, 1))
+        #expect(refClip.audioDuration == Fraction(20, 1))
+        #expect(refClip.lane == 2)
+        #expect(refClip.offset == Fraction(4, 1))
+        #expect(refClip.name == "Clip name")
+        #expect(refClip.start == Fraction(2, 1))
+        #expect(refClip.duration == Fraction(100, 1))
+        #expect(!refClip.enabled)
+        #expect(refClip.modDate == "2022-12-30 20:47:39 -0800")
+        #expect(refClip.note == "Notes here")
+        #expect(refClip.metadata == metadata)
     }
     
-    func testSyncClip() {
+    @Test
+    mutating func syncClip() async {
         let syncClip = FinalCutPro.FCPXML.SyncClip(
             format: "r2",
             tcStart: Fraction(3600, 1),
@@ -339,31 +350,33 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             metadata: metadata
         )
         
-        XCTAssertEqual(syncClip.format, "r2")
-        XCTAssertEqual(syncClip.tcStart, Fraction(3600, 1))
-        XCTAssertEqual(syncClip.tcFormat, .dropFrame)
-        XCTAssertEqual(syncClip.audioStart, Fraction(10, 1))
-        XCTAssertEqual(syncClip.audioDuration, Fraction(20, 1))
-        XCTAssertEqual(syncClip.lane, 2)
-        XCTAssertEqual(syncClip.offset, Fraction(4, 1))
-        XCTAssertEqual(syncClip.name, "Clip name")
-        XCTAssertEqual(syncClip.start, Fraction(2, 1))
-        XCTAssertEqual(syncClip.duration, Fraction(100, 1))
-        XCTAssertEqual(syncClip.enabled, false)
-        XCTAssertEqual(syncClip.modDate, "2022-12-30 20:47:39 -0800")
-        XCTAssertEqual(syncClip.note, "Notes here")
-        XCTAssertEqual(syncClip.metadata, metadata)
+        #expect(syncClip.format == "r2")
+        #expect(syncClip.tcStart == Fraction(3600, 1))
+        #expect(syncClip.tcFormat == .dropFrame)
+        #expect(syncClip.audioStart == Fraction(10, 1))
+        #expect(syncClip.audioDuration == Fraction(20, 1))
+        #expect(syncClip.lane == 2)
+        #expect(syncClip.offset == Fraction(4, 1))
+        #expect(syncClip.name == "Clip name")
+        #expect(syncClip.start == Fraction(2, 1))
+        #expect(syncClip.duration == Fraction(100, 1))
+        #expect(!syncClip.enabled)
+        #expect(syncClip.modDate == "2022-12-30 20:47:39 -0800")
+        #expect(syncClip.note == "Notes here")
+        #expect(syncClip.metadata == metadata)
     }
     
-    func testSyncSource() {
+    @Test
+    func syncSource() async {
         let syncSource = FinalCutPro.FCPXML.SyncClip.SyncSource(
             sourceID: .connected
         )
         
-        XCTAssertEqual(syncSource.sourceID, .connected)
+        #expect(syncSource.sourceID == .connected)
     }
     
-    func testTitle() {
+    @Test
+    mutating func title() async {
         let title = FinalCutPro.FCPXML.Title(
             ref: "r2",
             role: .init(rawValue: "video.video-1")!,
@@ -377,19 +390,20 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             metadata: metadata
         )
         
-        XCTAssertEqual(title.ref, "r2")
-        XCTAssertEqual(title.role, .init(rawValue: "video.video-1")!)
-        XCTAssertEqual(title.lane, 2)
-        XCTAssertEqual(title.offset, Fraction(4, 1))
-        XCTAssertEqual(title.name, "Clip name")
-        XCTAssertEqual(title.start, Fraction(2, 1))
-        XCTAssertEqual(title.duration, Fraction(100, 1))
-        XCTAssertEqual(title.enabled, false)
-        XCTAssertEqual(title.note, "Notes here")
-        XCTAssertEqual(title.metadata, metadata)
+        #expect(title.ref == "r2")
+        #expect(title.role == .init(rawValue: "video.video-1")!)
+        #expect(title.lane == 2)
+        #expect(title.offset == Fraction(4, 1))
+        #expect(title.name == "Clip name")
+        #expect(title.start == Fraction(2, 1))
+        #expect(title.duration == Fraction(100, 1))
+        #expect(!title.enabled)
+        #expect(title.note == "Notes here")
+        #expect(title.metadata == metadata)
     }
     
-    func testTransition() {
+    @Test
+    mutating func transition() async {
         let transition = FinalCutPro.FCPXML.Transition(
             offset: Fraction(3600, 1),
             name: "Some Transition",
@@ -397,13 +411,14 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             metadata: metadata
         )
         
-        XCTAssertEqual(transition.offset, Fraction(3600, 1))
-        XCTAssertEqual(transition.name, "Some Transition")
-        XCTAssertEqual(transition.duration, Fraction(4, 1))
-        XCTAssertEqual(transition.metadata, metadata)
+        #expect(transition.offset == Fraction(3600, 1))
+        #expect(transition.name == "Some Transition")
+        #expect(transition.duration == Fraction(4, 1))
+        #expect(transition.metadata == metadata)
     }
     
-    func testVideo() {
+    @Test
+    func video() async {
         let title = FinalCutPro.FCPXML.Video(
             ref: "r2",
             role: .init(rawValue: "video.video-1")!,
@@ -417,21 +432,22 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             note: "Notes here"
         )
         
-        XCTAssertEqual(title.ref, "r2")
-        XCTAssertEqual(title.role, .init(rawValue: "video.video-1")!)
-        XCTAssertEqual(title.srcID, "3")
-        XCTAssertEqual(title.lane, 2)
-        XCTAssertEqual(title.offset, Fraction(4, 1))
-        XCTAssertEqual(title.name, "Clip name")
-        XCTAssertEqual(title.start, Fraction(2, 1))
-        XCTAssertEqual(title.duration, Fraction(100, 1))
-        XCTAssertEqual(title.enabled, false)
-        XCTAssertEqual(title.note, "Notes here")
+        #expect(title.ref == "r2")
+        #expect(title.role == .init(rawValue: "video.video-1")!)
+        #expect(title.srcID == "3")
+        #expect(title.lane == 2)
+        #expect(title.offset == Fraction(4, 1))
+        #expect(title.name == "Clip name")
+        #expect(title.start == Fraction(2, 1))
+        #expect(title.duration == Fraction(100, 1))
+        #expect(!title.enabled)
+        #expect(title.note == "Notes here")
     }
     
     // MARK: - Story
     
-    func testSequence() throws {
+    @Test
+    mutating func sequence() async throws {
         let sequence = FinalCutPro.FCPXML.Sequence(
             spine: spine,
             audioLayout: .stereo,
@@ -446,17 +462,17 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             metadata: metadata
         )
         
-        XCTAssertEqual(sequence.spine, spine)
-        XCTAssertEqual(sequence.audioLayout, .stereo)
-        XCTAssertEqual(sequence.audioRate, .rate48kHz)
-        XCTAssertEqual(sequence.renderFormat, "fmt")
-        XCTAssertEqual(sequence.keywords, "keyword1,keyword2")
-        XCTAssertEqual(sequence.format, "r2")
-        XCTAssertEqual(sequence.duration, Fraction(100, 1))
-        XCTAssertEqual(sequence.tcStart, Fraction(3600, 1))
-        XCTAssertEqual(sequence.tcFormat, .dropFrame)
-        XCTAssertEqual(sequence.note, "Some notes")
-        XCTAssertEqual(sequence.metadata, metadata)
+        #expect(sequence.spine == spine)
+        #expect(sequence.audioLayout == .stereo)
+        #expect(sequence.audioRate == .rate48kHz)
+        #expect(sequence.renderFormat == "fmt")
+        #expect(sequence.keywords == "keyword1,keyword2")
+        #expect(sequence.format == "r2")
+        #expect(sequence.duration == Fraction(100, 1))
+        #expect(sequence.tcStart == Fraction(3600, 1))
+        #expect(sequence.tcFormat == .dropFrame)
+        #expect(sequence.note == "Some notes")
+        #expect(sequence.metadata == metadata)
     }
     
     let spine = FinalCutPro.FCPXML.Spine(
@@ -466,11 +482,12 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         offset: Fraction(4, 1)
     )
     
-    func testSpine() {
-        XCTAssertEqual(spine.name, "Spine name")
-        XCTAssertEqual(spine.format, "r2")
-        XCTAssertEqual(spine.lane, 2)
-        XCTAssertEqual(spine.offset, Fraction(4, 1))
+    @Test
+    func spine() async {
+        #expect(spine.name == "Spine name")
+        #expect(spine.format == "r2")
+        #expect(spine.lane == 2)
+        #expect(spine.offset == Fraction(4, 1))
     }
                                          
     // MARK: - Resources
@@ -482,16 +499,17 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         bookmark: "Ym9va5QEAAAAAAQQMAAAAFVzgSnK8/ycBhhs90R/FSAWmWSsEtn07NRJDmX1V9MVtAMAAAQAAAADAwAAABgAKAcAAAABAQAAVm9sdW1lcwAJAAAAAQEAAFdvcmtzcGFjZQAAAAcAAAABAQAARHJvcGJveAAHAAAAAQEAAF9jb2RpbmcAEAAAAAEBAABNYXJrZXJzRXh0cmFjdG9yAwAAAAEBAABGQ1AABQAAAAEBAABNZWRpYQAAACMAAAABAQAASXMgVGhpcyBUaGUgTGFuZCBvZiBGaXJlIG9yIEljZS5tcDQAIAAAAAEGAAAQAAAAIAAAADQAAABEAAAAVAAAAGwAAAB4AAAAiAAAAAgAAAAEAwAAIwAAAAAAAAAIAAAABAMAAAIAAAAAAAAACAAAAAQDAADkAAAAAAAAAAgAAAAEAwAA6AAAAAAAAAAIAAAABAMAAMVPAQAAAAAACAAAAAQDAAB0UAEAAAAAAAgAAAAEAwAAi1ABAAAAAAAIAAAABAMAAJxTAQAAAAAAIAAAAAEGAADcAAAA7AAAAPwAAAAMAQAAHAEAACwBAAA8AQAATAEAAAgAAAAABAAAQcRNZNcAAAAYAAAAAQIAAAEAAAAAAAAADwAAAAAAAAAAAAAAAAAAABoAAAABCQAAZmlsZTovLy9Wb2x1bWVzL1dvcmtzcGFjZS8AAAgAAAAEAwAAAMBa1OgAAAAIAAAAAAQAAEHEzixfQGbMJAAAAAEBAAA0QTEzQkU5NS1GN0Y2LTRBRUYtQjUzRC1FQjdDODFGREQ1OEQYAAAAAQIAAAEBAAABAAAA7xMAAAEAAAAAAAAAAAAAABIAAAABAQAAL1ZvbHVtZXMvV29ya3NwYWNlAAAIAAAAAQkAAGZpbGU6Ly8vDAAAAAEBAABNYWNpbnRvc2ggSEQIAAAABAMAAADgAePoAAAACAAAAAAEAABBxXou9AAAACQAAAABAQAANTY4QUU1RjEtMzg1Ny00M0Q0LUIyOEMtNDcyRUQ1QjNDODYwGAAAAAECAACBAAAAAQAAAO8TAAABAAAAAAAAAAAAAAABAAAAAQEAAC8AAABgAAAA/v///wDwAAAAAAAABwAAAAIgAADwAgAAAAAAAAUgAABgAgAAAAAAABAgAABwAgAAAAAAABEgAACkAgAAAAAAABIgAACEAgAAAAAAABMgAACUAgAAAAAAACAgAADQAgAAAAAAAAQAAAADAwAAAPAAAAQAAAADAwAAAAAAAAQAAAADAwAAAQAAACQAAAABBgAAZAMAAHADAAB8AwAAcAMAAHADAABwAwAAcAMAAHADAABwAwAAqAAAAP7///8BAAAA/AIAAA0AAAAEEAAAtAAAAAAAAAAFEAAAXAEAAAAAAAAQEAAAlAEAAAAAAABAEAAAhAEAAAAAAAAAIAAAiAMAAAAAAAACIAAARAIAAAAAAAAFIAAAtAEAAAAAAAAQIAAAIAAAAAAAAAARIAAA+AEAAAAAAAASIAAA2AEAAAAAAAATIAAA6AEAAAAAAAAgIAAAJAIAAAAAAAAQ0AAABAAAAAAAAAA="
     )
     
-    func testMediaRep() throws {
-        XCTAssertEqual(mediaRep.kind, .originalMedia)
-        XCTAssertEqual(mediaRep.sig, "978BD3B254D68A6FA69E87D0D90544FD")
-        XCTAssertEqual(
-            mediaRep.src,
-            URL(string: "file:///Volumes/Workspace/Dropbox/_coding/MarkersExtractor/FCP/Media/Is%20This%20The%20Land%20of%20Fire%20or%20Ice.mp4")!
+    @Test
+    func mediaRep() async throws {
+        #expect(mediaRep.kind == .originalMedia)
+        #expect(mediaRep.sig == "978BD3B254D68A6FA69E87D0D90544FD")
+        #expect(
+            mediaRep.src
+                == URL(string: "file:///Volumes/Workspace/Dropbox/_coding/MarkersExtractor/FCP/Media/Is%20This%20The%20Land%20of%20Fire%20or%20Ice.mp4")!
         )
-        XCTAssertEqual(
-            mediaRep.bookmarkData, 
-            "Ym9va5QEAAAAAAQQMAAAAFVzgSnK8/ycBhhs90R/FSAWmWSsEtn07NRJDmX1V9MVtAMAAAQAAAADAwAAABgAKAcAAAABAQAAVm9sdW1lcwAJAAAAAQEAAFdvcmtzcGFjZQAAAAcAAAABAQAARHJvcGJveAAHAAAAAQEAAF9jb2RpbmcAEAAAAAEBAABNYXJrZXJzRXh0cmFjdG9yAwAAAAEBAABGQ1AABQAAAAEBAABNZWRpYQAAACMAAAABAQAASXMgVGhpcyBUaGUgTGFuZCBvZiBGaXJlIG9yIEljZS5tcDQAIAAAAAEGAAAQAAAAIAAAADQAAABEAAAAVAAAAGwAAAB4AAAAiAAAAAgAAAAEAwAAIwAAAAAAAAAIAAAABAMAAAIAAAAAAAAACAAAAAQDAADkAAAAAAAAAAgAAAAEAwAA6AAAAAAAAAAIAAAABAMAAMVPAQAAAAAACAAAAAQDAAB0UAEAAAAAAAgAAAAEAwAAi1ABAAAAAAAIAAAABAMAAJxTAQAAAAAAIAAAAAEGAADcAAAA7AAAAPwAAAAMAQAAHAEAACwBAAA8AQAATAEAAAgAAAAABAAAQcRNZNcAAAAYAAAAAQIAAAEAAAAAAAAADwAAAAAAAAAAAAAAAAAAABoAAAABCQAAZmlsZTovLy9Wb2x1bWVzL1dvcmtzcGFjZS8AAAgAAAAEAwAAAMBa1OgAAAAIAAAAAAQAAEHEzixfQGbMJAAAAAEBAAA0QTEzQkU5NS1GN0Y2LTRBRUYtQjUzRC1FQjdDODFGREQ1OEQYAAAAAQIAAAEBAAABAAAA7xMAAAEAAAAAAAAAAAAAABIAAAABAQAAL1ZvbHVtZXMvV29ya3NwYWNlAAAIAAAAAQkAAGZpbGU6Ly8vDAAAAAEBAABNYWNpbnRvc2ggSEQIAAAABAMAAADgAePoAAAACAAAAAAEAABBxXou9AAAACQAAAABAQAANTY4QUU1RjEtMzg1Ny00M0Q0LUIyOEMtNDcyRUQ1QjNDODYwGAAAAAECAACBAAAAAQAAAO8TAAABAAAAAAAAAAAAAAABAAAAAQEAAC8AAABgAAAA/v///wDwAAAAAAAABwAAAAIgAADwAgAAAAAAAAUgAABgAgAAAAAAABAgAABwAgAAAAAAABEgAACkAgAAAAAAABIgAACEAgAAAAAAABMgAACUAgAAAAAAACAgAADQAgAAAAAAAAQAAAADAwAAAPAAAAQAAAADAwAAAAAAAAQAAAADAwAAAQAAACQAAAABBgAAZAMAAHADAAB8AwAAcAMAAHADAABwAwAAcAMAAHADAABwAwAAqAAAAP7///8BAAAA/AIAAA0AAAAEEAAAtAAAAAAAAAAFEAAAXAEAAAAAAAAQEAAAlAEAAAAAAABAEAAAhAEAAAAAAAAAIAAAiAMAAAAAAAACIAAARAIAAAAAAAAFIAAAtAEAAAAAAAAQIAAAIAAAAAAAAAARIAAA+AEAAAAAAAASIAAA2AEAAAAAAAATIAAA6AEAAAAAAAAgIAAAJAIAAAAAAAAQ0AAABAAAAAAAAAA="
+        #expect(
+            mediaRep.bookmarkData
+                == "Ym9va5QEAAAAAAQQMAAAAFVzgSnK8/ycBhhs90R/FSAWmWSsEtn07NRJDmX1V9MVtAMAAAQAAAADAwAAABgAKAcAAAABAQAAVm9sdW1lcwAJAAAAAQEAAFdvcmtzcGFjZQAAAAcAAAABAQAARHJvcGJveAAHAAAAAQEAAF9jb2RpbmcAEAAAAAEBAABNYXJrZXJzRXh0cmFjdG9yAwAAAAEBAABGQ1AABQAAAAEBAABNZWRpYQAAACMAAAABAQAASXMgVGhpcyBUaGUgTGFuZCBvZiBGaXJlIG9yIEljZS5tcDQAIAAAAAEGAAAQAAAAIAAAADQAAABEAAAAVAAAAGwAAAB4AAAAiAAAAAgAAAAEAwAAIwAAAAAAAAAIAAAABAMAAAIAAAAAAAAACAAAAAQDAADkAAAAAAAAAAgAAAAEAwAA6AAAAAAAAAAIAAAABAMAAMVPAQAAAAAACAAAAAQDAAB0UAEAAAAAAAgAAAAEAwAAi1ABAAAAAAAIAAAABAMAAJxTAQAAAAAAIAAAAAEGAADcAAAA7AAAAPwAAAAMAQAAHAEAACwBAAA8AQAATAEAAAgAAAAABAAAQcRNZNcAAAAYAAAAAQIAAAEAAAAAAAAADwAAAAAAAAAAAAAAAAAAABoAAAABCQAAZmlsZTovLy9Wb2x1bWVzL1dvcmtzcGFjZS8AAAgAAAAEAwAAAMBa1OgAAAAIAAAAAAQAAEHEzixfQGbMJAAAAAEBAAA0QTEzQkU5NS1GN0Y2LTRBRUYtQjUzRC1FQjdDODFGREQ1OEQYAAAAAQIAAAEBAAABAAAA7xMAAAEAAAAAAAAAAAAAABIAAAABAQAAL1ZvbHVtZXMvV29ya3NwYWNlAAAIAAAAAQkAAGZpbGU6Ly8vDAAAAAEBAABNYWNpbnRvc2ggSEQIAAAABAMAAADgAePoAAAACAAAAAAEAABBxXou9AAAACQAAAABAQAANTY4QUU1RjEtMzg1Ny00M0Q0LUIyOEMtNDcyRUQ1QjNDODYwGAAAAAECAACBAAAAAQAAAO8TAAABAAAAAAAAAAAAAAABAAAAAQEAAC8AAABgAAAA/v///wDwAAAAAAAABwAAAAIgAADwAgAAAAAAAAUgAABgAgAAAAAAABAgAABwAgAAAAAAABEgAACkAgAAAAAAABIgAACEAgAAAAAAABMgAACUAgAAAAAAACAgAADQAgAAAAAAAAQAAAADAwAAAPAAAAQAAAADAwAAAAAAAAQAAAADAwAAAQAAACQAAAABBgAAZAMAAHADAAB8AwAAcAMAAHADAABwAwAAcAMAAHADAABwAwAAqAAAAP7///8BAAAA/AIAAA0AAAAEEAAAtAAAAAAAAAAFEAAAXAEAAAAAAAAQEAAAlAEAAAAAAABAEAAAhAEAAAAAAAAAIAAAiAMAAAAAAAACIAAARAIAAAAAAAAFIAAAtAEAAAAAAAAQIAAAIAAAAAAAAAARIAAA+AEAAAAAAAASIAAA2AEAAAAAAAATIAAA6AEAAAAAAAAgIAAAJAIAAAAAAAAQ0AAABAAAAAAAAAA="
                 .data(using: .utf8)!
         )
     }
@@ -521,21 +539,22 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
     )
     lazy var metadata = FinalCutPro.FCPXML.Metadata(element: metadataXML)!
     
-    func testMetadata() throws {
+    @Test
+    func metadata() async throws {
         let md = FinalCutPro.FCPXML.Metadata()
         
         // test initial state
-        XCTAssertNil(md.cameraName)
-        XCTAssertNil(md.rawToLogConversion)
-        XCTAssertNil(md.colorProfile)
-        XCTAssertNil(md.cameraISO)
-        XCTAssertNil(md.cameraColorTemperature)
-        XCTAssertNil(md.codecs)
-        XCTAssertNil(md.ingestDate)
-        XCTAssertNil(md.reel)
-        XCTAssertNil(md.scene)
-        XCTAssertNil(md.take)
-        XCTAssertNil(md.cameraAngle)
+        #expect(md.cameraName == nil)
+        #expect(md.rawToLogConversion == nil)
+        #expect(md.colorProfile == nil)
+        #expect(md.cameraISO == nil)
+        #expect(md.cameraColorTemperature == nil)
+        #expect(md.codecs == nil)
+        #expect(md.ingestDate == nil)
+        #expect(md.reel == nil)
+        #expect(md.scene == nil)
+        #expect(md.take == nil)
+        #expect(md.cameraAngle == nil)
         
         // set new values
         md.cameraName = "TestVideo Camera Name"
@@ -551,17 +570,17 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         md.cameraAngle = "TestVideo Camera Angle"
         
         // test new values
-        XCTAssertEqual(md.cameraName, "TestVideo Camera Name")
-        XCTAssertEqual(md.rawToLogConversion, "0")
-        XCTAssertEqual(md.colorProfile, "SD (6-1-6)")
-        XCTAssertEqual(md.cameraISO, "120")
-        XCTAssertEqual(md.cameraColorTemperature, "0")
-        XCTAssertEqual(md.codecs, ["'avc1'", "MPEG-4 AAC"])
-        XCTAssertEqual(md.ingestDate, "2023-01-01 19:46:28 -0800")
-        XCTAssertEqual(md.reel, "TestVideo Reel")
-        XCTAssertEqual(md.scene, "TestVideo Scene")
-        XCTAssertEqual(md.take, "TestVideo Take")
-        XCTAssertEqual(md.cameraAngle, "TestVideo Camera Angle")
+        #expect(md.cameraName == "TestVideo Camera Name")
+        #expect(md.rawToLogConversion == "0")
+        #expect(md.colorProfile == "SD (6-1-6)")
+        #expect(md.cameraISO == "120")
+        #expect(md.cameraColorTemperature == "0")
+        #expect(md.codecs == ["'avc1'", "MPEG-4 AAC"])
+        #expect(md.ingestDate == "2023-01-01 19:46:28 -0800")
+        #expect(md.reel == "TestVideo Reel")
+        #expect(md.scene == "TestVideo Scene")
+        #expect(md.take == "TestVideo Take")
+        #expect(md.cameraAngle == "TestVideo Camera Angle")
         
         // remove values
         md.cameraName = nil
@@ -577,64 +596,69 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         md.cameraAngle = nil
         
         // test removed values
-        XCTAssertNil(md.cameraName)
-        XCTAssertNil(md.rawToLogConversion)
-        XCTAssertNil(md.colorProfile)
-        XCTAssertNil(md.cameraISO)
-        XCTAssertNil(md.cameraColorTemperature)
-        XCTAssertNil(md.codecs)
-        XCTAssertNil(md.ingestDate)
-        XCTAssertNil(md.reel)
-        XCTAssertNil(md.scene)
-        XCTAssertNil(md.take)
-        XCTAssertNil(md.cameraAngle)
+        #expect(md.cameraName == nil)
+        #expect(md.rawToLogConversion == nil)
+        #expect(md.colorProfile == nil)
+        #expect(md.cameraISO == nil)
+        #expect(md.cameraColorTemperature == nil)
+        #expect(md.codecs == nil)
+        #expect(md.ingestDate == nil)
+        #expect(md.reel == nil)
+        #expect(md.scene == nil)
+        #expect(md.take == nil)
+        #expect(md.cameraAngle == nil)
         
         // check codecs with empty array; should remove key entirely.
         md.codecs = []
-        XCTAssertNil(md.codecs)
+        #expect(md.codecs == nil)
     }
     
-    func testMetadata_FromXML() throws {
-        XCTAssertEqual(metadata.cameraName, "TestVideo Camera Name")
-        XCTAssertEqual(metadata.rawToLogConversion, "0") // TODO: should be `Bool` instead of `String`?
-        XCTAssertEqual(metadata.colorProfile, "SD (6-1-6)")
-        XCTAssertEqual(metadata.cameraISO, "120")
-        XCTAssertEqual(metadata.cameraColorTemperature, "0")
-        XCTAssertEqual(metadata.codecs, ["'avc1'", "MPEG-4 AAC"])
-        XCTAssertEqual(metadata.ingestDate, "2023-01-01 19:46:28 -0800")
-        XCTAssertEqual(metadata.reel, "TestVideo Reel")
-        XCTAssertEqual(metadata.scene, "TestVideo Scene")
-        XCTAssertEqual(metadata.take, "TestVideo Take")
-        XCTAssertEqual(metadata.cameraAngle, "TestVideo Camera Angle")
+    @Test
+    mutating func metadata_FromXML() async throws {
+        let metadata = metadata
+        
+        #expect(metadata.cameraName == "TestVideo Camera Name")
+        #expect(metadata.rawToLogConversion == "0") // TODO: should be `Bool` instead of `String`?
+        #expect(metadata.colorProfile == "SD (6-1-6)")
+        #expect(metadata.cameraISO == "120")
+        #expect(metadata.cameraColorTemperature == "0")
+        #expect(metadata.codecs == ["'avc1'", "MPEG-4 AAC"])
+        #expect(metadata.ingestDate == "2023-01-01 19:46:28 -0800")
+        #expect(metadata.reel == "TestVideo Reel")
+        #expect(metadata.scene == "TestVideo Scene")
+        #expect(metadata.take == "TestVideo Take")
+        #expect(metadata.cameraAngle == "TestVideo Camera Angle")
     }
     
-    func testMetadatum() throws {
+    @Test
+    func metadatum() async throws {
         let metadatum = FinalCutPro.FCPXML.Metadata.Metadatum()
         
         metadatum.key = .ingestDate
-        XCTAssertEqual(metadatum.key, .ingestDate)
+        #expect(metadatum.key == .ingestDate)
         
         metadatum.keyString = "com.domain.some.key"
-        XCTAssertEqual(metadatum.keyString, "com.domain.some.key")
-        XCTAssertEqual(metadatum.key, nil) // will be nil since the key isn't recognized
+        #expect(metadatum.keyString == "com.domain.some.key")
+        #expect(metadatum.key == nil) // will be nil since the key isn't recognized
         
         metadatum.value = "Value String"
-        XCTAssertEqual(metadatum.value, "Value String")
+        #expect(metadatum.value == "Value String")
         
         metadatum.editable = true
-        XCTAssertEqual(metadatum.editable, true)
+        #expect(metadatum.editable)
         
         metadatum.type = .timecode
-        XCTAssertEqual(metadatum.type, .timecode)
+        #expect(metadatum.type == .timecode)
         
         metadatum.displayName = "Some MD Name"
-        XCTAssertEqual(metadatum.displayName, "Some MD Name")
+        #expect(metadatum.displayName == "Some MD Name")
         
         metadatum.displayDescription = "Description of some MD."
-        XCTAssertEqual(metadatum.displayDescription, "Description of some MD.")
+        #expect(metadatum.displayDescription == "Description of some MD.")
     }
     
-    func testAsset() throws {
+    @Test
+    mutating func asset() async throws {
         let asset = FinalCutPro.FCPXML.Asset(
             id: "r5",
             name: "Is This The Land of Fire or Ice",
@@ -653,24 +677,25 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             metadata: metadata
         )
         
-        XCTAssertEqual(asset.id, "r5")
-        XCTAssertEqual(asset.name, "Is This The Land of Fire or Ice")
-        XCTAssertEqual(asset.start, .zero)
-        XCTAssertEqual(asset.duration, Fraction(205800, 1000))
-        XCTAssertEqual(asset.format, "r1")
-        XCTAssertEqual(asset.uid, "978BD3B254D68A6FA69E87D0D90544FD")
-        XCTAssertEqual(asset.hasAudio, true)
-        XCTAssertEqual(asset.hasVideo, true)
-        XCTAssertEqual(asset.audioSources, 1)
-        XCTAssertEqual(asset.audioChannels, 2)
-        XCTAssertEqual(asset.audioRate, .rate44_1kHz)
-        XCTAssertEqual(asset.videoSources, 1)
-        XCTAssertEqual(asset.auxVideoFlags, "flags")
-        XCTAssertEqual(asset.mediaRep, mediaRep)
-        XCTAssertEqual(asset.metadata, metadata)
+        #expect(asset.id == "r5")
+        #expect(asset.name == "Is This The Land of Fire or Ice")
+        #expect(asset.start == .zero)
+        #expect(asset.duration == Fraction(205800, 1000))
+        #expect(asset.format == "r1")
+        #expect(asset.uid == "978BD3B254D68A6FA69E87D0D90544FD")
+        #expect(asset.hasAudio)
+        #expect(asset.hasVideo)
+        #expect(asset.audioSources == 1)
+        #expect(asset.audioChannels == 2)
+        #expect(asset.audioRate == .rate44_1kHz)
+        #expect(asset.videoSources == 1)
+        #expect(asset.auxVideoFlags == "flags")
+        #expect(asset.mediaRep == mediaRep)
+        #expect(asset.metadata == metadata)
     }
     
-    func testEffect() {
+    @Test
+    func effect() async {
         let effect = FinalCutPro.FCPXML.Effect(
             id: "r6",
             name: "Basic Title",
@@ -678,13 +703,14 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             src: "source"
         )
         
-        XCTAssertEqual(effect.id, "r6")
-        XCTAssertEqual(effect.name, "Basic Title")
-        XCTAssertEqual(effect.uid, ".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti")
-        XCTAssertEqual(effect.src, "source")
+        #expect(effect.id == "r6")
+        #expect(effect.name == "Basic Title")
+        #expect(effect.uid == ".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti")
+        #expect(effect.src == "source")
     }
     
-    func testFormat() {
+    @Test
+    func format() async {
         let format = FinalCutPro.FCPXML.Format(
             id: "r1",
             name: "FFVideoFormat1080p25",
@@ -699,30 +725,32 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             stereoscopic: nil
         )
         
-        XCTAssertEqual(format.id, "r1")
-        XCTAssertEqual(format.name, "FFVideoFormat1080p25")
-        XCTAssertEqual(format.frameDuration, Fraction(200, 5000))
-        XCTAssertEqual(format.fieldOrder, nil)
-        XCTAssertEqual(format.width, 1920)
-        XCTAssertEqual(format.height, 1080)
-        XCTAssertEqual(format.paspH, nil)
-        XCTAssertEqual(format.paspV, nil)
-        XCTAssertEqual(format.colorSpace, "1-1-1 (Rec. 709)")
-        XCTAssertEqual(format.projection, nil)
-        XCTAssertEqual(format.stereoscopic, nil)
+        #expect(format.id == "r1")
+        #expect(format.name == "FFVideoFormat1080p25")
+        #expect(format.frameDuration == Fraction(200, 5000))
+        #expect(format.fieldOrder == nil)
+        #expect(format.width == 1920)
+        #expect(format.height == 1080)
+        #expect(format.paspH == nil)
+        #expect(format.paspV == nil)
+        #expect(format.colorSpace == "1-1-1 (Rec. 709)")
+        #expect(format.projection == nil)
+        #expect(format.stereoscopic == nil)
     }
     
-    func testLocator() {
+    @Test
+    func locator() async {
         let locator = FinalCutPro.FCPXML.Locator(
             id: "blah",
             url: URL(string: "file:///Users/user/movie.mov")!
         )
         
-        XCTAssertEqual(locator.id, "blah")
-        XCTAssertEqual(locator.url, URL(string: "file:///Users/user/movie.mov")!)
+        #expect(locator.id == "blah")
+        #expect(locator.url == URL(string: "file:///Users/user/movie.mov")!)
     }
     
-    func testMedia() {
+    @Test
+    func media() async {
         let media = FinalCutPro.FCPXML.Media(
             id: "r2",
             name: "Some Media",
@@ -731,14 +759,15 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             modDate: "2022-12-30 20:47:39 -0800"
         )
         
-        XCTAssertEqual(media.id, "r2")
-        XCTAssertEqual(media.name, "Some Media")
-        XCTAssertEqual(media.uid, "9asdfyna9d8fnyads8")
-        XCTAssertEqual(media.projectRef, "Project reference ahoy")
-        XCTAssertEqual(media.modDate, "2022-12-30 20:47:39 -0800")
+        #expect(media.id == "r2")
+        #expect(media.name == "Some Media")
+        #expect(media.uid == "9asdfyna9d8fnyads8")
+        #expect(media.projectRef == "Project reference ahoy")
+        #expect(media.modDate == "2022-12-30 20:47:39 -0800")
     }
     
-    func testObjectTracker() {
+    @Test
+    func objectTracker() async {
         #warning("> TODO: write unit test")
         
         let tracker = FinalCutPro.FCPXML.ObjectTracker(trackingShapes: [
@@ -748,12 +777,13 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         
         // TODO: add equality check for tracking shapes once properties have been implemented for them
         // for now, just check that child count is correct
-        XCTAssertEqual(tracker.trackingShapes.count, 2)
+        #expect(tracker.trackingShapes.count == 2)
     }
     
     // MARK: - Textual
     
-    func testText() {
+    @Test
+    func text() async {
         let text = FinalCutPro.FCPXML.Text(
             displayStyle: .rollUp,
             rollUpHeight: "20",
@@ -762,36 +792,39 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             alignment: .right
         )
         
-        XCTAssertEqual(text.displayStyle, .rollUp)
-        XCTAssertEqual(text.rollUpHeight, "20")
-        XCTAssertEqual(text.position, "50 200")
-        XCTAssertEqual(text.placement, .left)
-        XCTAssertEqual(text.alignment, .right)
+        #expect(text.displayStyle == .rollUp)
+        #expect(text.rollUpHeight == "20")
+        #expect(text.position == "50 200")
+        #expect(text.placement == .left)
+        #expect(text.alignment == .right)
     }
     
     // MARK: - Structure
     
-    func testLibrary() throws {
-        let url = try XCTUnwrap(URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/"))
+    @Test
+    func library() async throws {
+        let url = try #require(URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/"))
         
         let library = FinalCutPro.FCPXML.Library(
             location: url
         )
         
-        XCTAssertEqual(library.location, url)
+        #expect(library.location == url)
     }
     
-    func testEvent() {
+    @Test
+    func event() async {
         let event = FinalCutPro.FCPXML.Event(
             name: "Event name",
             uid: "a98msduf8masdu8f"
         )
         
-        XCTAssertEqual(event.name, "Event name")
-        XCTAssertEqual(event.uid, "a98msduf8masdu8f")
+        #expect(event.name == "Event name")
+        #expect(event.uid == "a98msduf8masdu8f")
     }
     
-    func testProject() {
+    @Test
+    func project() async {
         let project = FinalCutPro.FCPXML.Project(
             name: "Project name",
             id: "asd8fn08n",
@@ -799,52 +832,56 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             modDate: "2022-12-30 20:47:39 -0800"
         )
         
-        XCTAssertEqual(project.name, "Project name")
-        XCTAssertEqual(project.id, "asd8fn08n")
-        XCTAssertEqual(project.uid, "js9ajdf9dj")
-        XCTAssertEqual(project.modDate, "2022-12-30 20:47:39 -0800")
+        #expect(project.name == "Project name")
+        #expect(project.id == "asd8fn08n")
+        #expect(project.uid == "js9ajdf9dj")
+        #expect(project.modDate == "2022-12-30 20:47:39 -0800")
     }
     
     // MARK: - Misc.
     
-    func testConformRateA() {
+    @Test
+    func conformRateA() async {
         let conformRate = FinalCutPro.FCPXML.ConformRate(
             scaleEnabled: true,
             srcFrameRate: .fps24,
             frameSampling: .frameBlending
         )
         
-        XCTAssertEqual(conformRate.scaleEnabled, true)
-        XCTAssertEqual(conformRate.srcFrameRate, .fps24)
-        XCTAssertEqual(conformRate.frameSampling, .frameBlending)
+        #expect(conformRate.scaleEnabled)
+        #expect(conformRate.srcFrameRate == .fps24)
+        #expect(conformRate.frameSampling == .frameBlending)
     }
     
-    func testConformRateB() {
+    @Test
+    func conformRateB() async {
         let conformRate = FinalCutPro.FCPXML.ConformRate(
             scaleEnabled: false,
             srcFrameRate: nil,
             frameSampling: .floor
         )
         
-        XCTAssertEqual(conformRate.scaleEnabled, false)
-        XCTAssertEqual(conformRate.srcFrameRate, nil)
-        XCTAssertEqual(conformRate.frameSampling, .floor)
+        #expect(!conformRate.scaleEnabled)
+        #expect(conformRate.srcFrameRate == nil)
+        #expect(conformRate.frameSampling == .floor)
     }
     
-    func testTimeMapA() {
+    @Test
+    func timeMapA() async {
         let timeMap = FinalCutPro.FCPXML.TimeMap(
             frameSampling: .nearestNeighbor,
             preservesPitch: false
         )
         
-        XCTAssertEqual(timeMap.frameSampling, .nearestNeighbor)
-        XCTAssertEqual(timeMap.preservesPitch, false)
+        #expect(timeMap.frameSampling == .nearestNeighbor)
+        #expect(!timeMap.preservesPitch)
         
         let readTimePoints = Array(timeMap.timePoints)
-        XCTAssertEqual(readTimePoints.count, 0)
+        #expect(readTimePoints.count == 0)
     }
     
-    func testTimeMapB() {
+    @Test
+    func timeMapB() async {
         let timePoints: [FinalCutPro.FCPXML.TimeMap.TimePoint] = [timePoint]
         
         let timeMap = FinalCutPro.FCPXML.TimeMap(
@@ -853,12 +890,12 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
             timePoints: timePoints
         )
         
-        XCTAssertEqual(timeMap.frameSampling, .floor)
-        XCTAssertEqual(timeMap.preservesPitch, true)
+        #expect(timeMap.frameSampling == .floor)
+        #expect(timeMap.preservesPitch)
         
         let readTimePoints = Array(timeMap.timePoints)
-        XCTAssertEqual(readTimePoints.count, 1)
-        XCTAssertEqual(readTimePoints, timePoints)
+        #expect(readTimePoints.count == 1)
+        #expect(readTimePoints == timePoints)
     }
     
     let timePoint = FinalCutPro.FCPXML.TimeMap.TimePoint(
@@ -869,12 +906,13 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         transitionOutTime: Fraction(4, 1)
     )
     
-    func testTimePoint() {
-        XCTAssertEqual(timePoint.time, Fraction(2, 1))
-        XCTAssertEqual(timePoint.originalTime, Fraction(1, 1))
-        XCTAssertEqual(timePoint.interpolation, .linear)
-        XCTAssertEqual(timePoint.transitionInTime, Fraction(3, 1))
-        XCTAssertEqual(timePoint.transitionOutTime, Fraction(4, 1))
+    @Test
+    func timePoint() async {
+        #expect(timePoint.time == Fraction(2, 1))
+        #expect(timePoint.originalTime == Fraction(1, 1))
+        #expect(timePoint.interpolation == .linear)
+        #expect(timePoint.transitionInTime == Fraction(3, 1))
+        #expect(timePoint.transitionOutTime == Fraction(4, 1))
     }
 }
 

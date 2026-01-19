@@ -4,18 +4,15 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-class ProTools_SessionText_ExtendedChars: XCTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
-    func testSessionText_ExtendedChars_TextEditFormat() throws {
+@Suite struct ProTools_SessionText_ExtendedChars {
+    @Test
+    func sessionText_ExtendedChars_TextEditFormat() async throws {
         // load file
         
         let rawData = try TestResource.PTSessionTextExports.extendedChars_TextEditFormat_PT2023_3.data()
@@ -27,7 +24,7 @@ class ProTools_SessionText_ExtendedChars: XCTestCase {
         
         // parse messages
         
-        XCTAssertEqual(parseMessages.errors.count, 0)
+        #expect(parseMessages.errors.count == 0)
         if !parseMessages.errors.isEmpty {
             dump(parseMessages.errors)
         }
@@ -36,27 +33,28 @@ class ProTools_SessionText_ExtendedChars: XCTestCase {
         
         // markers
         
-        let markers = try XCTUnwrap(sessionInfo.markers)
-        XCTAssertEqual(markers.count, 4)
+        let markers = try #require(sessionInfo.markers)
+        #expect(markers.count == 4)
         
-        let marker1 = try XCTUnwrap(markers[safe: 0])
-        XCTAssertEqual(marker1.name, "Test Ellipsis…")
-        XCTAssertEqual(marker1.comment, nil)
+        let marker1 = try #require(markers[safe: 0])
+        #expect(marker1.name == "Test Ellipsis…")
+        #expect(marker1.comment == nil)
         
-        let marker2 = try XCTUnwrap(markers[safe: 1])
-        XCTAssertEqual(marker2.name, "Test Em Dash —")
-        XCTAssertEqual(marker2.comment, nil)
+        let marker2 = try #require(markers[safe: 1])
+        #expect(marker2.name == "Test Em Dash —")
+        #expect(marker2.comment == nil)
         
-        let marker3 = try XCTUnwrap(markers[safe: 2])
-        XCTAssertEqual(marker3.name, "Test En Dash –")
-        XCTAssertEqual(marker3.comment, nil)
+        let marker3 = try #require(markers[safe: 2])
+        #expect(marker3.name == "Test En Dash –")
+        #expect(marker3.comment == nil)
         
-        let marker4 = try XCTUnwrap(markers[safe: 3])
-        XCTAssertEqual(marker4.name, "Right Side Quote’s Not An Apostrophe")
-        XCTAssertEqual(marker4.comment, nil)
+        let marker4 = try #require(markers[safe: 3])
+        #expect(marker4.name == "Right Side Quote’s Not An Apostrophe")
+        #expect(marker4.comment == nil)
     }
     
-    func testSessionText_ExtendedChars_UTF8Format() throws {
+    @Test
+    func sessionText_ExtendedChars_UTF8Format() async throws {
         // load file
         
         let rawData = try TestResource.PTSessionTextExports.extendedChars_UTF8Format_PT2023_3.data()
@@ -68,7 +66,7 @@ class ProTools_SessionText_ExtendedChars: XCTestCase {
         
         // parse messages
         
-        XCTAssertEqual(parseMessages.errors.count, 0)
+        #expect(parseMessages.errors.count == 0)
         if !parseMessages.errors.isEmpty {
             dump(parseMessages.errors)
         }
@@ -77,23 +75,23 @@ class ProTools_SessionText_ExtendedChars: XCTestCase {
         
         // markers
         
-        let markers = try XCTUnwrap(sessionInfo.markers)
-        XCTAssertEqual(markers.count, 4)
+        let markers = try #require(sessionInfo.markers)
+        #expect(markers.count == 4)
         
-        let marker1 = try XCTUnwrap(markers[safe: 0])
-        XCTAssertEqual(marker1.name, "Test Ellipsis…")
-        XCTAssertEqual(marker1.comment, nil)
+        let marker1 = try #require(markers[safe: 0])
+        #expect(marker1.name == "Test Ellipsis…")
+        #expect(marker1.comment == nil)
         
-        let marker2 = try XCTUnwrap(markers[safe: 1])
-        XCTAssertEqual(marker2.name, "Test Em Dash —")
-        XCTAssertEqual(marker2.comment, nil)
+        let marker2 = try #require(markers[safe: 1])
+        #expect(marker2.name == "Test Em Dash —")
+        #expect(marker2.comment == nil)
         
-        let marker3 = try XCTUnwrap(markers[safe: 2])
-        XCTAssertEqual(marker3.name, "Test En Dash –")
-        XCTAssertEqual(marker3.comment, nil)
+        let marker3 = try #require(markers[safe: 2])
+        #expect(marker3.name == "Test En Dash –")
+        #expect(marker3.comment == nil)
         
-        let marker4 = try XCTUnwrap(markers[safe: 3])
-        XCTAssertEqual(marker4.name, "Right Side Quote’s Not An Apostrophe")
-        XCTAssertEqual(marker4.comment, nil)
+        let marker4 = try #require(markers[safe: 3])
+        #expect(marker4.name == "Right Side Quote’s Not An Apostrophe")
+        #expect(marker4.comment == nil)
     }
 }

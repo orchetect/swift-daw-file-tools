@@ -6,17 +6,13 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
-final class FinalCutPro_FCPXML_StandaloneRefClip: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
+@Suite struct FinalCutPro_FCPXML_StandaloneRefClip: FCPXMLUtilities {
     // MARK: - Test Data
     
     var fileContents: Data { get throws {
@@ -25,7 +21,8 @@ final class FinalCutPro_FCPXML_StandaloneRefClip: FCPXMLTestCase {
     
     // MARK: - Tests
     
-    func testParse() throws {
+    @Test
+    func parse() async throws {
         // load file
         let rawData = try fileContents
         
@@ -33,11 +30,12 @@ final class FinalCutPro_FCPXML_StandaloneRefClip: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // version
-        XCTAssertEqual(fcpxml.version, .ver1_11)
+        #expect(fcpxml.version == .ver1_11)
     }
     
     /// Test that FCPXML that doesn't contain a project is still able to extract standalone clips.
-    func testExtract() async throws {
+    @Test
+    func extract() async throws {
         // load file
         let rawData = try fileContents
         
@@ -46,41 +44,41 @@ final class FinalCutPro_FCPXML_StandaloneRefClip: FCPXMLTestCase {
         
         // timelines
         let timelines = fcpxml.allTimelines()
-        XCTAssertEqual(timelines.count, 1)
+        #expect(timelines.count == 1)
         
-        let anyTimeline = try XCTUnwrap(timelines.first)
+        let anyTimeline = try #require(timelines.first)
         
         // AnyTimeline
         
-        let timelineStartTC = try XCTUnwrap(anyTimeline.timelineStartAsTimecode())
-        XCTAssertEqual(timelineStartTC.components, .init(h: 00, m: 00, s: 00, f: 00))
-        XCTAssertEqual(timelineStartTC.frameRate, .fps29_97)
-        let timelineDurTC = try XCTUnwrap(anyTimeline.timelineDurationAsTimecode())
-        XCTAssertEqual(timelineDurTC.components, .init(h: 00, m: 00, s: 09, f: 00))
-        XCTAssertEqual(timelineDurTC.frameRate, .fps29_97)
+        let timelineStartTC = try #require(anyTimeline.timelineStartAsTimecode())
+        #expect(timelineStartTC.components == .init(h: 00, m: 00, s: 00, f: 00))
+        #expect(timelineStartTC.frameRate == .fps29_97)
+        let timelineDurTC = try #require(anyTimeline.timelineDurationAsTimecode())
+        #expect(timelineDurTC.components == .init(h: 00, m: 00, s: 09, f: 00))
+        #expect(timelineDurTC.frameRate == .fps29_97)
         
         // unwrap RefClip
         
-        guard case .refClip(let refClip) = anyTimeline else { XCTFail() ; return }
+        guard case .refClip(let refClip) = anyTimeline else { Issue.record() ; return }
         
         // FCPXMLElementMetaTimeline
-        let refClipStartTC = try XCTUnwrap(refClip.timelineStartAsTimecode())
-        XCTAssertEqual(refClipStartTC.components, .init(h: 00, m: 00, s: 00, f: 00))
-        XCTAssertEqual(refClipStartTC.frameRate, .fps29_97)
-        let refClipDurTC = try XCTUnwrap(refClip.timelineDurationAsTimecode())
-        XCTAssertEqual(refClipDurTC.components, .init(h: 00, m: 00, s: 09, f: 00))
-        XCTAssertEqual(refClipDurTC.frameRate, .fps29_97)
+        let refClipStartTC = try #require(refClip.timelineStartAsTimecode())
+        #expect(refClipStartTC.components == .init(h: 00, m: 00, s: 00, f: 00))
+        #expect(refClipStartTC.frameRate == .fps29_97)
+        let refClipDurTC = try #require(refClip.timelineDurationAsTimecode())
+        #expect(refClipDurTC.components == .init(h: 00, m: 00, s: 09, f: 00))
+        #expect(refClipDurTC.frameRate == .fps29_97)
         
         // local XML attributes
         // `ref-clip` itself doesn't have a start time, but its resource does
-        XCTAssertNil(refClip.startAsTimecode())
+        #expect(refClip.startAsTimecode() == nil)
         // `ref-clip` itself doesn't have a duration time, but its resource does
-        XCTAssertNil(refClip.durationAsTimecode())
+        #expect(refClip.durationAsTimecode() == nil)
         
         // test markers
         
         let markers = await refClip.extract(preset: .markers, scope: .mainTimeline)
-        XCTAssertEqual(markers.count, 1)
+        #expect(markers.count == 1)
     }
 }
 

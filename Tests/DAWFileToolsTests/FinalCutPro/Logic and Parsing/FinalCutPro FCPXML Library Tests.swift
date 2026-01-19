@@ -6,27 +6,27 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import XCTest
+import Foundation
 @testable import DAWFileTools
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
 
-final class FinalCutPro_FCPXML_Library: FCPXMLTestCase {
-    override func setUp() { }
-    override func tearDown() { }
-    
-    func testLocation() throws {
-        let url = try XCTUnwrap(URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/"))
+@Suite struct FinalCutPro_FCPXML_Library: FCPXMLUtilities {
+    @Test
+    func location() async throws {
+        let url = try #require(URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/"))
         let library = FinalCutPro.FCPXML.Library(location: url)
         
-        XCTAssertEqual(library.location, url)
+        #expect(library.location == url)
     }
     
-    func testName() throws {
-        let url = try XCTUnwrap(URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/"))
+    @Test
+    func name() async throws {
+        let url = try #require(URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/"))
         let library = FinalCutPro.FCPXML.Library(location: url)
         
-        XCTAssertEqual(library.name, "MyLibrary")
+        #expect(library.name == "MyLibrary")
     }
 }
 
