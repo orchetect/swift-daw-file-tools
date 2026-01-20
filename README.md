@@ -28,22 +28,30 @@ To add this package to an Xcode app project, use:
 
  `https://github.com/orchetect/swift-daw-file-tools` as the URL.
 
-To add this package to a Swift package, add the dependency to your package and target in Package.swift:
+To add this package to a Swift package, add it to your package dependencies:
 
 ```swift
-let package = Package(
-    dependencies: [
-        .package(url: "https://github.com/orchetect/swift-daw-file-tools", from: "0.7.1")
-    ],
-    targets: [
-        .target(
-            dependencies: [
-                .product(name: "DAWFileTools", package: "swift-daw-file-tools")
-            ]
-        )
-    ]
+.package(url: "https://github.com/orchetect/swift-daw-file-tools", from: "0.8.0")
+```
+
+Then add it to your target dependencies:
+
+```swift
+.product(name: "DAWFileTools", package: "swift-daw-file-tools")
+```
+
+This package utilizes [Swift Package Traits](https://docs.swift.org/swiftpm/documentation/packagemanagerdocs/packagetraits) to allow opt-in of each file format: `Cubase`, `FCP`, `MIDIFile`, `ProTools`, and `SRT`.
+
+```swift
+.package(
+    url: "https://github.com/orchetect/swift-daw-file-tools",
+    from: "0.8.0",
+    traits: [.trait(name: "FCP"), .trait(name: "ProTools")]
 )
 ```
+
+- By default, all traits are enabled if traits are not specified.
+- If empty traits are supplied, only DAW-agnostic types are emitted.
 
 ## Dependencies
 
