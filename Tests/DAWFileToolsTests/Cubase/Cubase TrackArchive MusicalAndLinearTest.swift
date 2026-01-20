@@ -55,9 +55,7 @@ import SwiftTimecodeCore
         guard case let .cycleMarker(track1event6) = track1.events[safe: 5] else { Issue.record(); return }
         #expect(track1event6.startTimecode.stringValue() == "01:00:17:29")
         
-        #warning(
-            "> TODO: these four asserts are correct, but will fail for now until tempo ramp events are implemented"
-        )
+        // TODO: these four asserts are correct, but will fail for now until tempo ramp events are implemented
         
         guard case let .marker(track1event7) = track1.events[safe: 6] else { Issue.record(); return }
         // #expect(track1event7.startTimecode.stringValue() == "01:00:26:02")

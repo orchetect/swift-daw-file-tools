@@ -116,7 +116,8 @@ extension Cubase.TrackArchive {
                     (Self.xmlPPQ.double / (60.0 / currentTempoEvent.tempo))
                 
             case .rampToNext:
-                #warning("> TODO: This calculation is not accurate, it is merely approximate.")
+                // TODO: This calculation is not accurate, it is merely approximate.
+                
                 // Cubase (and other DAWs like Logic Pro X) have mysterious tempo ramp calculation
                 // algorithms
                 // I was not able to precisely reverse engineer the algo Cubase uses

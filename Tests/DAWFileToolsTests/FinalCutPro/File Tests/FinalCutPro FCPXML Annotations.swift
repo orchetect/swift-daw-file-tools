@@ -149,7 +149,7 @@ import TestingExtensions
         #expect(element1.durationAsTimecode()?.frameRate == .fps25)
         #expect(element1.audioRole?.rawValue == "dialogue")
         
-        #warning("> TODO: finish this - but can't test absolute timecodes without running element extraction")
+        // TODO: finish this - but can't test absolute timecodes without running element extraction
         // markers
         
         let element1Markers = element1.contents

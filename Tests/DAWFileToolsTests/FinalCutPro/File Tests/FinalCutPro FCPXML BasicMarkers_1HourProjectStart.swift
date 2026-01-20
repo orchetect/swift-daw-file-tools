@@ -114,7 +114,7 @@ import TestingExtensions
             .zeroIndexed
         #expect(markers.count == 4)
         
-        #warning("> TODO: finish this - but can't test absolute timecodes without running element extraction")
+        // TODO: finish this - but can't test absolute timecodes without running element extraction
 //        let expectedMarker0 = FinalCutPro.FCPXML.Marker(
 //            start: Self.tc("01:00:29:14", .fps29_97),
 //            duration: Self.tc("00:00:00:01", .fps29_97),

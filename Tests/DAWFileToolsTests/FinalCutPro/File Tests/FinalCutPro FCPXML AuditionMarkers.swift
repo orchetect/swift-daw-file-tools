@@ -94,7 +94,7 @@ import TestingExtensions
         #expect(a1Marker.name == "Marker 1")
         #expect(a1Marker.configuration == .standard)
         #expect(a1Marker.note == nil)
-        #warning("> TODO: finish this - but can't test absolute timecodes without running element extraction")
+        // TODO: finish this - but can't test absolute timecodes without running element extraction
         // #expect(a1Marker.context[.absoluteStart] == Self.tc("01:00:05:00", .fps29_97))
         // #expect(a1Marker.context[.parentType] == .story(.anyClip(.title)))
         // #expect(a1Marker.context[.parentName] == "Basic Title 1")
@@ -115,7 +115,7 @@ import TestingExtensions
         #expect(a2Marker.name == "Marker 2")
         #expect(a2Marker.configuration == .standard)
         #expect(a2Marker.note == nil)
-        #warning("> TODO: finish this - but can't test absolute timecodes without running element extraction")
+        // TODO: finish this - but can't test absolute timecodes without running element extraction
         // #expect(a2Marker.context[.absoluteStart] == Self.tc("01:00:02:00", .fps29_97))
         // #expect(a2Marker.context[.parentType] == .story(.anyClip(.title)))
         // #expect(a2Marker.context[.parentName] == "Basic Title 2")
@@ -124,8 +124,6 @@ import TestingExtensions
         // #expect(a2Marker.context[.ancestorEventName] == "Test Event")
         // #expect(a2Marker.context[.ancestorProjectName] == "AuditionMarkers")
     }
-    
-    #warning("> TODO: uncomment and fix unit tests")
     
     @Test
     func extractMarkers_activeAudition() async throws {

@@ -156,7 +156,7 @@ import TestingExtensions
         let refClip1 = try #require(storyElements[safe: 4]?.fcpAsRefClip)
         #expect(refClip1.name == "Occlusion Clip 1")
         
-        #warning("> TODO: occlusion within a ref-clip must be tested with `fcpExtract(types:scope:)` and not `fcpExtract()`")
+        // TODO: occlusion within a ref-clip must be tested with `fcpExtract(types:scope:)` and not `fcpExtract()`
 //        let refClip1Sequence = refClip1.sequence
 //        #expect(refClip1Sequence.context[.occlusion] == .notOccluded)
 //        #expect(refClip1Sequence.context[.effectiveOcclusion] == .notOccluded)

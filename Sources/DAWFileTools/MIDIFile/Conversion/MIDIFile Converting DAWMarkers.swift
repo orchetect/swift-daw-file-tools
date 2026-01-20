@@ -158,9 +158,7 @@ extension MIDIFile {
         var tickPosition: UInt32 = 0
         
         for marker in markers {
-            #warning(
-                "> TODO: this may need to factor in marker's original session start timecode against the 'startTimecode' parameter passed into this function. should be an abstracted method that can convert/flatten a marker to a resolved timecode at a certain framerate and start time"
-            )
+            // TODO: this may need to factor in marker's original session start timecode against the 'startTimecode' parameter passed into this function. should be an abstracted method that can convert/flatten a marker to a resolved timecode at a certain framerate and start time
             
             // get marker's timecode object
             guard let markerTimecode = marker.resolvedTimecode(

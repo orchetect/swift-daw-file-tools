@@ -43,9 +43,7 @@ extension ProTools.SessionInfo {
             // SESSION START TIMECODE
             let tempStartTimecode = String(section[3])
             
-            #warning(
-                "> TODO: (Not all PT frame rates have been tested to be recognized from PT text files but in theory they should work. Need to individually test each frame rate by exporting a text file from Pro Tools at each frame rate to ensure they are correct.)"
-            )
+            // TODO: (Not all PT frame rates have been tested to be recognized from PT text files but in theory they should work. Need to individually test each frame rate by exporting a text file from Pro Tools at each frame rate to ensure they are correct.)
             
             // TIMECODE FORMAT
             switch section[4] {
