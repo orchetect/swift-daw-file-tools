@@ -20,12 +20,12 @@ let package = Package(
         .default(enabledTraits: [.cubase, .fcp, .midiFile, .proTools, .srt])
     ],
     dependencies: [
-        .package(url: "https://github.com/orchetect/swift-extensions", from: "2.0.0"),
+        .package(url: "https://github.com/orchetect/swift-extensions", from: "2.1.1"),
         .package(url: "https://github.com/orchetect/swift-timecode", from: "3.0.0"),
-        .package(url: "https://github.com/orchetect/MIDIKit", from: "0.10.7"),
+        .package(url: "https://github.com/orchetect/MIDIKit", from: "0.11.0"),
         
         // testing-only dependnecies
-        .package(url: "https://github.com/orchetect/swift-testing-extensions", from: "0.2.4"),
+        .package(url: "https://github.com/orchetect/swift-testing-extensions", from: "0.3.0"),
     ],
     targets: [
         .target(
