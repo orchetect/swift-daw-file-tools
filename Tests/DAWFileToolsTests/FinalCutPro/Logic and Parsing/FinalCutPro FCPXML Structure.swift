@@ -6,11 +6,12 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import Testing
-import TestingExtensions
-/* @testable */ import DAWFileTools
+import DAWFileTools
+import Foundation
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
 @Suite struct FinalCutPro_FCPXML_Structure: FCPXMLUtilities {
     /// Ensure that elements that can appear in various locations in the XML hierarchy are all found.

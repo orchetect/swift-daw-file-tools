@@ -6,11 +6,12 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import Testing
-import TestingExtensions
 @testable import DAWFileTools
+import Foundation
 import SwiftExtensions
 import SwiftTimecodeCore
+import Testing
+import TestingExtensions
 
 @Suite struct Cubase_TrackArchive_BasicMarkers {
     @Test
