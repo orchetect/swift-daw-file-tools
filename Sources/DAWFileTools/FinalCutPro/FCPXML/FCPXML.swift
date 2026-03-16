@@ -12,8 +12,12 @@
 // FCPXML was extracted into its own repository called swift-fcpxml as of swift-daw-file-tools 0.9.0
 
 extension FinalCutPro {
+    #if os(macOS) // XMLNode only works on macOS
+    
     @available(*, deprecated, message: "FCPXML is now outsourced to swift-fcpxml. FCPXML can be accessed as a top-level global type and the FinalCutPro namespace is no longer necessary to use.")
     public typealias FCPXML = SwiftFCPXML.FCPXML
+    
+    #endif
 }
 
 #endif
