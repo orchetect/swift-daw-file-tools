@@ -31,7 +31,7 @@ To add this package to an Xcode app project, use:
 To add this package to a Swift package, add it to your package dependencies:
 
 ```swift
-.package(url: "https://github.com/orchetect/swift-daw-file-tools", from: "0.8.0")
+.package(url: "https://github.com/orchetect/swift-daw-file-tools", from: "0.9.0")
 ```
 
 Then add it to your target dependencies:
@@ -56,6 +56,7 @@ This package utilizes [Swift Package Traits](https://docs.swift.org/swiftpm/docu
 ## Dependencies
 
 - [MIDIKit](https://github.com/orchetect/MIDIKit) to read/write Standard MIDI Files
+- [swift-fcpxml](https://github.com/orchetect/swift-fcpxml) for FCPXML support (previously a part of swift-daw-file-tools, but now extracted into its own repo)
 - [swift-timecode](https://github.com/orchetect/swift-timecode) to represent timecode values
 
 ## Documentation
@@ -74,7 +75,7 @@ Core unit tests implemented. More exhaustive tests can be added in future.
 
 ### Final Cut Pro XML
 
-- Basic support is implemented. More complete support may come in a future library update.
+- Basic support is implemented. More complete support may come in a future library update. See [swift-fcpxml](https://github.com/orchetect/swift-fcpxml) for more information.
 
 ## Affiliation
 
