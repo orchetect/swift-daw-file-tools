@@ -21,6 +21,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/orchetect/swift-extensions", from: "2.1.1"),
+        .package(url: "https://github.com/orchetect/swift-fcpxml", from: "0.1.0"),
         .package(url: "https://github.com/orchetect/swift-timecode", from: "3.0.0"),
         .package(url: "https://github.com/orchetect/MIDIKit", from: "0.11.0"),
         
@@ -32,6 +33,7 @@ let package = Package(
             name: "DAWFileTools",
             dependencies: [
                 .product(name: "SwiftExtensions", package: "swift-extensions"),
+                .product(name: "SwiftFCPXML", package: "swift-fcpxml", condition: .when(traits: [.fcp])),
                 .product(name: "SwiftTimecodeCore", package: "swift-timecode"),
                 .product(name: "MIDIKitSMF", package: "MIDIKit", condition: .when(traits: [.midiFile]))
             ]
@@ -45,7 +47,6 @@ let package = Package(
             resources: [
                 .copy("Cubase/Resources/Cubase TrackArchive XML Exports"),
                 .copy("ProTools/Resources/PT Session Text Exports"),
-                .copy("FinalCutPro/Resources/FCPXML Exports"),
                 .copy("SRT/Resources/SRT Files")
             ]
         )
