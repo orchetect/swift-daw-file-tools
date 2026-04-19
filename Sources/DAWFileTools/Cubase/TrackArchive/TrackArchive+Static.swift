@@ -1,7 +1,7 @@
 //
 //  TrackArchive+Static.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if Cubase && os(macOS) // XMLNode only works on macOS
@@ -11,13 +11,13 @@ import SwiftTimecodeCore
 extension Cubase.TrackArchive {
     /// Array of file types for use with `NSOpenPanel` / `NSSavePanel`.
     public static let fileTypes = ["public.xml", "xml"]
-    
+
     /// Static PPQ value used in Track Archive XML files (allegedly, until proven otherwise?)
     /// Changing PPQbase in Cubase preferences has no effect on this value.
-    internal static let xmlPPQ = 480
-    
+    static let xmlPPQ = 480
+
     /// Frame rates and their numeric identifier as stored in the XML.
-    internal static let frameRateTable: [Int: TimecodeFrameRate] = [
+    static let frameRateTable: [Int: TimecodeFrameRate] = [
         02: .fps24,
         03: .fps25,
         04: .fps29_97,

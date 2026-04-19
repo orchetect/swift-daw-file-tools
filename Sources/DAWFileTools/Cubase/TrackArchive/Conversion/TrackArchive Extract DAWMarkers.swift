@@ -1,7 +1,7 @@
 //
 //  TrackArchive Extract DAWMarkers.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if Cubase && os(macOS) // XMLNode only works on macOS
@@ -17,30 +17,30 @@ extension Cubase.TrackArchive {
                 "Could not determine frame rate."
             )
         }
-        
+
         // init array so we can append to it
         var dawMarkerTracks: [DAWMarkerTrack] = []
-        
+
         // filter just marker tracks (in case there are other non-marker tracks in the data set)
-        
+
         var markerTracks: [MarkerTrack] = tracks?.compactMap {
             switch $0 {
             case let .marker(track): track
             default: nil
             }
         } ?? []
-        
+
         // if necessary, convert time values to be from zero (00:00:00:00) instead of offsets from session start time
-        
+
         if let startTimeSeconds = main.startTimeSeconds,
            startTimeSeconds > 0.0
         {
-            //logger.debug(
+            // logger.debug(
             //    "Converting " + fileTypeDescription + " event start times to zero-start. (" +
             //    "\(startTimeSeconds)" +
             //    "sec session start time, \(markerTracks.count) marker tracks)"
-            //)
-            
+            // )
+
             for trackIdx in markerTracks.indices {
                 for eventIdx in markerTracks[trackIdx].events.indices {
                     if let srt = markerTracks[trackIdx].events[eventIdx].startRealTime {
@@ -49,22 +49,22 @@ extension Cubase.TrackArchive {
                 }
             }
         }
-        
+
         for markerTrack in markerTracks {
             // translate to native Marker objects
             let markers = markerTrack.events.convertToDAWMarkers(
                 originalFrameRate: frameRate
             )
-            
+
             let dawMarkerTrack = DAWMarkerTrack(
                 trackType: .track,
                 name: markerTrack.name ?? "",
                 markers: markers
             )
-            
+
             dawMarkerTracks.append(dawMarkerTrack)
         }
-        
+
         return dawMarkerTracks
     }
 }
@@ -78,26 +78,26 @@ extension Array where Element: CubaseTrackArchiveMarker {
     ) -> [DAWMarker] {
         // Cubase uses 80 subframes
         let subFramesBase: Timecode.SubFramesBase = .max80SubFrames
-        
+
         // init array so we can append to it
         var markers: [DAWMarker] = []
-        
+
         for marker in self {
             // take start time regardless whether it's a marker or cycle marker
             let tc = marker.startTimecode
-            
+
             if marker.startRealTime != nil {
                 let storage = DAWMarker.Storage(
                     value: .realTime(relativeToStart: marker.startRealTime!),
                     frameRate: originalFrameRate,
                     base: subFramesBase
                 )
-                
+
                 let newMarker = DAWMarker(
                     storage: storage,
                     name: marker.name
                 ) // no comment text
-                
+
                 markers.append(newMarker)
             } else {
                 let storage = DAWMarker.Storage(
@@ -105,16 +105,16 @@ extension Array where Element: CubaseTrackArchiveMarker {
                     frameRate: originalFrameRate,
                     base: subFramesBase
                 )
-                
+
                 let newMarker = DAWMarker(
                     storage: storage,
                     name: marker.name
                 ) // no comment text
-                
+
                 markers.append(newMarker)
             }
         }
-        
+
         return markers
     }
 }

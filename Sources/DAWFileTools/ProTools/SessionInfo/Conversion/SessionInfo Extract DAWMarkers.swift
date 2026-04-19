@@ -1,7 +1,7 @@
 //
 //  SessionInfo Extract DAWMarkers.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if ProTools
@@ -19,12 +19,12 @@ extension ProTools.SessionInfo {
                 "Could not determine frame rate."
             )
         }
-        
+
         return markers?.convertToDAWMarkers(originalFrameRate: frameRate) ?? []
     }
 }
 
-extension Array where Element == ProTools.SessionInfo.Marker {
+extension [ProTools.SessionInfo.Marker] { // TODO: refactor as `Sequence<ProTools.SessionInfo.Marker>`
     /// Converts `[ProTools.SessionInfo.Marker]` to `DAWMarker` array(s) broken down by
     /// ruler/track.
     public func convertToDAWMarkers(
@@ -32,31 +32,31 @@ extension Array where Element == ProTools.SessionInfo.Marker {
     ) -> [DAWMarkerTrack] {
         // PT uses 100 subframes
         let subFramesBase: Timecode.SubFramesBase = .max100SubFrames
-        
+
         // init array so we can append to it
         var dawMarkerTracks: [DAWMarkerTrack] = []
-        
+
         for marker in self {
             // TODO: handle PT Session info text files that don't use Timecode as the primary time format
             guard let loc = marker.location,
                   case let .timecode(tc) = loc
             else { continue }
-            
+
             let storage = DAWMarker.Storage(
                 value: .timecodeString(absolute: tc.stringValue(format: ProTools.timecodeStringFormat)),
                 frameRate: originalFrameRate,
                 base: subFramesBase
             )
-            
+
             let newMarker = DAWMarker(
                 storage: storage,
                 name: marker.name,
                 comment: marker.comment
             )
-            
+
             // add to corresponding marker track.
             // create new track if necessary.
-            
+
             let trackIndex: Int
             if let ti = dawMarkerTracks.firstIndex(where: { dawMarkerTrack in
                 dawMarkerTrack.name == marker.trackName &&
@@ -72,10 +72,10 @@ extension Array where Element == ProTools.SessionInfo.Marker {
                 dawMarkerTracks.append(newMarkerTrack)
                 trackIndex = dawMarkerTracks.indices.last!
             }
-            
+
             dawMarkerTracks[trackIndex].markers.append(newMarker)
         }
-        
+
         return dawMarkerTracks
     }
 }
@@ -85,8 +85,8 @@ extension Array where Element == ProTools.SessionInfo.Marker {
 extension DAWTrackType {
     var proToolsSessionInfoTextMarkerTrackType: ProTools.SessionInfo.Marker.TrackType {
         switch self {
-        case .ruler: return .ruler
-        case .track: return .track
+        case .ruler: .ruler
+        case .track: .track
         }
     }
 }
@@ -94,8 +94,8 @@ extension DAWTrackType {
 extension ProTools.SessionInfo.Marker.TrackType {
     var dawTrackType: DAWTrackType {
         switch self {
-        case .ruler: return .ruler
-        case .track: return .track
+        case .ruler: .ruler
+        case .track: .track
         }
     }
 }

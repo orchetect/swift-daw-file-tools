@@ -1,7 +1,7 @@
 //
 //  SessionInfo File.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if ProTools
@@ -13,7 +13,7 @@ extension ProTools.SessionInfo {
     public struct File: Equatable, Hashable {
         public internal(set) var filename: String = ""
         public internal(set) var path: String = ""
-        
+
         /// Flag determining if file was online (true) or offline (false)
         public internal(set) var online: Bool = true
     }

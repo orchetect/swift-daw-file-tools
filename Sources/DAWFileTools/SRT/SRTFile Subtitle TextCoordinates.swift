@@ -1,7 +1,7 @@
 //
 //  SRTFile Subtitle TextCoordinates.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if SRT
@@ -16,7 +16,7 @@ extension SRTFile.Subtitle {
         public var x2: Int
         public var y1: Int
         public var y2: Int
-        
+
         public init(x1: Int, x2: Int, y1: Int, y2: Int) {
             self.x1 = x1
             self.x2 = x2

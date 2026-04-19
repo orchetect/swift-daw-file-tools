@@ -1,7 +1,7 @@
 //
 //  SRTFile Subtitle.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if SRT
@@ -25,13 +25,13 @@ extension SRTFile {
         ///
         /// Note that these are wall-clock timestamps and not timecodes (which need to be converted to timestamps).
         public var timeRange: ClosedRange<Time>
-        
+
         /// Subtitle (caption) text to display on-screen.
         public var text: String
-        
+
         /// Unofficially, text coordinates can be specified at the end of the timestamp line as `X1:… X2:… Y1:… Y2:…`.
         public var textCoordinates: TextCoordinates?
-        
+
         public init(
             timeRange: ClosedRange<Time>,
             text: String,
@@ -62,12 +62,12 @@ extension SRTFile.Subtitle {
         let inTime = Time(seconds: timeRange.lowerBound.realTimeValue)
         let outTime = Time(seconds: timeRange.upperBound.realTimeValue)
         self.timeRange = inTime ... outTime
-        
+
         self.text = text
-        
+
         self.textCoordinates = textCoordinates
     }
-    
+
     /// Returns the wall-clock time range converted to a timecode range.
     public func timeRangeAsTimecode(
         at frameRate: TimecodeFrameRate,
@@ -99,22 +99,22 @@ extension SRTFile.Subtitle {
         let (_, subtitle) = try Self.parse(string: string)
         self = subtitle
     }
-    
-    static func parse<S: StringProtocol>(string: S) throws -> (sequenceNumber: Int, subtitle: Self) {
+
+    static func parse(string: some StringProtocol) throws -> (sequenceNumber: Int, subtitle: Self) {
         // accommodate text coordinates at the end of the timestamp line
-        
+
         let lines = string
             .trimmingCharacters(in: .newlines)
             .split(separator: "\n")
-        
+
         guard lines.count >= 3 else {
             throw SRTFile.DecodeError.unexpectedLineCount
         }
-        
+
         guard let sequenceNumber = lines[0].int else {
             throw SRTFile.DecodeError.invalidSequenceNumber
         }
-        
+
         let timeStampPattern = #"^(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})(.*)$"#
         let timeStampMatches = lines[1].regexMatches(captureGroupsFromPattern: timeStampPattern)
         guard timeStampMatches.count == 4,
@@ -125,14 +125,14 @@ extension SRTFile.Subtitle {
         else {
             throw SRTFile.DecodeError.invalidTimeStamps
         }
-        
+
         // validation: ensure time range is chronological
         guard timeIn <= timeOut else {
             throw SRTFile.DecodeError.invalidTimeStamps
         }
-        
+
         let timeRange = timeIn ... timeOut
-        
+
         let textCoordinates: TextCoordinates?
         if let textCoordinatesString = timeStampMatches[3]?.trimmed,
            !textCoordinatesString.isEmpty
@@ -153,37 +153,37 @@ extension SRTFile.Subtitle {
             } else {
                 textCoordinates = nil
             }
-            
+
         } else {
             textCoordinates = nil
         }
-        
+
         let text = lines[2...].joined(separator: "\n")
-        
+
         let subtitle = Self(timeRange: timeRange, text: text, textCoordinates: textCoordinates)
-        
+
         return (sequenceNumber: sequenceNumber, subtitle: subtitle)
     }
-    
+
     /// Returns the subtitle data encoded for an SRT file.
     public func rawData(
         sequenceNumber: Int
     ) -> String {
         var output = ""
-        
+
         output += "\(sequenceNumber)\n"
-        
+
         let inTime = timeRange.lowerBound.srtEncodedString()
         let outTime = timeRange.upperBound.srtEncodedString()
         output += "\(inTime) --> \(outTime)"
-        
+
         if let c = textCoordinates {
             output += " X1:\(c.x1) X2:\(c.x2) Y1:\(c.y1) Y2:\(c.y2)"
         }
         output += "\n"
-        
+
         output += text
-        
+
         return output
     }
 }
@@ -197,7 +197,7 @@ extension SRTFile.Subtitle {
         frameRate: TimecodeFrameRate
     ) -> DAWMarker {
         let storage = DAWMarker.Storage(
-            value: .realTime(relativeToStart: self.timeRange.lowerBound.interval),
+            value: .realTime(relativeToStart: timeRange.lowerBound.interval),
             frameRate: frameRate,
             base: .max100SubFrames
         )
@@ -207,7 +207,7 @@ extension SRTFile.Subtitle {
 
 // MARK: - Sequence Category Methods
 
-extension Sequence where Element == SRTFile.Subtitle {
+extension Sequence<SRTFile.Subtitle> {
     /// Convert the SRT subtitles to ``DAWMarker``s.
     /// Note that this is a lossy process that discards the subtitles' out time.
     public func convertToDAWMarkers(

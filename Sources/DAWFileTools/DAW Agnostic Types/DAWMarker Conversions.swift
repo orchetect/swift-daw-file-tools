@@ -1,7 +1,7 @@
 //
 //  DAWMarker Conversions.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 import SwiftTimecodeCore
@@ -24,26 +24,26 @@ extension DAWMarker {
                 base: base,
                 limit: limit
             ),
-                  let offsetTimecode = try? startTimecode.adding(realTimeDurationAsTimecode)
+                let offsetTimecode = try? startTimecode.adding(realTimeDurationAsTimecode)
             else { return nil }
-            
+
             return offsetTimecode
-            
+
         case let .timecodeString(string):
             // if storage is a timecode string, we need original frame rate
             // if frame rates differ, convert timecode between them
-            
+
             let usingFrameRate = timeStorage?.frameRate ?? newFrameRate
-            
+
             var timecode = try? Timecode(
                 .string(string),
                 at: usingFrameRate,
                 base: base,
                 limit: limit
             )
-            
+
             // if frame rates differ, convert
-            
+
             if timeStorage?.frameRate != nil,
                timecode != nil,
                newFrameRate != timeStorage?.frameRate
@@ -55,9 +55,9 @@ extension DAWMarker {
                     limit: limit
                 )
             }
-            
+
             return timecode
-            
+
         case let .rational(fraction):
             guard let realTimeDurationAsTimecode = try? Timecode(
                 .rational(fraction),
@@ -67,22 +67,22 @@ extension DAWMarker {
             ),
                 let offsetTimecode = try? startTimecode.adding(realTimeDurationAsTimecode)
             else { return nil }
-            
+
             return offsetTimecode
-            
+
         case .none:
             return nil
         }
     }
-    
+
     /// Computed property, not cached.
     /// Returns a timecode object constructed from the `timeStorage` contents.
     public func originalTimecode(
         base: Timecode.SubFramesBase,
         limit: Timecode.UpperLimit
     ) -> Timecode? {
-        guard let timeStorage = timeStorage else { return nil }
-        
+        guard let timeStorage else { return nil }
+
         switch timeStorage.value {
         case let .realTime(secondsRelativeToStart):
             return try? Timecode(
@@ -91,7 +91,7 @@ extension DAWMarker {
                 base: base,
                 limit: limit
             )
-            
+
         case let .timecodeString(string):
             return try? Timecode(
                 .string(string),
@@ -99,7 +99,7 @@ extension DAWMarker {
                 base: base,
                 limit: limit
             )
-            
+
         case let .rational(fraction):
             return try? Timecode(
                 .rational(fraction),

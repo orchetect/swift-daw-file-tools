@@ -1,7 +1,7 @@
 //
 //  ProTools.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if ProTools
@@ -14,11 +14,11 @@ public enum ProTools {
     /// `Timecode` setting for `.subFramesBase`.
     /// Pro Tools uses 100 subframes per frame.
     public static let timecodeSubFramesBase: Timecode.SubFramesBase = .max100SubFrames
-    
+
     /// `Timecode` setting for `.upperLimit`.
     /// Pro Tools uses a 24-hour SMPTE timecode clock.
     public static let timecodeUpperLimit: Timecode.UpperLimit = .max24Hours
-    
+
     /// `Timecode` setting for `.stringFormat`.
     public static let timecodeStringFormat: Timecode.StringFormat = []
 }
@@ -36,7 +36,7 @@ extension ProTools {
             limit: timecodeUpperLimit
         )
     }
-    
+
     /// `Timecode` struct template.
     public static func formTimecode(
         _ exactly: String,
@@ -49,7 +49,7 @@ extension ProTools {
             limit: timecodeUpperLimit
         )
     }
-    
+
     /// `Timecode` struct template.
     public static func formTimecode(
         realTimeValue: TimeInterval,

@@ -1,19 +1,20 @@
 //
 //  DAWMarker Comparable Tests.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
-import Testing
 @testable import DAWFileTools
 import SwiftTimecodeCore
+import Testing
 
-@Suite struct DAWMarker_Comparable_Tests {
+@Suite
+struct DAWMarker_Comparable_Tests {
     /// For comparison with the context of a timeline that is != `00:00:00:00`.
     @Test
-    func compareTo() async throws {
+    func compareTo() throws {
         let frameRate: TimecodeFrameRate = .fps24
-        
+
         func dawMarker(_ string: String) -> DAWMarker {
             DAWMarker(
                 storage: .init(
@@ -25,118 +26,118 @@ import SwiftTimecodeCore
                 comment: nil
             )
         }
-        
+
         func tc(_ string: String) throws -> Timecode {
             try Timecode(.string(string), at: frameRate)
         }
-        
+
         // orderedSame (==)
-        
+
         #expect(
             try dawMarker("00:00:00:00")
                 .compare(to: dawMarker("00:00:00:00"), timelineStart: tc("00:00:00:00"))
-            == .orderedSame
+                == .orderedSame
         )
-        
+
         #expect(
             try dawMarker("00:00:00:00")
                 .compare(to: dawMarker("00:00:00:00"), timelineStart: tc("01:00:00:00"))
-            == .orderedSame
+                == .orderedSame
         )
-        
+
         #expect(
             try dawMarker("00:00:00:00.01")
                 .compare(to: dawMarker("00:00:00:00.01"), timelineStart: tc("00:00:00:00"))
-            == .orderedSame
+                == .orderedSame
         )
-        
+
         #expect(
             try dawMarker("01:00:00:00")
                 .compare(to: dawMarker("01:00:00:00"), timelineStart: tc("00:00:00:00"))
-            == .orderedSame
+                == .orderedSame
         )
-        
+
         #expect(
             try dawMarker("01:00:00:00")
                 .compare(to: dawMarker("01:00:00:00"), timelineStart: tc("01:00:00:00"))
-            == .orderedSame
+                == .orderedSame
         )
-        
+
         #expect(
             try dawMarker("01:00:00:00")
                 .compare(to: dawMarker("01:00:00:00"), timelineStart: tc("02:00:00:00"))
-            == .orderedSame
+                == .orderedSame
         )
-        
+
         // orderedAscending (<)
-        
+
         #expect(
             try dawMarker("00:00:00:00")
                 .compare(to: dawMarker("00:00:00:00.01"), timelineStart: tc("00:00:00:00"))
-            == .orderedAscending
+                == .orderedAscending
         )
-        
+
         #expect(
             try dawMarker("00:00:00:00")
                 .compare(to: dawMarker("00:00:00:01"), timelineStart: tc("00:00:00:00"))
-            == .orderedAscending
+                == .orderedAscending
         )
-        
+
         #expect(
             try dawMarker("00:00:00:00")
                 .compare(to: dawMarker("00:00:00:01"), timelineStart: tc("01:00:00:00"))
-            == .orderedAscending
+                == .orderedAscending
         )
-        
+
         #expect(
             try dawMarker("23:00:00:00")
                 .compare(to: dawMarker("00:00:00:00"), timelineStart: tc("23:00:00:00"))
-            == .orderedAscending
+                == .orderedAscending
         )
-        
+
         #expect(
             try dawMarker("23:30:00:00")
                 .compare(to: dawMarker("00:00:00:00"), timelineStart: tc("23:00:00:00"))
-            == .orderedAscending
+                == .orderedAscending
         )
-        
+
         #expect(
             try dawMarker("23:30:00:00")
                 .compare(to: dawMarker("01:00:00:00"), timelineStart: tc("23:00:00:00"))
-            == .orderedAscending
+                == .orderedAscending
         )
-        
+
         // orderedDescending (>)
-        
+
         #expect(
             try tc("00:00:00:00.01")
                 .compare(to: tc("00:00:00:00"), timelineStart: tc("00:00:00:00"))
-            == .orderedDescending
+                == .orderedDescending
         )
-        
+
         #expect(
             try dawMarker("00:00:00:01")
                 .compare(to: dawMarker("00:00:00:00"), timelineStart: tc("00:00:00:00"))
-            == .orderedDescending
+                == .orderedDescending
         )
-        
+
         #expect(
             try dawMarker("23:30:00:00")
                 .compare(to: dawMarker("00:00:00:00"), timelineStart: tc("00:00:00:00"))
-            == .orderedDescending
+                == .orderedDescending
         )
-        
+
         #expect(
             try dawMarker("00:00:00:00")
                 .compare(to: dawMarker("23:30:00:00"), timelineStart: tc("23:00:00:00"))
-            == .orderedDescending
+                == .orderedDescending
         )
     }
-    
+
     @Test
-    func collection_isSorted() async throws {
+    func collection_isSorted() throws {
         let frameRate: TimecodeFrameRate = .fps24
-        
+
         func dawMarker(_ string: String) -> DAWMarker {
             DAWMarker(
                 storage: .init(
@@ -148,11 +149,11 @@ import SwiftTimecodeCore
                 comment: nil
             )
         }
-        
+
         func tc(_ string: String) throws -> Timecode {
             try Timecode(.string(string), at: frameRate)
         }
-        
+
         #expect(
             [
                 dawMarker("00:00:00:00"),
@@ -174,9 +175,9 @@ import SwiftTimecodeCore
             .isSorted() // timelineStart of zero
             == true
         )
-        
+
         #expect(
-            [
+            try [
                 dawMarker("00:00:00:00"),
                 dawMarker("00:00:00:01"),
                 dawMarker("00:00:00:14"),
@@ -193,12 +194,12 @@ import SwiftTimecodeCore
                 dawMarker("02:00:00:00"),
                 dawMarker("03:00:00:00")
             ]
-            .isSorted(timelineStart: try tc("01:00:00:00"))
+            .isSorted(timelineStart: tc("01:00:00:00"))
             == false
         )
-        
+
         #expect(
-            [
+            try [
                 dawMarker("01:00:00:00"),
                 dawMarker("02:00:00:00"),
                 dawMarker("03:00:00:00"),
@@ -216,12 +217,12 @@ import SwiftTimecodeCore
                 dawMarker("00:23:00:10"),
                 dawMarker("00:59:59:23") // 1 frame before wrap around
             ]
-            .isSorted(timelineStart: try tc("01:00:00:00"))
+            .isSorted(timelineStart: tc("01:00:00:00"))
             == true
         )
-        
+
         #expect(
-            [
+            try [
                 dawMarker("01:00:00:00"),
                 dawMarker("02:00:00:00"),
                 dawMarker("03:00:00:00"),
@@ -239,12 +240,12 @@ import SwiftTimecodeCore
                 dawMarker("00:23:00:10"),
                 dawMarker("00:59:59:23") // 1 frame before wrap around
             ]
-            .isSorted(ascending: false, timelineStart: try tc("01:00:00:00"))
+            .isSorted(ascending: false, timelineStart: tc("01:00:00:00"))
             == false
         )
-        
+
         #expect(
-            [
+            try [
                 dawMarker("00:59:59:23"), // 1 frame before wrap around
                 dawMarker("00:23:00:10"),
                 dawMarker("00:02:00:08"),
@@ -262,7 +263,7 @@ import SwiftTimecodeCore
                 dawMarker("02:00:00:00"),
                 dawMarker("01:00:00:00")
             ]
-            .isSorted(ascending: false, timelineStart: try tc("01:00:00:00"))
+            .isSorted(ascending: false, timelineStart: tc("01:00:00:00"))
             == true
         )
     }

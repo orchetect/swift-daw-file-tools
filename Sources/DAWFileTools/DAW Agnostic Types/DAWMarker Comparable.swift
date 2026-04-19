@@ -1,7 +1,7 @@
 //
 //  DAWMarker Comparable.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 import Foundation
@@ -38,18 +38,18 @@ extension DAWMarker {
     /// standard  `<`, `==`, or  `>` operators as a sort comparator.
     public func compare(to other: DAWMarker, timelineStart: Timecode? = nil) -> ComparisonResult? {
         let limit: Timecode.UpperLimit = timelineStart?.upperLimit ?? .max24Hours
-        
+
         guard let lhsTC = convertToTimecodeForComparison(limit: limit),
               let rhsTC = other.convertToTimecodeForComparison(limit: limit)
         else { return nil }
-        
+
         return lhsTC.compare(to: rhsTC, timelineStart: timelineStart)
     }
 }
 
 // MARK: - Collection Ordering
 
-extension Collection where Element == DAWMarker {
+extension Collection<DAWMarker> {
     /// Returns `true` if all ``DAWMarker`` instances are ordered chronologically, either ascending
     /// or descending according to the `ascending` parameter.
     /// Contiguous subsequences of identical timecode are allowed.
@@ -81,20 +81,21 @@ extension Collection where Element == DAWMarker {
     /// Note that passing `timelineStart` of `nil` or zero (00:00:00:00) is the same as using the
     /// standard  `<`, `==`, or  `>` operators as a sort comparator.
     public func isSorted(ascending: Bool = true,
-                         timelineStart: Timecode? = nil) -> Bool? {
+                         timelineStart: Timecode? = nil) -> Bool?
+    {
         guard count > 1 else { return true }
-        
+
         let limit: Timecode.UpperLimit = timelineStart?.upperLimit ?? .max24Hours
         let timecodes = compactMap { $0.convertToTimecodeForComparison(limit: limit) }
-        
+
         // if any markers failed to convert to timecode, abort
         guard timecodes.count == count else { return nil }
-        
+
         return timecodes.isSorted(ascending: ascending, timelineStart: timelineStart)
     }
 }
 
-extension Collection where Element == DAWMarker {
+extension Collection<DAWMarker> {
     /// Returns a collection sorting all ``DAWMarker`` instances chronologically, either ascending
     /// or descending.
     /// Contiguous subsequences of identical timecode are allowed.
@@ -126,18 +127,19 @@ extension Collection where Element == DAWMarker {
     /// Note that passing `timelineStart` of `nil` or zero (00:00:00:00) is the same as using the
     /// standard  `<`, `==`, or  `>` operators as a sort comparator.
     public func sorted(ascending: Bool = true,
-                       timelineStart: Timecode) -> [Element] {
+                       timelineStart: Timecode) -> [Element]
+    {
         sorted {
             $0.compare(to: $1, timelineStart: timelineStart)
-                != (ascending ? .orderedDescending : .orderedAscending )
+                != (ascending ? .orderedDescending : .orderedAscending)
         }
     }
 }
 
 extension MutableCollection
-where Element == DAWMarker,
-      Self: RandomAccessCollection,
-      Element: Comparable
+    where Element == DAWMarker,
+    Self: RandomAccessCollection,
+    Element: Comparable
 {
     /// Sorts the collection in place by sorting all ``DAWMarker`` instances chronologically, either
     /// ascending or descending.
@@ -170,10 +172,11 @@ where Element == DAWMarker,
     /// Note that passing `timelineStart` of `nil` or zero (00:00:00:00) is the same as using the
     /// standard  `<`, `==`, or  `>` operators as a sort comparator.
     public mutating func sort(ascending: Bool = true,
-                              timelineStart: Timecode) {
+                              timelineStart: Timecode)
+    {
         sort {
             $0.compare(to: $1, timelineStart: timelineStart)
-            != (ascending ? .orderedDescending : .orderedAscending )
+                != (ascending ? .orderedDescending : .orderedAscending)
         }
     }
 }
@@ -181,7 +184,7 @@ where Element == DAWMarker,
 // MARK: - Helpers
 
 extension DAWMarker {
-    internal func convertToTimecodeForComparison(limit: Timecode.UpperLimit) -> Timecode? {
+    func convertToTimecodeForComparison(limit: Timecode.UpperLimit) -> Timecode? {
         originalTimecode(
             base: timeStorage?.base ?? .max80SubFrames,
             limit: limit

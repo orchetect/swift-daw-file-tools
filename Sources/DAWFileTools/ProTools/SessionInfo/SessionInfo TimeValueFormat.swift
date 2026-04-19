@@ -1,7 +1,7 @@
 //
-//  SessionInfo TimeValue.swift
+//  SessionInfo TimeValueFormat.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if ProTools
@@ -14,23 +14,23 @@ extension ProTools.SessionInfo {
         ///
         /// Pro Tools always uses a subframe base of 100 subframes per frame.
         case timecode
-        
+
         /// Min:Secs time format.
         /// This can either be `MM:SS` or `MM:SS.sss` (where `sss` is milliseconds).
         case minSecs
-        
+
         /// Elapsed audio samples since the project start.
         ///
         /// Refer to ``ProTools/SessionInfo/main-swift.property``.``ProTools/SessionInfo/Main-swift.struct/sampleRate``
         /// for project sample rate.
         case samples
-        
+
         /// Bars and Beats (musical).
         /// Ticks (quarter note division) is only present when the _Show Subframes_ option is
         /// enabled in Pro Tools' Export Session Text window while exporting. Pro Tools uses a PPQ
         /// base of 960 ticks per quarter.
         case barsAndBeats
-        
+
         /// Feet and Frames.
         ///
         /// This can either be `FT:FR` or `FT:FR.sf` (where `sf` is subframes).
@@ -43,7 +43,9 @@ extension ProTools.SessionInfo {
 }
 
 extension ProTools.SessionInfo.TimeValueFormat: Identifiable {
-    public var id: Self { self }
+    public var id: Self {
+        self
+    }
 }
 
 extension ProTools.SessionInfo.TimeValueFormat: Sendable { }
@@ -58,11 +60,11 @@ extension ProTools.SessionInfo.TimeValueFormat {
     /// Returns human-readable name of the time value format type suitable for UI or debugging.
     public var name: String {
         switch self {
-        case .timecode: return "Timecode"
-        case .minSecs: return "Min:Secs"
-        case .samples: return "Samples"
-        case .barsAndBeats: return "Bars|Beats"
-        case .feetAndFrames: return "Feet+Frames"
+        case .timecode: "Timecode"
+        case .minSecs: "Min:Secs"
+        case .samples: "Samples"
+        case .barsAndBeats: "Bars|Beats"
+        case .feetAndFrames: "Feet+Frames"
         }
     }
 }
@@ -78,7 +80,7 @@ extension ProTools.SessionInfo.TimeValueFormat {
     init(heuristic source: String) throws {
         // as a performance optimization, the formats here
         // are ordered from most common to least common
-        
+
         if Self.isTimecode(source) {
             self = .timecode
             return
@@ -99,40 +101,40 @@ extension ProTools.SessionInfo.TimeValueFormat {
             self = .feetAndFrames
             return
         }
-        
+
         throw ProTools.SessionInfo.ParseError.general(
             "Not a valid time value."
         )
     }
-    
+
     private static func isTimecode(
         _ source: String
     ) -> Bool {
         let regExPattern = #"^\d{2}:\d{2}:\d{2}[:|;]\d{2}(.\d{2}){0,1}$"#
         return source.regexMatches(pattern: regExPattern).count == 1
     }
-    
+
     private static func isMinSecs(
         _ source: String
     ) -> Bool {
         let regExPattern = #"^(\d+):(\d{2})(.\d{3}){0,1}$"#
         return source.regexMatches(pattern: regExPattern).count == 1
     }
-    
+
     private static func isSamples(
         _ source: String
     ) -> Bool {
         let regExPattern = #"^\d+$"#
         return source.regexMatches(pattern: regExPattern).count == 1
     }
-    
+
     private static func isBarsAndBeats(
         _ source: String
     ) -> Bool {
         let regExPattern = #"^\d+\|\d+(\|[\s\d]{1}\d{3}){0,1}$"#
         return source.regexMatches(pattern: regExPattern).count == 1
     }
-    
+
     private static func isFeetAndFrames(
         _ source: String
     ) -> Bool {

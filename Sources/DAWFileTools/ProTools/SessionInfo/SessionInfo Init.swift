@@ -1,7 +1,7 @@
 //
 //  SessionInfo Init.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if ProTools
@@ -14,7 +14,7 @@ import SwiftTimecodeCore
 
 extension ProTools.SessionInfo {
     // TODO: add init(URL)
-    
+
     /// Parse text file contents exported from Pro Tools.
     ///
     /// - Parameters:
@@ -32,7 +32,7 @@ extension ProTools.SessionInfo {
             messages: &dummy
         )
     }
-    
+
     /// Parse text file contents exported from Pro Tools.
     ///
     /// - Parameters:
@@ -49,7 +49,7 @@ extension ProTools.SessionInfo {
         func addParseMessage(_ msg: ParseMessage) {
             messages.append(msg)
         }
-        
+
         // Mac OS Roman (legacy 'TextEdit' format when exporting from Pro Tools)
         // https://en.wikipedia.org/wiki/Mac_OS_Roman
         // The MIME Content-Type for this encoding is "text/plain; charset=macintosh"
@@ -58,7 +58,7 @@ extension ProTools.SessionInfo {
         // operating system.
         // Pro Tools still retains the Mac OS Roman encoding as its default export option.
         // However UTF8 is selectable as an alternate encoding for export.
-        
+
         // Note: NSString.stringEncoding() doesn't work as expected for our needs to
         // attempt to detect text encoding of the file. Instead, a custom heuristic works
         // more reliably as follows:
@@ -67,7 +67,7 @@ extension ProTools.SessionInfo {
         // 2. Then fall back to Mac OS Roman as the second option.
         // 3. Fail if neither encoding succeeds, since these are the only 2 encodings
         //    that Pro Tools exports with.
-        
+
         var rawString: String
         if let decoded = String(data: data, encoding: .utf8) {
             addParseMessage(.info("Detected format: UTF8"))
@@ -80,7 +80,7 @@ extension ProTools.SessionInfo {
                 "Error: could not convert document file data to string."
             )
         }
-        
+
         try self.init(
             fileContent: rawString,
             timeValueFormat: timeValueFormat,
@@ -107,7 +107,7 @@ extension ProTools.SessionInfo {
             messages: &dummy
         )
     }
-    
+
     /// Parse text file contents exported from Pro Tools.
     ///
     /// - Parameters:

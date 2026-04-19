@@ -1,7 +1,7 @@
 //
 //  SRTFile Time Utilities.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if SRT
@@ -18,7 +18,7 @@ extension Time {
             ? "^" + pattern + "$"
             : pattern
     }
-    
+
     /// Decode from SRT file timestamp format.
     ///
     /// - Parameters:
@@ -26,7 +26,7 @@ extension Time {
     ///   - strict: Enable strict parsing mode. When strict, only the "00:00:00,000" format is accepted.
     ///     When non-strict, a very loose heuristic is used to allow for superfluous whitespace, the
     ///     use of non-standard time separator characters and non-enforcement of character zero-padding.
-    public init?<S: StringProtocol>(srtEncodedString: S, strict: Bool = false) {
+    public init?(srtEncodedString: some StringProtocol, strict: Bool = false) {
         let pattern = Self.decodeRegExPattern(strict: strict, matchLine: true)
         let matches = srtEncodedString.regexMatches(
             captureGroupsFromPattern: pattern,
@@ -41,10 +41,10 @@ extension Time {
               strict ? msString.count == 3 : (1 ... 3).contains(msString.count),
               let ms = msString.int
         else { return nil }
-        
+
         self.init(hours: h, minutes: m, seconds: s, milliseconds: ms)
     }
-    
+
     /// Encode to SRT file timestamp format.
     public func srtEncodedString() -> String {
         hours.string(paddedTo: 2)

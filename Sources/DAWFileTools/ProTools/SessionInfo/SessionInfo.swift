@@ -1,7 +1,7 @@
 //
 //  SessionInfo.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if ProTools
@@ -16,28 +16,28 @@ extension ProTools {
     public struct SessionInfo: Equatable, Hashable {
         /// Meta data contained in the main header of the data file.
         public internal(set) var main = Main()
-        
+
         /// Files listing (online).
         public internal(set) var onlineFiles: [File]?
-        
+
         /// Files listing (offline).
         public internal(set) var offlineFiles: [File]?
-        
+
         /// Clips listing (online).
         public internal(set) var onlineClips: [Clip]?
-        
+
         /// Clips listing (offline).
         public internal(set) var offlineClips: [Clip]?
-        
+
         /// Plugin listing.
         public internal(set) var plugins: [Plugin]?
-        
+
         /// Tracks listing.
         public internal(set) var tracks: [Track]?
-        
+
         /// Markers listing.
         public internal(set) var markers: [Marker]?
-        
+
         /// Holds any extraneous sections or data that was not recognized while parsing the file.
         public internal(set) var orphanData: [OrphanData]?
     }

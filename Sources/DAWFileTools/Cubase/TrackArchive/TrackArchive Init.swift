@@ -1,7 +1,7 @@
 //
 //  TrackArchive Init.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if Cubase && os(macOS) // XMLNode only works on macOS
@@ -18,7 +18,7 @@ extension Cubase.TrackArchive {
         var dummy: [ParseMessage] = []
         try self.init(fileContent: data, messages: &dummy)
     }
-    
+
     /// Parse Track Archive XML file contents exported from Cubase.
     public init(
         fileContent data: Data,
@@ -37,7 +37,7 @@ extension Cubase.TrackArchive {
         var dummy: [ParseMessage] = []
         try self.init(fileContent: xml, messages: &dummy)
     }
-    
+
     /// Parse Track Archive XML file contents exported from Cubase.
     public init(
         fileContent xml: XMLDocument,
@@ -55,7 +55,7 @@ extension Cubase.TrackArchive {
         var dummy: [ParseMessage] = []
         self.init(fileContent: xmlRoot, messages: &dummy)
     }
-    
+
     /// Parse Track Archive XML file contents exported from Cubase.
     public init(
         fileContent xmlRoot: XMLElement,

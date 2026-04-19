@@ -5,7 +5,10 @@ import PackageDescription
 let package = Package(
     name: "swift-daw-file-tools",
     platforms: [
-        .macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v6)
+        .macOS(.v10_15),
+        .iOS(.v13),
+        .tvOS(.v13),
+        .watchOS(.v6)
     ],
     products: [
         .library(name: "DAWFileTools", targets: ["DAWFileTools"])
@@ -23,9 +26,9 @@ let package = Package(
         .package(url: "https://github.com/orchetect/swift-fcpxml", from: "0.1.1"),
         .package(url: "https://github.com/orchetect/swift-timecode", from: "3.1.0"),
         .package(url: "https://github.com/orchetect/MIDIKit", from: "0.11.0"),
-        
+
         // testing-only dependencies
-        .package(url: "https://github.com/orchetect/swift-testing-extensions", from: "0.3.0"),
+        .package(url: "https://github.com/orchetect/swift-testing-extensions", from: "0.3.0")
     ],
     targets: [
         .target(
@@ -55,11 +58,25 @@ let package = Package(
 // MARK: - Traits
 
 extension Trait {
-    static var cubase: Trait { .trait(name: "Cubase") }
-    static var fcp: Trait { .trait(name: "FCP") }
-    static var midiFile: Trait { .trait(name: "MIDIFile") }
-    static var proTools: Trait { .trait(name: "ProTools") }
-    static var srt: Trait { .trait(name: "SRT") }
+    static var cubase: Trait {
+        .trait(name: "Cubase")
+    }
+
+    static var fcp: Trait {
+        .trait(name: "FCP")
+    }
+
+    static var midiFile: Trait {
+        .trait(name: "MIDIFile")
+    }
+
+    static var proTools: Trait {
+        .trait(name: "ProTools")
+    }
+
+    static var srt: Trait {
+        .trait(name: "SRT")
+    }
 }
 
 // MARK: - Helpers
@@ -70,7 +87,7 @@ extension Trait {
     public static func trait(name: String, description: String? = nil, enabledTraits: Set<Trait> = []) -> Trait {
         .trait(name: name, description: description, enabledTraits: Set(enabledTraits.map(\.name)))
     }
-    
+
     @_disfavoredOverload
     public static func `default`(enabledTraits: Set<Trait>) -> Trait {
         .default(enabledTraits: Set(enabledTraits.map(\.name)))
@@ -83,7 +100,7 @@ extension TargetDependencyCondition {
     public static func when(platforms: [Platform], traits: Set<Trait>) -> TargetDependencyCondition? {
         .when(platforms: platforms, traits: Set(traits.map(\.name)))
     }
-    
+
     @available(_PackageDescription 6.1)
     @_disfavoredOverload
     public static func when(traits: Set<Trait>) -> TargetDependencyCondition? {

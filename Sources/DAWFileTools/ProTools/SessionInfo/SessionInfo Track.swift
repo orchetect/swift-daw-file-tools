@@ -1,7 +1,7 @@
 //
 //  SessionInfo Track.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if ProTools
@@ -28,11 +28,11 @@ extension ProTools.SessionInfo.Track: Sendable { }
 extension ProTools.SessionInfo.Track {
     /// A track's state.
     public enum State: String {
-        case inactive    = "Inactive"
-        case hidden      = "Hidden"
-        case muted       = "Muted"
-        case solo        = "Solo"
-        case soloSafe    = "SoloSafe"
+        case inactive = "Inactive"
+        case hidden = "Hidden"
+        case muted = "Muted"
+        case solo = "Solo"
+        case soloSafe = "SoloSafe"
     }
 }
 
@@ -61,7 +61,7 @@ extension ProTools.SessionInfo.Track.Clip {
     /// A clip's state (such as 'Muted', 'Unmuted')
     public enum State: String {
         // TODO: there may be more states possible than this -- need to test
-        case muted   = "Muted"
+        case muted = "Muted"
         case unmuted = "Unmuted"
     }
 }

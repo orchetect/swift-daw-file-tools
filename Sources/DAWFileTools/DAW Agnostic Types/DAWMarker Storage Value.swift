@@ -1,21 +1,21 @@
 //
 //  DAWMarker Storage Value.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 import Foundation
-import SwiftTimecodeCore
 import SwiftExtensions
+import SwiftTimecodeCore
 
 extension DAWMarker.Storage {
     public enum Value {
         /// Real time in seconds, relative to the start time.
         case realTime(relativeToStart: TimeInterval)
-        
+
         /// Timecode string, absolute timestamp (not an interval from start time).
         case timecodeString(absolute: String)
-        
+
         /// Rational (fraction) time value.
         case rational(relativeToStart: Fraction)
     }
@@ -26,7 +26,9 @@ extension DAWMarker.Storage.Value: Equatable { }
 extension DAWMarker.Storage.Value: Hashable { }
 
 extension DAWMarker.Storage.Value: Identifiable {
-    public var id: Self { self }
+    public var id: Self {
+        self
+    }
 }
 
 extension DAWMarker.Storage.Value: Sendable { }
@@ -37,23 +39,23 @@ extension DAWMarker.Storage.Value {
     public var stringValue: String {
         switch self {
         case let .realTime(time):
-            return time.stringValueHighPrecision
-            
+            time.stringValueHighPrecision
+
         case let .timecodeString(string):
-            return string
-            
+            string
+
         case let .rational(fraction):
-            return fraction.fcpxmlStringValue
+            fraction.fcpxmlStringValue
         }
     }
-    
+
     /// Returns whether persistent storage of the marker's associated original frame rate is
     /// required to convert to real time.
     public var requiresOriginalFrameRate: Bool {
         switch self {
-        case .realTime: return false
-        case .timecodeString: return true
-        case .rational: return false
+        case .realTime: false
+        case .timecodeString: true
+        case .rational: false
         }
     }
 }
@@ -64,20 +66,20 @@ extension DAWMarker.Storage.Value: Codable {
         case timecodeString
         case rational
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         var lastError: Error?
-        
+
         // parse
-        
+
         do {
             let value = try container.decode(TimeInterval.self, forKey: .realTime)
             self = .realTime(relativeToStart: value)
             return
         } catch { lastError = error }
-        
+
         do {
             let value = try container.decode(String.self, forKey: .timecodeString)
             // framerate is inconsequential for testing string format, so arbitrary 30fps is fine
@@ -92,7 +94,7 @@ extension DAWMarker.Storage.Value: Codable {
             self = .timecodeString(absolute: value)
             return
         } catch { lastError = error }
-        
+
         do {
             let value = try container.decode(String.self, forKey: .rational)
             guard let fraction = Fraction(fcpxmlString: value) else {
@@ -102,16 +104,16 @@ extension DAWMarker.Storage.Value: Codable {
                         debugDescription: "Rational fraction value was stored but could not be parsed. The string may not be encoded correctly."
                     ))
             }
-            
+
             self = .rational(relativeToStart: fraction)
             return
         } catch { lastError = error }
-        
+
         // if no known keys are found, throw the last error that was stored
-        if let lastError = lastError {
+        if let lastError {
             throw lastError
         }
-        
+
         // if no error was stored, throw a generic failure
         throw DecodingError
             .dataCorrupted(.init(
@@ -119,10 +121,10 @@ extension DAWMarker.Storage.Value: Codable {
                 debugDescription: "Key not found, or wrong value type."
             ))
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         switch self {
         case let .realTime(value):
             try container.encode(value, forKey: .realTime)

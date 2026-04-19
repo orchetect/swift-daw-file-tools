@@ -1,7 +1,7 @@
 //
-//  FCPXML.swift
+//  FinalCutPro.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if FCP

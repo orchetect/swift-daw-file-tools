@@ -1,7 +1,7 @@
 //
 //  TrackArchive ParseMessage.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if Cubase && os(macOS) // XMLNode only works on macOS
@@ -13,7 +13,7 @@ extension Cubase.TrackArchive {
         /// Info message.
         /// Can be disregarded and only useful for debugging.
         case info(String)
-        
+
         /// Error message.
         /// Something was malformed or data format was not expected.
         case error(String)
@@ -28,7 +28,7 @@ extension Cubase.TrackArchive.ParseMessage: Sendable { }
 
 // MARK: - Extensions
 
-extension Collection where Element == Cubase.TrackArchive.ParseMessage {
+extension Collection<Cubase.TrackArchive.ParseMessage> {
     /// Returns all `.info` cases as enum-unwrapped Strings.
     public var infos: [String] {
         reduce(into: [String]()) {
@@ -40,7 +40,7 @@ extension Collection where Element == Cubase.TrackArchive.ParseMessage {
             }
         }
     }
-    
+
     /// Returns all `.error` cases as enum-unwrapped Strings.
     public var errors: [String] {
         reduce(into: [String]()) {

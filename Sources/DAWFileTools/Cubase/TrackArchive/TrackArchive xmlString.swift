@@ -1,7 +1,7 @@
 //
 //  TrackArchive xmlString.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if Cubase && os(macOS) // XMLNode only works on macOS
@@ -12,48 +12,48 @@ import SwiftTimecodeCore
 
 extension Cubase.TrackArchive {
     // MARK: xmlString
-    
+
     /// Returns Cubase XML file contents generated from the `TrackArchive` contents as a String.
     public func xmlString() throws -> (
         xmlString: String,
         messages: [EncodeMessage]
     ) {
         var messages: [EncodeMessage] = []
-        
+
         func addEncodeMessage(_ msg: EncodeMessage) {
             messages.append(msg)
         }
-        
+
         var idCounter = IDCounter()
-        
+
         let xmlOptions: XMLNode.Options = [.nodePrettyPrint, .nodeCompactEmptyElement]
-        
+
         // xml doc
-        
+
         let xml = XMLDocument(kind: .document, options: xmlOptions)
         xml.version = "1.0"
         xml.characterEncoding = "utf-8"
         xml.setRootElement(XMLElement(name: "root"))
-        
+
         // root
-        
+
         guard let root = xml.rootElement() else {
             throw EncodeError.general(
                 "Could not access root XML element."
             )
         }
         root.name = "tracklist2"
-        
+
         // track list
-        
+
         _addTrackListAndTempoEvents(root, idCounter: &idCounter, messages: &messages)
-        
+
         // setup
-        
+
         try _addSetup(root, idCounter: &idCounter, messages: &messages)
-        
+
         // return data
-        
+
         return (
             xmlString: xml.xmlString(options: xmlOptions),
             messages: messages
@@ -63,7 +63,7 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
     // MARK: _addSetup
-    
+
     fileprivate func _addSetup(
         _ root: XMLElement,
         idCounter: inout IDCounter,
@@ -72,7 +72,7 @@ extension Cubase.TrackArchive {
         func addEncodeMessage(_ msg: EncodeMessage) {
             messages.append(msg)
         }
-        
+
         let setupNode = XMLElement(
             name: "obj",
             attributes: [
@@ -81,7 +81,7 @@ extension Cubase.TrackArchive {
                 ("ID", idCounter.getNewID().string)
             ]
         )
-        
+
         // frame rate
         if let value = Self.frameRateTable
             .first(where: { $0.value == main.frameRate })?
@@ -95,16 +95,16 @@ extension Cubase.TrackArchive {
                 ]
             ))
         }
-        
+
         // start time
         if let stc = main.startTimecode {
             let startNode = XMLElement(
                 name: "member",
                 attributes: [("name", "Start")]
             )
-            
+
             let value = stc.realTimeValue.stringValueHighPrecision
-            
+
             startNode.addChild(XMLElement(
                 name: "float",
                 attributes: [
@@ -112,26 +112,26 @@ extension Cubase.TrackArchive {
                     ("value", value)
                 ]
             ))
-            
+
             // TODO: instead of raw string, use a non-throwing method?
-            startNode.addChild(
-                try XMLElement(
+            try startNode.addChild(
+                XMLElement(
                     xmlString: #"<member name="Domain"><int name="Type" value="1"/><float name="Period" value="1"/></member>"#
                 )
             )
-            
+
             setupNode.addChild(startNode)
         }
-        
+
         // length
         if let ltc = main.lengthTimecode {
             let startNode = XMLElement(
                 name: "member",
                 attributes: [("name", "Length")]
             )
-            
+
             let value = ltc.realTimeValue.string
-            
+
             startNode.addChild(XMLElement(
                 name: "float",
                 attributes: [
@@ -139,19 +139,19 @@ extension Cubase.TrackArchive {
                     ("value", value)
                 ]
             ))
-            
+
             // TODO: instead of raw string, use a non-throwing method?
-            startNode.addChild(
-                try XMLElement(
+            try startNode.addChild(
+                XMLElement(
                     xmlString: #"<member name="Domain"><int name="Type" value="1"/><float name="Period" value="1"/></member>"#
                 )
             )
-            
+
             setupNode.addChild(startNode)
         }
-        
+
         // TimeType - not implemented yet
-        
+
         // bar offset
         if let value = main.barOffset {
             setupNode.addChild(XMLElement(
@@ -162,7 +162,7 @@ extension Cubase.TrackArchive {
                 ]
             ))
         }
-        
+
         // sample rate
         if let value = main.sampleRate {
             setupNode.addChild(XMLElement(
@@ -173,7 +173,7 @@ extension Cubase.TrackArchive {
                 ]
             ))
         }
-        
+
         // bit depth
         if let value = main.bitDepth {
             setupNode.addChild(XMLElement(
@@ -184,19 +184,19 @@ extension Cubase.TrackArchive {
                 ]
             ))
         }
-        
+
         // 'SampleFormatSize' - not implemented yet
-        
+
         // 'RecordFile' - not implemented yet
-        
+
         // 'RecordFileType' ... - not implemented yet
-        
+
         // 'PanLaw' - not implemented yet
-        
+
         // 'VolumeMax' - not implemented yet
-        
+
         // 'HmtType' - not implemented yet
-        
+
         // 'HmtDepth'
         if let value = main.hmtDepth {
             setupNode.addChild(XMLElement(
@@ -207,14 +207,14 @@ extension Cubase.TrackArchive {
                 ]
             ))
         }
-        
+
         root.addChild(setupNode)
     }
 }
 
 extension Cubase.TrackArchive {
     // MARK: _addTrackListAndTempoEvents
-    
+
     fileprivate func _addTrackListAndTempoEvents(
         _ root: XMLElement,
         idCounter: inout IDCounter,
@@ -223,7 +223,7 @@ extension Cubase.TrackArchive {
         func addEncodeMessage(_ msg: EncodeMessage) {
             messages.append(msg)
         }
-        
+
         let listNode = XMLElement(
             name: "list",
             attributes: [
@@ -231,12 +231,12 @@ extension Cubase.TrackArchive {
                 ("type", "obj")
             ]
         )
-        
+
         // TODO: needs coding - add tracks and tempo events
-        
+
         for track in tracks ?? [] {
             let newTrack = XMLElement()
-            
+
             // Flags
             // TODO: not sure what this value is for, but Cubase will refuse
             // to open the XML if it's absent
@@ -247,7 +247,7 @@ extension Cubase.TrackArchive {
                     ("value", "1")
                 ]
             ))
-            
+
             // Start
             newTrack.addChild(XMLElement(
                 name: "float",
@@ -256,9 +256,9 @@ extension Cubase.TrackArchive {
                     ("value", "0")
                 ]
             ))
-            
+
             // Length - needed?
-            
+
             // MListNode
             let mlistNode = XMLElement(
                 name: "obj",
@@ -269,7 +269,7 @@ extension Cubase.TrackArchive {
                 ]
             )
             newTrack.addChild(mlistNode)
-            
+
             // Track Name
             mlistNode.addChild(XMLElement(
                 name: "string",
@@ -278,7 +278,7 @@ extension Cubase.TrackArchive {
                     ("value", track.name ?? "")
                 ]
             ))
-            
+
             // Time domain
             let Domain = XMLElement(
                 name: "member",
@@ -299,9 +299,9 @@ extension Cubase.TrackArchive {
                 ]
             ))
             mlistNode.addChild(Domain)
-            
+
             // track-specific contents
-            
+
             switch track {
             case let .marker(markerTrack):
                 _addTrackMarker(
@@ -310,7 +310,7 @@ extension Cubase.TrackArchive {
                     idCounter: &idCounter,
                     messages: &messages
                 )
-                
+
             default:
                 addEncodeMessage(
                     .error(
@@ -318,7 +318,7 @@ extension Cubase.TrackArchive {
                     )
                 )
             }
-            
+
             // Track Device
             // TODO: not sure what this value is for, but Cubase will refuse
             // to open the XML if it's absent
@@ -338,15 +338,15 @@ extension Cubase.TrackArchive {
                 ]
             ))
             newTrack.addChild(TrackDevice)
-            
+
             listNode.addChild(newTrack)
         }
-        
+
         root.addChild(listNode)
     }
-    
+
     // MARK: _addTrackMarker
-    
+
     @discardableResult
     fileprivate func _addTrackMarker(
         using newTrack: XMLElement,
@@ -357,22 +357,22 @@ extension Cubase.TrackArchive {
         func addEncodeMessage(_ msg: EncodeMessage) {
             messages.append(msg)
         }
-        
+
         var staticMarkerIDCounter = 0
         var cycleMarkerIDCounter = 0
-        
+
         newTrack.name = "obj"
         newTrack.addAttributes([
             ("class", "MMarkerTrackEvent"),
             ("ID", idCounter.getNewID().string)
         ])
-        
+
         // MListNode
         let mlistNode = newTrack.childElements
             .filter(whereNodeNamed: "obj")
             .filter(whereAttribute: "class", hasValue: "MListNode")
             .first(whereAttribute: "name", hasValue: "Node")
-        
+
         // MListNode.Events
         let eventsNode = XMLElement(
             name: "list",
@@ -381,10 +381,10 @@ extension Cubase.TrackArchive {
                 ("type", "obj")
             ]
         )
-        
+
         for event in track.events {
             let newNode = XMLElement(name: "obj")
-            
+
             // add length as real time if present, otherwise convert the
             // timecode object to real time
             if let eventStartRealTime = event.startRealTime {
@@ -404,7 +404,7 @@ extension Cubase.TrackArchive {
                 let eventTC = event.startTimecode
                 let sortedTCs = [sessionStartTC, eventTC].sorted(timelineStart: sessionStartTC)
                 let offsetTC = sortedTCs[0].interval(to: sortedTCs[1]).flattened()
-                
+
                 newNode.addChild(XMLElement(
                     name: "float",
                     attributes: [
@@ -418,14 +418,14 @@ extension Cubase.TrackArchive {
                     ]
                 ))
             }
-            
+
             switch event {
             case .marker(_): // MMarkerEvent
                 newNode.addAttribute(withName: "class", value: "MMarkerEvent")
-                
+
             case let .cycleMarker(cycleMarker): // MRangeMarkerEvent
                 newNode.addAttribute(withName: "class", value: "MRangeMarkerEvent")
-                
+
                 // add length as real time if present, otherwise convert the
                 // timecode object to real time
                 if let markerLengthRealTime = cycleMarker.lengthRealTime {
@@ -455,12 +455,12 @@ extension Cubase.TrackArchive {
                     ))
                 }
             }
-            
+
             newNode.addChild(XMLElement(name: "string", attributes: [
                 ("name", "Name"),
                 ("value", event.name)
             ]))
-            
+
             switch event {
             case .marker(_): // MMarkerEvent
                 staticMarkerIDCounter += 1
@@ -471,7 +471,7 @@ extension Cubase.TrackArchive {
                         staticMarkerIDCounter.string
                     )
                 ]))
-                
+
             case .cycleMarker(_): // MRangeMarkerEvent
                 cycleMarkerIDCounter += 1
                 newNode.addChild(XMLElement(name: "int", attributes: [
@@ -483,12 +483,12 @@ extension Cubase.TrackArchive {
                 ]))
             }
             newNode.addAttribute(withName: "ID", value: idCounter.getNewID().string)
-            
+
             eventsNode.addChild(newNode)
         }
-        
+
         mlistNode?.addChild(eventsNode)
-        
+
         return newTrack
     }
 }
@@ -498,7 +498,7 @@ extension Cubase.TrackArchive {
 extension Cubase.TrackArchive {
     fileprivate struct IDCounter {
         var id = 0
-        
+
         mutating func getNewID() -> Int {
             id += 1
             return id

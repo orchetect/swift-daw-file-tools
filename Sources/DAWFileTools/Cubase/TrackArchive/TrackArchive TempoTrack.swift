@@ -1,7 +1,7 @@
 //
 //  TrackArchive TempoTrack.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if Cubase && os(macOS) // XMLNode only works on macOS
@@ -13,7 +13,7 @@ extension Cubase.TrackArchive {
     public struct TempoTrack: CubaseTrackArchiveTrack {
         public var name: String?
         public var events: [Event]
-        
+
         public init(name: String? = nil, events: [Event] = []) {
             self.name = name
             self.events = events
@@ -35,7 +35,7 @@ extension Cubase.TrackArchive.TempoTrack {
         public var startTimeAsPPQ: Cubase.PPQ
         public var tempo: Cubase.Tempo
         public var type: TempoEventType
-        
+
         public init(startTimeAsPPQ: Cubase.PPQ, tempo: Cubase.Tempo, type: TempoEventType) {
             self.startTimeAsPPQ = startTimeAsPPQ
             self.tempo = tempo

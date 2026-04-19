@@ -1,7 +1,7 @@
 //
 //  SRTFile.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if SRT
@@ -76,10 +76,10 @@ public struct SRTFile {
     /// YouTube only supports UTF-8. The default encoding for subtitle files in FFmpeg is UTF-8. All text in a
     /// Matroska file is encoded in UTF-8.
     public var encoding: String.Encoding
-    
+
     /// Subtitles (captions) contained in the SRT file.
     public var subtitles: [Subtitle]
-    
+
     public init(encoding: String.Encoding = .windowsCP1252, subtitles: [Subtitle]) {
         self.encoding = encoding
         self.subtitles = subtitles
@@ -100,7 +100,7 @@ extension SRTFile {
         let data = try Data(contentsOf: url)
         try self.init(fileContent: data)
     }
-    
+
     /// Initialize by loading raw file contents.
     public init(fileContent data: Data) throws {
         // must use charset detection since there is no standard text encoding for SRT files.
@@ -108,7 +108,7 @@ extension SRTFile {
         var nsString: NSString?
         guard case let rawValue = NSString.stringEncoding(
             for: data,
-            encodingOptions: nil /*[
+            encodingOptions: nil /* [
                 .suggestedEncodingsKey: [
                     NSUTF8StringEncoding,
                     NSUTF16StringEncoding,
@@ -117,7 +117,7 @@ extension SRTFile {
                     NSWindowsCP1252StringEncoding
                 ],
                 .useOnlySuggestedEncodingsKey: true as NSNumber
-            ]*/,
+            ] */,
             convertedString: &nsString,
             usedLossyConversion: &usedLossyConversion
         ),
@@ -127,64 +127,63 @@ extension SRTFile {
             throw DecodeError.unrecognizedTextEncoding
         }
         let encoding = String.Encoding(rawValue: rawValue)
-        
+
         try self.init(fileContent: rawText, encoding: encoding)
     }
-    
+
     /// Initialize by loading raw file contents.
     public init(fileContent: String, encoding: String.Encoding = .windowsCP1252) throws {
         self.encoding = encoding
-        
+
         let blocks = fileContent
             .trimmingCharacters(in: .newlines)
             .replacingOccurrences(of: "\r\n", with: "\n") // TODO: hacky line-endings conversion
             .components(separatedBy: "\n\n")
             .filter { !$0.isEmpty }
-        
+
         // parse subtitles into a dictionary keyed by sequence number
         let subtitlesDict: [Int: Subtitle] = try blocks
             .mapDictionary { element in
                 let (sequenceNumber, subtitle) = try Subtitle.parse(string: element)
                 return (key: sequenceNumber, value: subtitle)
             }
-        
+
         // sort by sequence number
         subtitles = subtitlesDict
             .sorted(by: { $0.key < $1.key })
             .map(\.value)
-            
     }
-    
+
     /// Returns the raw SRT file contents.
     public func rawString() throws -> String {
         guard !subtitles.isEmpty,
               let lastIndex = subtitles.indices.last
         else { return "" }
-        
+
         var output = ""
-        
-        for (index, subtitle) in self.subtitles.enumerated() {
+
+        for (index, subtitle) in subtitles.enumerated() {
             let sequenceNumber = index + 1
             let subtitleBlockString = subtitle.rawData(sequenceNumber: sequenceNumber)
             output.append(subtitleBlockString)
-            
+
             if index < lastIndex {
                 output.append("\n\n")
             }
         }
-        
+
         return output
     }
-    
+
     /// Returns the raw SRT file contents using the encoding as set in the ``encoding`` property.
     public func rawData() throws -> Data {
         let output = try rawString()
-        
+
         // encode string
         guard let data = output.toData(using: encoding) else {
             throw EncodeError.encodeError
         }
-        
+
         return data
     }
 }

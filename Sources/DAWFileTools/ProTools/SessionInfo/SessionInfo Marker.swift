@@ -1,7 +1,7 @@
 //
 //  SessionInfo Marker.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if ProTools
@@ -42,10 +42,10 @@ extension ProTools.SessionInfo {
         /// Marker number.
         /// This is the Memory Location number assigned to the Marker in the Pro Tools project.
         public let number: Int
-        
+
         /// Location.
         public let location: TimeValue?
-        
+
         /// Time Reference (secondary location information based on the Marker type).
         ///
         /// - For **Absolute** Markers, elapsed audio samples is included.
@@ -59,10 +59,10 @@ extension ProTools.SessionInfo {
         ///   Pro Tools' Export Session Text window while exporting. Pro Tools uses a PPQ base of
         ///   960 ticks per quarter.
         public let timeReference: TimeValue
-        
+
         /// Marker name.
         public let name: String
-        
+
         /// Track name.
         ///
         /// For marker rulers, the ruler name will be returned: "Markers", "Markers 2", "Markers 3", "Markers 4" or "Markers 5".
@@ -73,7 +73,7 @@ extension ProTools.SessionInfo {
         /// >
         /// > Pro Tools 2023.12 introduced exporting track name information in the session info text file.
         public let trackName: String
-        
+
         /// Marker track type.
         ///
         /// > Note:
@@ -82,12 +82,12 @@ extension ProTools.SessionInfo {
         /// >
         /// > Pro Tools 2023.12 introduced exporting track type information in the session info text file.
         public let trackType: TrackType
-        
+
         /// Marker comment, if present.
         public let comment: String?
-        
+
         // MARK: - Init
-        
+
         init(
             number: Int,
             location: TimeValue?,
@@ -121,7 +121,7 @@ extension ProTools.SessionInfo.Marker {
         /// >
         /// > Prior to Pro Tools 2023.12, only one session marker ruler was available.
         case ruler = "Ruler"
-        
+
         /// Track.
         ///
         /// > Note:

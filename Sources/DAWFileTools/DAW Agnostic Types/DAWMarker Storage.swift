@@ -1,7 +1,7 @@
 //
 //  DAWMarker Storage.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 import SwiftTimecodeCore
@@ -10,13 +10,13 @@ extension DAWMarker {
     public struct Storage {
         /// Time value.
         public let value: Value
-        
+
         /// The original frame rate that was associated with the value.
         public let frameRate: TimecodeFrameRate
-        
+
         /// The original timecode subframes divisor.
         public let base: Timecode.SubFramesBase
-        
+
         public init(
             value: Value,
             frameRate: TimecodeFrameRate,

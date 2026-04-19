@@ -1,7 +1,7 @@
 //
 //  TrackArchive Converting DAWMarkers.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if Cubase && os(macOS) // XMLNode only works on macOS
@@ -29,7 +29,7 @@ extension Cubase.TrackArchive {
             buildMessages: &buildMessages
         )
     }
-    
+
     /// Creates a new Track Archive XML file by converting markers to marker track(s).
     public init(
         converting markers: [DAWMarker],
@@ -40,12 +40,12 @@ extension Cubase.TrackArchive {
         buildMessages messages: inout [Cubase.TrackArchive.EncodeMessage]
     ) {
         self.init()
-        
+
         main.startTimecode = startTimecode
         main.frameRate = frameRate
-        
+
         tracks = [] // init track array
-        
+
         // markers track
         let markersTrack = Self.buildTrack(
             name: "Markers",
@@ -54,7 +54,7 @@ extension Cubase.TrackArchive {
             startTimecode: startTimecode,
             markerName: { marker in
                 var name = marker.name
-                
+
                 // add comment to marker text, if comments are included and comments aren't destined
                 // for their own track
                 if includeComments, !separateCommentsTrack,
@@ -62,13 +62,13 @@ extension Cubase.TrackArchive {
                 {
                     name += " - " + comment
                 }
-                
+
                 return name
             },
             buildMessages: &messages
         )
         tracks?.append(.marker(markersTrack))
-        
+
         // comments track
         if includeComments, separateCommentsTrack {
             let commentsTrack = Self.buildTrack(
@@ -81,7 +81,7 @@ extension Cubase.TrackArchive {
                     guard let comment = marker.comment,
                           !comment.trimmed.isEmpty
                     else { return nil }
-                    
+
                     return comment
                 },
                 buildMessages: &messages
@@ -89,8 +89,8 @@ extension Cubase.TrackArchive {
             tracks?.append(.marker(commentsTrack))
         }
     }
-    
-    internal static func buildTrack(
+
+    static func buildTrack(
         name: String,
         from markers: [DAWMarker],
         at frameRate: TimecodeFrameRate,
@@ -114,7 +114,7 @@ extension Cubase.TrackArchive {
 
 extension DAWMarker {
     /// If `nameBlock` returns `nil`, this will also return `nil`.
-    internal func convertToCubaseTrackArchiveXMLMarker(
+    func convertToCubaseTrackArchiveXMLMarker(
         at frameRate: TimecodeFrameRate,
         startTimecode: Timecode,
         name nameBlock: (_ marker: DAWMarker) -> String? = { $0.name },
@@ -122,9 +122,9 @@ extension DAWMarker {
     ) -> Cubase.TrackArchive.Marker? {
         let upperLimit = startTimecode.upperLimit
         let subFramesBase = startTimecode.subFramesBase
-        
+
         let markerName = nameBlock(self)
-        
+
         guard let markerTC = resolvedTimecode(
             at: frameRate,
             base: subFramesBase,
@@ -136,9 +136,9 @@ extension DAWMarker {
             messages.append(.error("Could not resolve timecode for marker at timecode \(tcString) with name \(mnString)."))
             return nil
         }
-        
-        guard let markerName = markerName else { return nil }
-        
+
+        guard let markerName else { return nil }
+
         return Cubase.TrackArchive.Marker(
             name: markerName,
             startTimecode: markerTC
@@ -146,9 +146,9 @@ extension DAWMarker {
     }
 }
 
-extension Array where Element == DAWMarker {
+extension [DAWMarker] {
     /// If `nameBlock` returns `nil`, this will return an empty array.
-    internal func convertToCubaseTrackArchiveXMLMarkers(
+    func convertToCubaseTrackArchiveXMLMarkers(
         at frameRate: TimecodeFrameRate,
         startTimecode: Timecode,
         name nameBlock: (_ marker: DAWMarker) -> String? = { $0.name },

@@ -1,7 +1,7 @@
 //
 //  TrackArchive MarkerTrack.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if Cubase && os(macOS) // XMLNode only works on macOS
@@ -12,9 +12,9 @@ extension Cubase.TrackArchive {
     /// Represents a track and its contents.
     public struct MarkerTrack: CubaseTrackArchiveTrack {
         public var name: String?
-        
+
         public var events: [AnyMarker] = []
-        
+
         public init() { }
     }
 }

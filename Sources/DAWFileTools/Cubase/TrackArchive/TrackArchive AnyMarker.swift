@@ -1,7 +1,7 @@
 //
 //  TrackArchive AnyMarker.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if Cubase && os(macOS) // XMLNode only works on macOS
@@ -42,7 +42,7 @@ extension Cubase.TrackArchive.AnyMarker: CubaseTrackArchiveMarker {
             }
         }
     }
-    
+
     public var startTimecode: Timecode {
         get {
             switch self {
@@ -61,7 +61,7 @@ extension Cubase.TrackArchive.AnyMarker: CubaseTrackArchiveMarker {
             }
         }
     }
-    
+
     public var startRealTime: TimeInterval? {
         get {
             switch self {
@@ -86,7 +86,7 @@ extension Cubase.TrackArchive.AnyMarker {
     public init(_ marker: Cubase.TrackArchive.Marker) {
         self = .marker(marker)
     }
-    
+
     public init(_ marker: Cubase.TrackArchive.CycleMarker) {
         self = .cycleMarker(marker)
     }

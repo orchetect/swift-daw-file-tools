@@ -1,7 +1,7 @@
 //
 //  TrackArchive CycleMarker.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if Cubase && os(macOS) // XMLNode only works on macOS
@@ -13,13 +13,13 @@ extension Cubase.TrackArchive {
     /// Represents a cycle marker event and its contents.
     public struct CycleMarker: CubaseTrackArchiveMarker {
         public var name: String = ""
-        
+
         public var startTimecode: Timecode
         public var startRealTime: TimeInterval?
-        
+
         public var lengthTimecode: Timecode
         public var lengthRealTime: TimeInterval?
-        
+
         public init(
             name: String,
             startTimecode: Timecode,
@@ -28,10 +28,10 @@ extension Cubase.TrackArchive {
             lengthRealTime: TimeInterval? = nil
         ) {
             self.name = name
-            
+
             self.startTimecode = startTimecode
             self.startRealTime = startRealTime
-            
+
             self.lengthTimecode = lengthTimecode
             self.lengthRealTime = lengthRealTime
         }

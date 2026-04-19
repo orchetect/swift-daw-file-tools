@@ -1,30 +1,31 @@
 //
 //  SRTFile utf8bom-extended-chars Tests.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 @testable import DAWFileTools
 import Foundation
 import SwiftExtensions
+import SwiftTimecodeCore
 import Testing
 import TestingExtensions
-import SwiftTimecodeCore
 
-@Suite struct SRTFile_utf8BOMExtendedCharsTests {
+@Suite
+struct SRTFile_utf8BOMExtendedCharsTests {
     @Test
-    func decodeSRT_BOM_CRLF_ExtendedChars() async throws {
+    func decodeSRT_BOM_CRLF_ExtendedChars() throws {
         // load file
-        
+
         let rawData = try TestResource.SRTFiles.bomCrLfExtendedChars.data()
-        
+
         // parse
-        
+
         let srtFile = try SRTFile(fileContent: rawData)
-        
+
         #expect(srtFile.encoding == .utf8)
         try #require(srtFile.subtitles.count == 5)
-        
+
         let subtitle1 = srtFile.subtitles[0]
         #expect(subtitle1.timeRange.lowerBound == Time(hours: 0, minutes: 0, seconds: 36, milliseconds: 038))
         #expect(subtitle1.timeRange.upperBound == Time(hours: 0, minutes: 0, seconds: 40, milliseconds: 944))
@@ -33,25 +34,25 @@ import SwiftTimecodeCore
                 + "\n" + ##"-- <font color="#138CE7">www.example.com</font> --"##
         )
         #expect(subtitle1.textCoordinates == nil)
-        
+
         let subtitle2 = srtFile.subtitles[1]
         #expect(subtitle2.timeRange.lowerBound == Time(hours: 0, minutes: 5, seconds: 33, milliseconds: 959))
         #expect(subtitle2.timeRange.upperBound == Time(hours: 0, minutes: 5, seconds: 35, milliseconds: 961))
         #expect(subtitle2.text == "Hello.")
         #expect(subtitle2.textCoordinates == nil)
-        
+
         let subtitle3 = srtFile.subtitles[2]
         #expect(subtitle3.timeRange.lowerBound == Time(hours: 0, minutes: 5, seconds: 38, milliseconds: 005))
         #expect(subtitle3.timeRange.upperBound == Time(hours: 0, minutes: 5, seconds: 40, milliseconds: 130))
         #expect(subtitle3.text == "Where are you?")
         #expect(subtitle3.textCoordinates == nil)
-        
+
         let subtitle4 = srtFile.subtitles[3]
         #expect(subtitle4.timeRange.lowerBound == Time(hours: 0, minutes: 55, seconds: 46, milliseconds: 427))
         #expect(subtitle4.timeRange.upperBound == Time(hours: 0, minutes: 55, seconds: 50, milliseconds: 383))
         #expect(subtitle4.text == "♪ Song lyric ♪")
         #expect(subtitle4.textCoordinates == nil)
-        
+
         let subtitle5 = srtFile.subtitles[4]
         #expect(subtitle5.timeRange.lowerBound == Time(hours: 0, minutes: 55, seconds: 50, milliseconds: 380))
         #expect(subtitle5.timeRange.upperBound == Time(hours: 0, minutes: 55, seconds: 55, milliseconds: 306))

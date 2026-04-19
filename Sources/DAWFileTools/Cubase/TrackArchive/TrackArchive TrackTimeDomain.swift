@@ -1,7 +1,7 @@
 //
 //  TrackArchive TrackTimeDomain.swift
 //  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
 #if Cubase && os(macOS) // XMLNode only works on macOS
@@ -13,7 +13,7 @@ extension Cubase.TrackArchive {
     public enum TrackTimeDomain: Int {
         /// Bars & beats timebase - computations are against PPQ base and tempo
         case musical = 0
-        
+
         /// Time linear timebase - real / absolute time
         case linear = 1
     }
