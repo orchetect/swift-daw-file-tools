@@ -10,9 +10,7 @@ import Foundation
 public struct EquatableExempt<Value>: Equatable {
     public var wrappedValue: Value
 
-    public static func == (lhs: EquatableExempt<Value>,
-                           rhs: EquatableExempt<Value>) -> Bool
-    {
+    public static func == (lhs: EquatableExempt<Value>, rhs: EquatableExempt<Value>) -> Bool {
         true
     }
 
@@ -25,9 +23,7 @@ public struct EquatableExempt<Value>: Equatable {
 public struct EquatableAndHashableExempt<Value>: Equatable, Hashable {
     public var wrappedValue: Value
 
-    public static func == (lhs: EquatableAndHashableExempt<Value>,
-                           rhs: EquatableAndHashableExempt<Value>) -> Bool
-    {
+    public static func == (lhs: EquatableAndHashableExempt<Value>, rhs: EquatableAndHashableExempt<Value>) -> Bool {
         true
     }
 

@@ -80,9 +80,10 @@ extension Collection<DAWMarker> {
     ///
     /// Note that passing `timelineStart` of `nil` or zero (00:00:00:00) is the same as using the
     /// standard  `<`, `==`, or  `>` operators as a sort comparator.
-    public func isSorted(ascending: Bool = true,
-                         timelineStart: Timecode? = nil) -> Bool?
-    {
+    public func isSorted(
+        ascending: Bool = true,
+        timelineStart: Timecode? = nil
+    ) -> Bool? {
         guard count > 1 else { return true }
 
         let limit: Timecode.UpperLimit = timelineStart?.upperLimit ?? .max24Hours
@@ -126,9 +127,10 @@ extension Collection<DAWMarker> {
     ///
     /// Note that passing `timelineStart` of `nil` or zero (00:00:00:00) is the same as using the
     /// standard  `<`, `==`, or  `>` operators as a sort comparator.
-    public func sorted(ascending: Bool = true,
-                       timelineStart: Timecode) -> [Element]
-    {
+    public func sorted(
+        ascending: Bool = true,
+        timelineStart: Timecode
+    ) -> [Element] {
         sorted {
             $0.compare(to: $1, timelineStart: timelineStart)
                 != (ascending ? .orderedDescending : .orderedAscending)
@@ -171,9 +173,10 @@ extension MutableCollection
     ///
     /// Note that passing `timelineStart` of `nil` or zero (00:00:00:00) is the same as using the
     /// standard  `<`, `==`, or  `>` operators as a sort comparator.
-    public mutating func sort(ascending: Bool = true,
-                              timelineStart: Timecode)
-    {
+    public mutating func sort(
+        ascending: Bool = true,
+        timelineStart: Timecode
+    ) {
         sort {
             $0.compare(to: $1, timelineStart: timelineStart)
                 != (ascending ? .orderedDescending : .orderedAscending)

@@ -180,9 +180,11 @@ struct ProTools_SessionText_2023_12_Markers {
         #expect(marker1.name == "Marker 1")
         #expect(
             marker1.timeStorage
-                == .init(value: .timecodeString(absolute: "01:00:00:00"),
-                         frameRate: .fps24,
-                         base: .max100SubFrames)
+                == .init(
+                    value: .timecodeString(absolute: "01:00:00:00"),
+                    frameRate: .fps24,
+                    base: .max100SubFrames
+                )
         )
 
         let dawMarkerTrack2 = try #require(dawMarkerTracks[safe: 1])
@@ -193,9 +195,11 @@ struct ProTools_SessionText_2023_12_Markers {
         #expect(marker2.name == "Marker 2")
         #expect(
             marker2.timeStorage
-                == .init(value: .timecodeString(absolute: "01:00:01:00"),
-                         frameRate: .fps24,
-                         base: .max100SubFrames)
+                == .init(
+                    value: .timecodeString(absolute: "01:00:01:00"),
+                    frameRate: .fps24,
+                    base: .max100SubFrames
+                )
         )
 
         let dawMarkerTrack6 = try #require(dawMarkerTracks[safe: 5])
@@ -206,9 +210,11 @@ struct ProTools_SessionText_2023_12_Markers {
         #expect(marker6.name == "Marker 6")
         #expect(
             marker6.timeStorage
-                == .init(value: .timecodeString(absolute: "01:00:05:00"),
-                         frameRate: .fps24,
-                         base: .max100SubFrames)
+                == .init(
+                    value: .timecodeString(absolute: "01:00:05:00"),
+                    frameRate: .fps24,
+                    base: .max100SubFrames
+                )
         )
     }
 }
