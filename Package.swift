@@ -24,7 +24,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/orchetect/swift-extensions", from: "2.1.5"),
         .package(url: "https://github.com/orchetect/swift-fcpxml", from: "0.1.1"),
-        .package(url: "https://github.com/orchetect/swift-timecode", from: "3.1.0"),
+        .package(url: "https://github.com/orchetect/swift-timecode", from: "3.1.1"),
         .package(url: "https://github.com/orchetect/MIDIKit", from: "0.11.0"),
 
         // testing-only dependencies
