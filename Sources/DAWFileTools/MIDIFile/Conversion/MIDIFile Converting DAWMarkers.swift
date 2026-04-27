@@ -18,7 +18,7 @@ extension MusicalMIDI1File {
         tempo inputTempo: Double,
         startTimecode: Timecode,
         includeComments: Bool
-    ) throws {
+    ) throws(BuildError) {
         var buildMessages: [String] = []
         try self.init(
             converting: markers,
@@ -36,7 +36,7 @@ extension MusicalMIDI1File {
         startTimecode: Timecode,
         includeComments: Bool,
         buildMessages messages: inout [String]
-    ) throws {
+    ) throws(BuildError) {
         // ascertain frame rate - let's just grab it from the start timecode object (reasonably
         // assuming all timecode objects have the same frame rate)
 
@@ -53,7 +53,7 @@ extension MusicalMIDI1File {
         // MARK: Tempo validation and calculation
 
         guard (5.0 ... 300.0).contains(inputTempo) else {
-            throw BuildError.general(
+            throw .general(
                 "Tempo \(inputTempo)bpm is not within valid range (5bpm-300bpm)."
             )
         }
@@ -128,7 +128,7 @@ extension MusicalMIDI1File {
         // might be a PT bug because I can't imagine 30d is more useful/common
 
         guard let s: MusicalMIDI1File.Track.Event = .smpteOffset(delta: .none, scaling: startTimecode) else {
-            throw BuildError.general("Error scaling timecode: \(startTimecode.stringValueVerbose)")
+            throw .general("Error scaling timecode: \(startTimecode.stringValueVerbose)")
         }
         midiTrack.events.append(s)
 
@@ -170,7 +170,7 @@ extension MusicalMIDI1File {
                 limit: upperLimit,
                 startTimecode: startTimecode
             ) else {
-                throw BuildError.general(
+                throw .general(
                     "Encountered an invalid timecode in the markers list."
                 )
             }
