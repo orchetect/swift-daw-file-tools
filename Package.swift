@@ -25,7 +25,7 @@ let package = Package(
         .package(url: "https://github.com/orchetect/swift-extensions", from: "2.1.5"),
         .package(url: "https://github.com/orchetect/swift-fcpxml", from: "0.1.1"),
         .package(url: "https://github.com/orchetect/swift-timecode", from: "3.1.1"),
-        .package(url: "https://github.com/orchetect/MIDIKit", from: "0.11.0"),
+        .package(url: "https://github.com/orchetect/swift-midi-file", from: "1.0.0"),
 
         // testing-only dependencies
         .package(url: "https://github.com/orchetect/swift-testing-extensions", from: "0.3.0")
@@ -37,7 +37,7 @@ let package = Package(
                 .product(name: "SwiftExtensions", package: "swift-extensions"),
                 .product(name: "SwiftFCPXML", package: "swift-fcpxml", condition: .when(traits: [.fcp])),
                 .product(name: "SwiftTimecodeCore", package: "swift-timecode"),
-                .product(name: "MIDIKitSMF", package: "MIDIKit", condition: .when(traits: [.midiFile]))
+                .product(name: "SwiftMIDIFile", package: "swift-midi-file", condition: .when(traits: [.midiFile]))
             ]
         ),
         .testTarget(

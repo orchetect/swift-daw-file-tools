@@ -7,9 +7,9 @@
 #if MIDIFile
 
 import Foundation
-import MIDIKitSMF
+import SwiftMIDIFile
 
-extension MIDIFile {
+extension MusicalMIDI1File {
     /// Cubase track archive XML parsing error.
     public enum BuildError: Error {
         case general(String)

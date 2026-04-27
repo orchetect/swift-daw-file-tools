@@ -7,11 +7,11 @@
 #if MIDIFile
 
 import Foundation
-import MIDIKitSMF
+import SwiftMIDIFile
 import SwiftExtensions
 import SwiftTimecodeCore
 
-extension MIDIFile {
+extension MusicalMIDI1File {
     /// Constructs a MIDI file based on a marker list.
     public init(
         converting markers: [DAWMarker],
@@ -38,7 +38,7 @@ extension MIDIFile {
         buildMessages messages: inout [String]
     ) throws {
         // ascertain frame rate - let's just grab it from the start timecode object (reasonably
-        // assuming all timecode objects have the same framerate)
+        // assuming all timecode objects have the same frame rate)
 
         let frameRate = startTimecode.frameRate
         let upperLimit = startTimecode.upperLimit
@@ -46,7 +46,7 @@ extension MIDIFile {
 
         // MARK: MIDI file header
 
-        var midifile = MIDIFile()
+        var midifile = MusicalMIDI1File()
 
         midifile.format = .singleTrack
 
@@ -64,8 +64,8 @@ extension MIDIFile {
         // 152.503 bpm read by a DAW importing the midi file). this will ensure optimal accuracy
         // when calculating marker event positions in the midi file
 
-        let tempoEvent = MIDIFileEvent.Tempo(bpm: inputTempo)
-        let tempo = tempoEvent.bpmEncoded // get our new adjusted tempo for calculation
+        let tempoEvent = MIDIFileEvent.MusicalTempo(bpm: inputTempo)
+        let tempo = tempoEvent.bpm // get our new adjusted tempo for calculation
 
         if inputTempo != tempo {
             messages.append(
@@ -96,7 +96,7 @@ extension MIDIFile {
 
         let tpq: UInt16 = 9600
 
-        midifile.timeBase = .musical(ticksPerQuarterNote: tpq) // set to static PPQ
+        midifile.timebase = .musical(ticksPerQuarterNote: tpq) // set to static PPQ
 
         // let beatDurationInSeconds = (60.0 / tempo)
         //    let beatsPerSecond = (tempo / 60.0)
@@ -106,7 +106,7 @@ extension MIDIFile {
 
         // MARK: MIDI file track
 
-        var midiTrack = MIDIFile.Chunk.Track()
+        var midiTrack = MusicalMIDI1File.Track()
 
         // MARK: MIDI file track - Track name
 
@@ -127,11 +127,14 @@ extension MIDIFile {
         // for some reason it decides 30d is a better candidate for importing the MIDI file...?
         // might be a PT bug because I can't imagine 30d is more useful/common
 
-        midiTrack.events.append(.smpteOffset(delta: .none, scaling: startTimecode))
+        guard let s: MusicalMIDI1File.Track.Event = .smpteOffset(delta: .none, scaling: startTimecode) else {
+            throw BuildError.general("Error scaling timecode: \(startTimecode.stringValueVerbose)")
+        }
+        midiTrack.events.append(s)
 
         // MARK: MIDI file track - Tempo event
 
-        midiTrack.events.append(tempoEvent.smfWrappedEvent(delta: .none))
+        midiTrack.events.append(delta: .none, .tempo(.musical(tempoEvent)))
 
         // MARK: MIDI file Events
 
@@ -180,7 +183,7 @@ extension MIDIFile {
             if currentRealTimeOffset !=
                 0.0 { currentRealTimeOffset = 0.0 } // only use offset the for the first marker
             let deltaTicks = UInt32(round((deltaAdvanceRealTime * ticksPerSecond) / 1000.0))
-            let deltaTime = MIDIFileEvent.DeltaTime.ticks(deltaTicks)
+            let deltaTime: MusicalMIDI1File.DeltaTime = .ticks(deltaTicks)
 
             // do some self-validation to see if the event converts back into the same timecode as
             // the marker's input timecode
@@ -217,7 +220,7 @@ extension MIDIFile {
                 string: markerName
             )
 
-            midiTrack.events.append(newMarker.smfWrappedEvent(delta: deltaTime))
+            midiTrack.events.append(delta: deltaTime, .text(newMarker))
 
             // update running position
             framePosition += deltaAdvanceFrames
