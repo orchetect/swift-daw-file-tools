@@ -18,6 +18,7 @@ extension MusicalMIDI1File {
         tempo inputTempo: Double,
         startTimecode: Timecode,
         includeComments: Bool,
+        trackName: String? = "Markers",
         encodingMode: MIDIFileEvent.Text.EncodingMode = .strictASCII
     ) throws(BuildError) {
         var buildMessages: [String] = []
@@ -26,6 +27,7 @@ extension MusicalMIDI1File {
             tempo: inputTempo,
             startTimecode: startTimecode,
             includeComments: includeComments,
+            trackName: trackName,
             encodingMode: encodingMode,
             buildMessages: &buildMessages
         )
@@ -37,6 +39,7 @@ extension MusicalMIDI1File {
         tempo inputTempo: Double,
         startTimecode: Timecode,
         includeComments: Bool,
+        trackName: String? = "Markers",
         encodingMode: MIDIFileEvent.Text.EncodingMode = .strictASCII,
         buildMessages messages: inout [String]
     ) throws(BuildError) {
@@ -119,13 +122,16 @@ extension MusicalMIDI1File {
 
         // MARK: MIDI file track - Track name
 
-        midiTrack.events.append(
-            .text(
-                delta: .none,
-                type: .trackOrSequenceName,
-                string: "Markers"
+        if let trackName {
+            midiTrack.events.append(
+                .text(
+                    delta: .none,
+                    type: .trackOrSequenceName,
+                    string: trackName,
+                    encodingMode: encodingMode
+                )
             )
-        )
+        }
 
         // MARK: MIDI file track - SMPTE offset (start time & frame rate)
 
