@@ -17,7 +17,9 @@ extension MusicalMIDI1File {
         converting markers: [DAWMarker],
         tempo inputTempo: Double,
         startTimecode: Timecode,
-        includeComments: Bool
+        includeComments: Bool,
+        trackName: String? = "Markers",
+        encoding: MIDIFileEvent.Text.Encoding = .strictASCII
     ) throws(BuildError) {
         var buildMessages: [String] = []
         try self.init(
@@ -25,6 +27,8 @@ extension MusicalMIDI1File {
             tempo: inputTempo,
             startTimecode: startTimecode,
             includeComments: includeComments,
+            trackName: trackName,
+            encoding: encoding,
             buildMessages: &buildMessages
         )
     }
@@ -35,6 +39,8 @@ extension MusicalMIDI1File {
         tempo inputTempo: Double,
         startTimecode: Timecode,
         includeComments: Bool,
+        trackName: String? = "Markers",
+        encoding: MIDIFileEvent.Text.Encoding = .strictASCII,
         buildMessages messages: inout [String]
     ) throws(BuildError) {
         // ascertain frame rate - let's just grab it from the start timecode object (reasonably
@@ -69,7 +75,13 @@ extension MusicalMIDI1File {
 
         if inputTempo != tempo {
             messages.append(
-                "Input tempo \(inputTempo)bpm resolves to \(tempo)bpm after encoding in a MIDI file. Depending on variances in how DAWs interpret MIDI file tempos, after importing the MIDI file, markers may not exactly correspond to their timecodes in the DAW session. Stable tempos for retaining the highest level of MIDI file timing resolution include: 30, 60, 120, 125, 150, 160, 192, 200, 240, 250 bpm."
+                """
+                Input tempo \(inputTempo)bpm resolves to \(tempo)bpm after encoding in a MIDI file. \
+                Depending on variances in how DAWs interpret MIDI file tempos, after importing the MIDI file, \
+                markers may not exactly correspond to their timecodes in the DAW session. \
+                Stable tempos for retaining the highest level of MIDI file timing resolution include: \
+                30, 60, 120, 125, 150, 160, 192, 200, 240, 250 bpm.
+                """
             )
         }
 
@@ -110,13 +122,16 @@ extension MusicalMIDI1File {
 
         // MARK: MIDI file track - Track name
 
-        midiTrack.events.append(
-            .text(
-                delta: .none,
-                type: .trackOrSequenceName,
-                string: "Markers"
+        if let trackName {
+            midiTrack.events.append(
+                .text(
+                    delta: .none,
+                    type: .trackOrSequenceName,
+                    string: trackName,
+                    encoding: encoding
+                )
             )
-        )
+        }
 
         // MARK: MIDI file track - SMPTE offset (start time & frame rate)
 
@@ -217,7 +232,8 @@ extension MusicalMIDI1File {
 
             let newMarker = MIDIFileEvent.Text(
                 type: .marker,
-                string: markerName
+                string: markerName,
+                encoding: encoding
             )
 
             midiTrack.events.append(delta: deltaTime, .text(newMarker))
