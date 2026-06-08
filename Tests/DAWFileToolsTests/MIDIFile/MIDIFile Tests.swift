@@ -30,14 +30,14 @@ struct MIDIFile_Tests {
             DAWMarker(storage: storage("00:00:02:00"), name: "请请让我知道", comment: nil)
         ]
 
-        func midiFileEvents(encodingMode: MIDIFileEvent.Text.EncodingMode) throws -> [MIDIFileEvent.Text] {
+        func midiFileEvents(encoding: MIDIFileEvent.Text.Encoding) throws -> [MIDIFileEvent.Text] {
             let midiFile = try MusicalMIDI1File(
                 converting: markers,
                 tempo: 120.0,
                 startTimecode: Timecode(.zero, at: .fps24),
                 includeComments: true,
                 trackName: nil,
-                encodingMode: encodingMode
+                encoding: encoding
             )
             
             #expect(midiFile.tracks.count == 1)
@@ -55,7 +55,7 @@ struct MIDIFile_Tests {
         
         // strict ascii
         do {
-            let textEvents = try midiFileEvents(encodingMode: .strictASCII)
+            let textEvents = try midiFileEvents(encoding: .strictASCII)
             try #require(textEvents.count == markers.count)
             #expect(textEvents[0].text == "ASCII Marker")
             #expect(textEvents[1].text == "Extended (C) ASCII")
@@ -63,9 +63,9 @@ struct MIDIFile_Tests {
             #expect(textEvents[3].text == "??????")
         }
         
-        // lenient ascii
+        // extended ascii
         do {
-            let textEvents = try midiFileEvents(encodingMode: .lenientASCII)
+            let textEvents = try midiFileEvents(encoding: .extendedASCII)
             try #require(textEvents.count == markers.count)
             #expect(textEvents[0].text == "ASCII Marker")
             #expect(textEvents[1].text == "Extended © ASCII")
@@ -75,7 +75,7 @@ struct MIDIFile_Tests {
         
         // allow UTF8
         do {
-            let textEvents = try midiFileEvents(encodingMode: .allowUTF8)
+            let textEvents = try midiFileEvents(encoding: .allowUTF8)
             try #require(textEvents.count == markers.count)
             #expect(textEvents[0].text == "ASCII Marker")
             #expect(textEvents[1].text == "Extended © ASCII")

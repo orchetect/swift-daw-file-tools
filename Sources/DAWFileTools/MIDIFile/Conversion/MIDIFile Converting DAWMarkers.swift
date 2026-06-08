@@ -19,7 +19,7 @@ extension MusicalMIDI1File {
         startTimecode: Timecode,
         includeComments: Bool,
         trackName: String? = "Markers",
-        encodingMode: MIDIFileEvent.Text.EncodingMode = .strictASCII
+        encoding: MIDIFileEvent.Text.Encoding = .strictASCII
     ) throws(BuildError) {
         var buildMessages: [String] = []
         try self.init(
@@ -28,7 +28,7 @@ extension MusicalMIDI1File {
             startTimecode: startTimecode,
             includeComments: includeComments,
             trackName: trackName,
-            encodingMode: encodingMode,
+            encoding: encoding,
             buildMessages: &buildMessages
         )
     }
@@ -40,7 +40,7 @@ extension MusicalMIDI1File {
         startTimecode: Timecode,
         includeComments: Bool,
         trackName: String? = "Markers",
-        encodingMode: MIDIFileEvent.Text.EncodingMode = .strictASCII,
+        encoding: MIDIFileEvent.Text.Encoding = .strictASCII,
         buildMessages messages: inout [String]
     ) throws(BuildError) {
         // ascertain frame rate - let's just grab it from the start timecode object (reasonably
@@ -128,7 +128,7 @@ extension MusicalMIDI1File {
                     delta: .none,
                     type: .trackOrSequenceName,
                     string: trackName,
-                    encodingMode: encodingMode
+                    encoding: encoding
                 )
             )
         }
@@ -233,7 +233,7 @@ extension MusicalMIDI1File {
             let newMarker = MIDIFileEvent.Text(
                 type: .marker,
                 string: markerName,
-                encodingMode: encodingMode
+                encoding: encoding
             )
 
             midiTrack.events.append(delta: deltaTime, .text(newMarker))
