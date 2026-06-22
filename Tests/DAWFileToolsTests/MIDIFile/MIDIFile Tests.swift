@@ -1,6 +1,6 @@
 //
 //  MIDIFile Tests.swift
-//  swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools
+//  SwiftDAWFileTools • https://github.com/orchetect/swift-daw-file-tools
 //  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
@@ -39,20 +39,20 @@ struct MIDIFile_Tests {
                 trackName: nil,
                 encoding: encoding
             )
-            
+
             #expect(midiFile.tracks.count == 1)
             let track = try #require(midiFile.tracks.first)
-            
+
             let textEvents: [MIDIFileEvent.Text] = track.events
                 .map(\.event)
                 .compactMap {
                     guard case let .text(text) = $0 else { return nil }
                     return text
                 }
-            
+
             return textEvents
         }
-        
+
         // strict ascii
         do {
             let textEvents = try midiFileEvents(encoding: .strictASCII)
@@ -62,7 +62,7 @@ struct MIDIFile_Tests {
             #expect(textEvents[2].text == "Emoji ?")
             #expect(textEvents[3].text == "??????")
         }
-        
+
         // extended ascii
         do {
             let textEvents = try midiFileEvents(encoding: .extendedASCII)
@@ -72,7 +72,7 @@ struct MIDIFile_Tests {
             #expect(textEvents[2].text == "Emoji ?")
             #expect(textEvents[3].text == "??????")
         }
-        
+
         // allow UTF8
         do {
             let textEvents = try midiFileEvents(encoding: .allowUTF8)
@@ -82,7 +82,6 @@ struct MIDIFile_Tests {
             #expect(textEvents[2].text == "Emoji 😀")
             #expect(textEvents[3].text == "请请让我知道")
         }
-        
     }
 
     @Test
@@ -94,20 +93,20 @@ struct MIDIFile_Tests {
             includeComments: true,
             trackName: nil
         )
-        
+
         #expect(midiFile.tracks.count == 1)
         let track = try #require(midiFile.tracks.first)
-        
+
         let textEvents: [MIDIFileEvent.Text] = track.events
             .map(\.event)
             .compactMap {
                 guard case let .text(text) = $0 else { return nil }
                 return text
             }
-        
+
         #expect(textEvents.isEmpty)
     }
-    
+
     @Test
     func withTrackName() throws {
         let midiFile = try MusicalMIDI1File(
@@ -117,21 +116,21 @@ struct MIDIFile_Tests {
             includeComments: true,
             trackName: "Track Name"
         )
-        
+
         #expect(midiFile.tracks.count == 1)
         let track = try #require(midiFile.tracks.first)
-        
+
         let textEvents: [MIDIFileEvent.Text] = track.events
             .map(\.event)
             .compactMap {
                 guard case let .text(text) = $0 else { return nil }
                 return text
             }
-        
+
         try #require(textEvents.count == 1)
-        
+
         #expect(textEvents[0].text == "Track Name")
     }
-    
+
     // TODO: add MIDI file generation tests
 }
