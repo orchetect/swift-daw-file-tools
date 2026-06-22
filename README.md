@@ -1,4 +1,4 @@
-# swift-daw-file-tools
+# SwiftDAWFileTools
 
 [![Platforms - macOS 10.15+ | iOS 10+ | tvOS 10+ | visionOS 1+](https://img.shields.io/badge/platforms-macOS%2010.15+%20|%20iOS%2010+%20|%20tvOS%2010+%20|%20visionOS%201+-lightgrey.svg?style=flat)](https://developer.apple.com/swift) ![Swift 5.5-6.0](https://img.shields.io/badge/Swift-5.5–6.0-orange.svg?style=flat) [![Xcode 13-16](https://img.shields.io/badge/Xcode-13–16-blue.svg?style=flat)](https://developer.apple.com/swift) [![License: MIT](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/orchetect/swift-daw-file-tools/blob/main/LICENSE)
 
@@ -56,7 +56,7 @@ This package utilizes [Swift Package Traits](https://docs.swift.org/swiftpm/docu
 ## Dependencies
 
 - [MIDIKit](https://github.com/orchetect/MIDIKit) to read/write Standard MIDI Files
-- [swift-fcpxml](https://github.com/orchetect/swift-fcpxml) for FCPXML support (previously a part of swift-daw-file-tools, but now extracted into its own repo)
+- [swift-fcpxml](https://github.com/orchetect/swift-fcpxml) for FCPXML support (previously a part of SwiftDAWFileTools, but now extracted into its own repo)
 - [swift-timecode](https://github.com/orchetect/swift-timecode) to represent timecode values
 
 ## Documentation
