@@ -180,7 +180,7 @@ extension SRTFile {
         let output = try rawString()
 
         // encode string
-        guard let data = output.toData(using: encoding) else {
+        guard let data = output.data(using: encoding) else {
             throw EncodeError.encodeError
         }
 
