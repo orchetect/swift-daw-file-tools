@@ -6,7 +6,7 @@
 
 #if FCP
 
-@_exported import SwiftFCPXML
+import SwiftFCPXML
 
 // Note:
 // FCPXML was extracted into its own repository called swift-fcpxml as of swift-daw-file-tools 0.9.0
