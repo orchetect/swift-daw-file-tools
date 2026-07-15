@@ -6,7 +6,7 @@
 
 #if SRT
 
-@_exported import SwiftTime
-@_exported import SwiftTimecodeCore
+@_exported public import SwiftTime
+@_exported public import SwiftTimecodeCore
 
 #endif

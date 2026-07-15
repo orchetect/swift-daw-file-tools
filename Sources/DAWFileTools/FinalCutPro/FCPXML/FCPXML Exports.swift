@@ -6,6 +6,6 @@
 
 #if FCP
 
-@_exported import SwiftFCPXML
+@_exported public import SwiftFCPXML
 
 #endif

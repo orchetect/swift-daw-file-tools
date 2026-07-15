@@ -4,4 +4,4 @@
 //  © 2026 Steffan Andrews • Licensed under MIT License
 //
 
-@_exported import SwiftTimecodeCore
+@_exported public import SwiftTimecodeCore

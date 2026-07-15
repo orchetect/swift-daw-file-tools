@@ -6,6 +6,6 @@
 
 #if Cubase
 
-@_exported import SwiftTimecodeCore
+@_exported public import SwiftTimecodeCore
 
 #endif

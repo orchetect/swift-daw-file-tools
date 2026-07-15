@@ -6,7 +6,7 @@
 
 #if MIDIFile
 
-@_exported import SwiftMIDIFile
-@_exported import SwiftTimecodeCore
+@_exported public import SwiftMIDIFile
+@_exported public import SwiftTimecodeCore
 
 #endif
