@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftExtensions
+import SwiftTime
 
 extension Time {
     static func decodeRegExPattern(strict: Bool, matchLine: Bool) -> String {

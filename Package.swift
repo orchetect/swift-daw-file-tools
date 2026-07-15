@@ -24,6 +24,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/orchetect/swift-extensions", from: "3.0.0"),
         .package(url: "https://github.com/orchetect/swift-fcpxml", from: "0.1.2"),
+        .package(url: "https://github.com/orchetect/swift-time", from: "1.0.0"),
         .package(url: "https://github.com/orchetect/swift-timecode", from: "3.1.1"),
         .package(url: "https://github.com/orchetect/swift-midi-file", from: "1.0.2"),
 
@@ -36,6 +37,7 @@ let package = Package(
             dependencies: [
                 .product(name: "SwiftExtensions", package: "swift-extensions"),
                 .product(name: "SwiftFCPXML", package: "swift-fcpxml", condition: .when(traits: [.fcp])),
+                .product(name: "SwiftTime", package: "swift-time"),
                 .product(name: "SwiftTimecodeCore", package: "swift-timecode"),
                 .product(name: "SwiftMIDIFile", package: "swift-midi-file", condition: .when(traits: [.midiFile]))
             ]

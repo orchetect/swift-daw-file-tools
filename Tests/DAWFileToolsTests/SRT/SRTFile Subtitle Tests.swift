@@ -8,6 +8,7 @@
 import SwiftExtensions
 import SwiftTimecodeCore
 import Testing
+import SwiftTime
 
 @Suite
 struct SRTFileSubtitleDecodeTests {

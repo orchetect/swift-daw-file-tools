@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftExtensions
+import SwiftTime
 import SwiftTimecodeCore
 
 extension SRTFile {

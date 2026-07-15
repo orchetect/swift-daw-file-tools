@@ -6,6 +6,7 @@
 
 @testable import DAWFileTools
 import SwiftExtensions
+import SwiftTime
 import SwiftTimecodeCore
 import Testing
 
