@@ -90,74 +90,56 @@ jobs:
         PLATFORM: ${{ steps.sim-setup.outputs.platform }}
         WORKSPACEPATH: ${{ steps.sim-setup.outputs.workspace-path }}
 
-  NoTraits:
+  no-traits:
     name: Build (No Traits)
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
     - uses: actions/checkout@main
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: latest-stable
     - name: Build
       run: swift build --disable-default-traits
 
-  CubaseTrait:
+  cubase-trait:
     name: Build (Cubase Trait)
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
     - uses: actions/checkout@main
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: latest-stable
     - name: Build
       run: swift build --traits Cubase
 
-  FCPTrait:
+  fcp-trait:
     name: Build (FCP Trait)
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
     - uses: actions/checkout@main
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: latest-stable
     - name: Build
       run: swift build --traits FCP
 
-  MIDIFileTrait:
+  midifile-trait:
     name: Build (MIDIFile Trait)
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
     - uses: actions/checkout@main
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: latest-stable
     - name: Build
       run: swift build --traits MIDIFile
 
-  ProToolsTrait:
+  protools-trait:
     name: Build (ProTools Trait)
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
     - uses: actions/checkout@main
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: latest-stable
     - name: Build
       run: swift build --traits ProTools
 
-  SRTTrait:
+  srt-trait:
     name: Build (SRT Trait)
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
     - uses: actions/checkout@main
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: latest-stable
     - name: Build
       run: swift build --traits SRT
