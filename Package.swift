@@ -1,14 +1,14 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.4
 
 import PackageDescription
 
 let package = Package(
     name: "swift-daw-file-tools",
     platforms: [
-        .macOS(.v10_15),
-        .iOS(.v13),
-        .tvOS(.v13),
-        .watchOS(.v6)
+        .macOS(.v12),
+        .iOS(.v15),
+        .tvOS(.v15),
+        .watchOS(.v9)
     ],
     products: [
         .library(name: "DAWFileTools", targets: ["DAWFileTools"])
@@ -23,9 +23,9 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/orchetect/swift-extensions", from: "3.0.0"),
-        .package(url: "https://github.com/orchetect/swift-fcpxml", from: "0.1.2"),
+        .package(url: "https://github.com/orchetect/swift-fcpxml", from: "0.1.3"),
         .package(url: "https://github.com/orchetect/swift-time", from: "1.0.0"),
-        .package(url: "https://github.com/orchetect/swift-timecode", from: "3.1.3"),
+        .package(url: "https://github.com/orchetect/swift-timecode", from: "3.1.5"),
         .package(url: "https://github.com/orchetect/swift-midi-file", from: "1.0.2"),
 
         // testing-only dependencies
